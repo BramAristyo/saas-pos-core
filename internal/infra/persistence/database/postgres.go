@@ -14,10 +14,10 @@ func InitDb() error {
 	conn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Singapore",
 		"localhost",
-		"5433",
+		"5432",
 		"postgres",
-		"postgres",
-		"go_pos_mawish",
+		"root",
+		"go-pos",
 		"disable",
 	)
 	var err error

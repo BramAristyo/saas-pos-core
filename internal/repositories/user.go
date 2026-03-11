@@ -27,9 +27,46 @@ func (r *UserRepository) GetAll() ([]model.User, error) {
 }
 
 func (r *UserRepository) Store(user *model.User) (*model.User, error) {
-	if err := r.DB.Create(&user).Error; err != nil {
-		return &model.User{}, nil
+	if err := r.DB.Create(user).Error; err != nil {
+		return nil, err
 	}
 
 	return user, nil
+}
+
+func (r *UserRepository) FindById(id string) (*model.User, error) {
+	var user model.User
+
+	if err := r.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *UserRepository) Update(id string, data *model.User) (*model.User, error) {
+	user, err := r.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// https://gorm.io/docs/update.html
+	if err := r.DB.Model(user).Updates(data).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r *UserRepository) Destroy(id string) error {
+	user, err := r.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	if err := r.DB.Delete(&user).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
