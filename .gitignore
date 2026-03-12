@@ -1,0 +1,37 @@
+# Standard Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+__debug_bin
+go.work
+
+# Vendor directory (uncomment if not using vendoring)
+# vendor/
+
+# Logs
+*.log
+*.log.gz
+
+# Air (live reload)
+.air.toml
+.air/
+
+# Jupyter Notebooks
+*.ipynb
+
+# AI/ML datasets and models
+data/
+models/
+*.csv
+*.h5
+*.pkl
+*.joblib
+
+# Temp and uploads
+tmp/
+uploads/
+*/cmd/uploads

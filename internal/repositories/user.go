@@ -51,7 +51,7 @@ func (r *UserRepository) Update(id string, data *model.User) (*model.User, error
 	}
 
 	// https://gorm.io/docs/update.html
-	if err := r.DB.Model(user).Updates(data).Error; err != nil {
+	if err := r.DB.Model(user).Updates(map[string]interface{}{"name": data.Name, "email": data.Email, "is_active": data.IsActive}).Error; err != nil {
 		return nil, err
 	}
 
@@ -69,4 +69,24 @@ func (r *UserRepository) Destroy(id string) error {
 	}
 
 	return nil
+}
+
+func (r *UserRepository) IsEmailExist(email string) (bool, error) {
+	var count int64
+
+	if err := r.DB.Model(&model.User{}).Where("email = ?", email).Count(&count).Error; err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func (r *UserRepository) IsEmailTaken(id string, email string) (bool, error) {
+	var count int64
+
+	if err := r.DB.Model(&model.User{}).Where("email = ? AND id != ?", email, id).Count(&count).Error; err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

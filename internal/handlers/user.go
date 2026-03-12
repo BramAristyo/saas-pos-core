@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/services"
+	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -51,13 +53,18 @@ func (h *UserHandler) Store(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Service.Store(user)
+	created, err := h.Service.Store(user)
 	if err != nil {
+		var serviceErr *service_errors.ServiceError
+		if errors.As(err, &serviceErr) {
+			c.JSON(serviceErr.Code, gin.H{"error": serviceErr.Message})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, res)
+	c.JSON(http.StatusCreated, gin.H{"success": true, "data": created})
 }
 
 func (h *UserHandler) Update(c *gin.Context) {
@@ -74,6 +81,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "failed to update user"})
 			return
 		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update user"})
 		return
 	}

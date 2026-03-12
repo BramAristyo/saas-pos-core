@@ -29,6 +29,10 @@ func main() {
 	v1 := router.Group("/api")
 	{
 		v1.GET("/", userHandler.GetAll)
+		v1.GET("/:id", userHandler.FindById)
+		v1.POST("/", userHandler.Store)
+		v1.PUT("/:id", userHandler.Update)
+		v1.DELETE("/:id", userHandler.Delete)
 	}
 
 	router.Run(":9000")

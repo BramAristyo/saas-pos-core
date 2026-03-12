@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repositories"
+	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -46,6 +47,15 @@ func (s *UserService) FindById(id string) (dto.UserResponse, error) {
 }
 
 func (s *UserService) Store(req dto.CreateUserRequest) (dto.UserResponse, error) {
+	exist, err := s.Repo.IsEmailExist(req.Email)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	if exist {
+		return dto.UserResponse{}, service_errors.EmailExist
+	}
+
 	hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
 	if err != nil {
 		return dto.UserResponse{}, err
@@ -65,6 +75,17 @@ func (s *UserService) Store(req dto.CreateUserRequest) (dto.UserResponse, error)
 
 func (s *UserService) Update(id string, req dto.UpdateUserRequest) (dto.UserResponse, error) {
 	user := dto.ToUpdateUserModel(req)
+
+	exist, err := s.Repo.IsEmailTaken(req.Email, id)
+
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	if exist {
+		return dto.UserResponse{}, service_errors.EmailExist
+	}
+
 	updatedUser, err := s.Repo.Update(id, &user)
 	if err != nil {
 		return dto.UserResponse{}, err
