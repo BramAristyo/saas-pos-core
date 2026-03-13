@@ -51,7 +51,7 @@ func (h *CategoryHandler) FindById(c *gin.Context) {
 func (h *CategoryHandler) Store(c *gin.Context) {
 	var req dto.CreateCategoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ValidationError(c, err)
 		return
 	}
 
@@ -68,7 +68,7 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 	var req dto.UpdateCategoryRequest
 	id, _ := strconv.Atoi(c.Param("id"))
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		response.ValidationError(c, err)
 		return
 	}
 

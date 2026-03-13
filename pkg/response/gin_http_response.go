@@ -5,7 +5,6 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type BaseHTTPResponse struct {
@@ -38,7 +37,7 @@ func Error(c *gin.Context, code int, message string) {
 	})
 }
 
-func ValidationError(c *gin.Context, err validator.ValidationErrors) {
+func ValidationError(c *gin.Context, err error) {
 	c.JSON(http.StatusBadRequest, BaseHTTPResponse{
 		Success: false,
 		Error:   validation.GetValidationErrors(err),
