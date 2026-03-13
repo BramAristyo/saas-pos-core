@@ -1,19 +1,19 @@
-package services
+package service
 
 import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/repositories"
+	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 )
 
 type CategoryService struct {
-	Repo *repositories.CategoryRepository
+	Repo *repository.CategoryRepository
 }
 
-func NewCategoryService(repo *repositories.CategoryRepository) *CategoryService {
+func NewCategoryService(repo *repository.CategoryRepository) *CategoryService {
 	return &CategoryService{
 		Repo: repo,
 	}

@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/services"
+	"github.com/BramAristyo/go-pos-mawish/internal/service"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 	"github.com/gin-gonic/gin"
@@ -14,10 +14,10 @@ import (
 )
 
 type UserHandler struct {
-	Service *services.UserService
+	Service *service.UserService
 }
 
-func NewUserHandler(s *services.UserService) *UserHandler {
+func NewUserHandler(s *service.UserService) *UserHandler {
 	return &UserHandler{
 		Service: s,
 	}

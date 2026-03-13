@@ -5,17 +5,17 @@ import (
 	"strconv"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/services"
+	"github.com/BramAristyo/go-pos-mawish/internal/service"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type CategoryHandler struct {
-	Service *services.CategoryService
+	Service *service.CategoryService
 }
 
-func NewCategoryHandler(s *services.CategoryService) *CategoryHandler {
+func NewCategoryHandler(s *service.CategoryService) *CategoryHandler {
 	return &CategoryHandler{
 		Service: s,
 	}

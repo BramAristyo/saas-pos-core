@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/BramAristyo/go-pos-mawish/internal/models"
+	"github.com/BramAristyo/go-pos-mawish/internal/model"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 )
 
@@ -29,23 +29,23 @@ type UpdateCategoryRequest struct {
 	IsActive    bool   `json:"isActive"`
 }
 
-func ToCreateCategoryModel(req CreateCategoryRequest) models.Category {
-	return models.Category{
+func ToCreateCategoryModel(req CreateCategoryRequest) model.Category {
+	return model.Category{
 		Name:        req.Name,
 		Description: req.Description,
 		IsActive:    true,
 	}
 }
 
-func ToUpdateCategoryModel(req UpdateCategoryRequest) models.Category {
-	return models.Category{
+func ToUpdateCategoryModel(req UpdateCategoryRequest) model.Category {
+	return model.Category{
 		Name:        req.Name,
 		Description: req.Description,
 		IsActive:    true,
 	}
 }
 
-func ToCategoryResponse(c models.Category) CategoryResponse {
+func ToCategoryResponse(c model.Category) CategoryResponse {
 	return CategoryResponse{
 		ID:          int(c.ID),
 		Name:        c.Name,

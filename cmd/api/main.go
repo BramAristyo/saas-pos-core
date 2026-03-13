@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 
-	handler "github.com/BramAristyo/go-pos-mawish/internal/handlers"
+	"github.com/BramAristyo/go-pos-mawish/internal/handler"
 	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
-	"github.com/BramAristyo/go-pos-mawish/internal/repositories"
-	"github.com/BramAristyo/go-pos-mawish/internal/services"
+	"github.com/BramAristyo/go-pos-mawish/internal/repository"
+	"github.com/BramAristyo/go-pos-mawish/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,12 +20,12 @@ func main() {
 
 	db := database.GetDb()
 
-	userRepository := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepository)
+	userRepository := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepository)
 	userHandler := handler.NewUserHandler(userService)
 
-	categoryRepository := repositories.NewCategoryRepository(db)
-	categoryService := services.NewCategoryService(categoryRepository)
+	categoryRepository := repository.NewCategoryRepository(db)
+	categoryService := service.NewCategoryService(categoryRepository)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 
 	router := gin.Default()

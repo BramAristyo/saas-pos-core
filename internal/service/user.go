@@ -1,19 +1,19 @@
-package services
+package service
 
 import (
 	"fmt"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/repositories"
+	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	Repo *repositories.UserRepository
+	Repo *repository.UserRepository
 }
 
-func NewUserService(r *repositories.UserRepository) *UserService {
+func NewUserService(r *repository.UserRepository) *UserService {
 	return &UserService{
 		Repo: r,
 	}

@@ -1,8 +1,6 @@
 package dto
 
-import "github.com/BramAristyo/go-pos-mawish/internal/models"
-
-// https://gin-gonic.com/en/docs/examples/binding-and-validation/
+import "github.com/BramAristyo/go-pos-mawish/internal/model"
 
 type CreateUserRequest struct {
 	Name     string `json:"name" binding:"required,min=2,max=100"`
@@ -24,7 +22,7 @@ type UserResponse struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-func ToUserResponse(u models.User) UserResponse {
+func ToUserResponse(u model.User) UserResponse {
 	return UserResponse{
 		ID:        u.ID,
 		Name:      u.Name,
@@ -34,8 +32,8 @@ func ToUserResponse(u models.User) UserResponse {
 	}
 }
 
-func ToCreateUserModel(req CreateUserRequest) models.User {
-	return models.User{
+func ToCreateUserModel(req CreateUserRequest) model.User {
+	return model.User{
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: req.Password,
@@ -43,8 +41,8 @@ func ToCreateUserModel(req CreateUserRequest) models.User {
 	}
 }
 
-func ToUpdateUserModel(req UpdateUserRequest) models.User {
-	return models.User{
+func ToUpdateUserModel(req UpdateUserRequest) model.User {
+	return model.User{
 		Name:     req.Name,
 		Email:    req.Email,
 		IsActive: req.IsActive,

@@ -1,9 +1,9 @@
-package repositories
+package repository
 
 import (
 	"fmt"
 
-	model "github.com/BramAristyo/go-pos-mawish/internal/models"
+	"github.com/BramAristyo/go-pos-mawish/internal/model"
 	"gorm.io/gorm"
 )
 

@@ -1,9 +1,9 @@
-package repositories
+package repository
 
 import (
 	"context"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/models"
+	"github.com/BramAristyo/go-pos-mawish/internal/model"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"gorm.io/gorm"
 )
@@ -16,23 +16,23 @@ func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
 	return &CategoryRepository{DB: db}
 }
 
-func (r *CategoryRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []models.Category, error) {
-	var categories []models.Category
+func (r *CategoryRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []model.Category, error) {
+	var categories []model.Category
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&models.Category{}).Count(&totalRows).Error; err != nil {
-		return 0, []models.Category{}, err
+	if err := r.DB.WithContext(ctx).Model(&model.Category{}).Count(&totalRows).Error; err != nil {
+		return 0, []model.Category{}, err
 	}
 
 	if err := r.DB.WithContext(ctx).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&categories).Error; err != nil {
-		return 0, []models.Category{}, err
+		return 0, []model.Category{}, err
 	}
 
 	return totalRows, categories, nil
 }
 
-func (r *CategoryRepository) FindById(ctx context.Context, id int) (*models.Category, error) {
-	var category models.Category
+func (r *CategoryRepository) FindById(ctx context.Context, id int) (*model.Category, error) {
+	var category model.Category
 
 	if err := r.DB.WithContext(ctx).First(&category, "id = ?", id).Error; err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (r *CategoryRepository) FindById(ctx context.Context, id int) (*models.Cate
 	return &category, nil
 }
 
-func (r *CategoryRepository) Store(ctx context.Context, category *models.Category) (*models.Category, error) {
+func (r *CategoryRepository) Store(ctx context.Context, category *model.Category) (*model.Category, error) {
 	if err := r.DB.WithContext(ctx).Create(category).Error; err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (r *CategoryRepository) Store(ctx context.Context, category *models.Categor
 	return category, nil
 }
 
-func (r *CategoryRepository) Update(ctx context.Context, id int, data *models.Category) (*models.Category, error) {
+func (r *CategoryRepository) Update(ctx context.Context, id int, data *model.Category) (*model.Category, error) {
 	category, err := r.FindById(ctx, id)
 	if err != nil {
 		return nil, err
