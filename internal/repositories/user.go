@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+
 	model "github.com/BramAristyo/go-pos-mawish/internal/models"
 	"gorm.io/gorm"
 )
@@ -51,7 +53,7 @@ func (r *UserRepository) Update(id string, data *model.User) (*model.User, error
 	}
 
 	// https://gorm.io/docs/update.html
-	if err := r.DB.Model(user).Updates(map[string]interface{}{"name": data.Name, "email": data.Email, "is_active": data.IsActive}).Error; err != nil {
+	if err := r.DB.Model(user).Updates(map[string]any{"name": data.Name, "email": data.Email, "is_active": data.IsActive}).Error; err != nil {
 		return nil, err
 	}
 
@@ -84,6 +86,7 @@ func (r *UserRepository) IsEmailExist(email string) (bool, error) {
 func (r *UserRepository) IsEmailTaken(id string, email string) (bool, error) {
 	var count int64
 
+	fmt.Println(id, email)
 	if err := r.DB.Model(&model.User{}).Where("email = ? AND id != ?", email, id).Count(&count).Error; err != nil {
 		return false, err
 	}

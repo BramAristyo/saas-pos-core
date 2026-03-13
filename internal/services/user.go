@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repositories"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
@@ -26,11 +28,7 @@ func (s *UserService) GetAll() ([]dto.UserResponse, error) {
 	// https://pkg.go.dev/builtin#make
 	responses := make([]dto.UserResponse, 0, len(users))
 	for _, u := range users {
-		responses = append(responses, dto.UserResponse{
-			ID:    u.ID,
-			Name:  u.Name,
-			Email: u.Email,
-		})
+		responses = append(responses, dto.ToUserResponse(u))
 	}
 
 	return responses, nil
@@ -76,7 +74,8 @@ func (s *UserService) Store(req dto.CreateUserRequest) (dto.UserResponse, error)
 func (s *UserService) Update(id string, req dto.UpdateUserRequest) (dto.UserResponse, error) {
 	user := dto.ToUpdateUserModel(req)
 
-	exist, err := s.Repo.IsEmailTaken(req.Email, id)
+	fmt.Println(id, req.Email)
+	exist, err := s.Repo.IsEmailTaken(id, req.Email)
 
 	if err != nil {
 		return dto.UserResponse{}, err

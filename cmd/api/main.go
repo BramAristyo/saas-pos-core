@@ -24,15 +24,30 @@ func main() {
 	userService := services.NewUserService(userRepository)
 	userHandler := handler.NewUserHandler(userService)
 
+	categoryRepository := repositories.NewCategoryRepository(db)
+	categoryService := services.NewCategoryService(categoryRepository)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
+
 	router := gin.Default()
 
-	v1 := router.Group("/api")
+	api := router.Group("/api")
+	v1 := api.Group("/v1")
+
+	users := v1.Group("/users")
 	{
-		v1.GET("/", userHandler.GetAll)
-		v1.GET("/:id", userHandler.FindById)
-		v1.POST("/", userHandler.Store)
-		v1.PUT("/:id", userHandler.Update)
-		v1.DELETE("/:id", userHandler.Delete)
+		users.GET("/", userHandler.GetAll)
+		users.GET("/:id", userHandler.FindById)
+		users.POST("/", userHandler.Store)
+		users.PUT("/:id", userHandler.Update)
+		users.DELETE("/:id", userHandler.Delete)
+	}
+
+	categories := v1.Group("/categories")
+	{
+		categories.GET("/", categoryHandler.Paginate)
+		categories.GET("/:id", categoryHandler.FindById)
+		categories.POST("/", categoryHandler.Store)
+		categories.PUT("/:id", categoryHandler.Update)
 	}
 
 	router.Run(":9000")

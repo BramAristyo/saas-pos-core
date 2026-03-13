@@ -1,6 +1,11 @@
 package service_errors
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+
+	"github.com/jackc/pgx/v5/pgconn"
+)
 
 type ServiceError struct {
 	Code    int
@@ -11,6 +16,12 @@ func (e *ServiceError) Error() string {
 	return e.Message
 }
 
+func IsUniqueViolation(err error) bool {
+	var pgErr *pgconn.PgError
+	return errors.As(err, &pgErr) && pgErr.Code == "23505"
+}
+
 var (
-	EmailExist = &ServiceError{http.StatusBadRequest, "email already registered"}
+	EmailExist     = &ServiceError{http.StatusConflict, "email already registered"}
+	DuplicateEntry = &ServiceError{http.StatusConflict, "data already exist"}
 )

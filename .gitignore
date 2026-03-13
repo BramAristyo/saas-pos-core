@@ -23,14 +23,6 @@ go.work
 # Jupyter Notebooks
 *.ipynb
 
-# AI/ML datasets and models
-data/
-models/
-*.csv
-*.h5
-*.pkl
-*.joblib
-
 # Temp and uploads
 tmp/
 uploads/
