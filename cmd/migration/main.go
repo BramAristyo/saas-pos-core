@@ -9,6 +9,8 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
+// goose -dir internal/infra/persistence/migrations create create_users_table sql
+
 func main() {
 	err := database.InitDb()
 	defer database.CloseDb()
