@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/handler"
 	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
+	"github.com/BramAristyo/go-pos-mawish/internal/middleware"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/internal/service"
 	"github.com/gin-gonic/gin"
@@ -29,6 +30,7 @@ func main() {
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 
 	router := gin.Default()
+	router.Use(middleware.ErrorHandler())
 
 	api := router.Group("/api")
 	v1 := api.Group("/v1")
