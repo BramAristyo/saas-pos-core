@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"net/http"
 
+	"github.com/BramAristyo/go-pos-mawish/internal/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/handler"
 	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/internal/middleware"
@@ -12,7 +14,9 @@ import (
 )
 
 func main() {
-	err := database.InitDb()
+	cfg := config.GetConfig()
+
+	err := database.InitDb(cfg)
 	defer database.CloseDb()
 
 	if err != nil {
@@ -30,6 +34,12 @@ func main() {
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 
 	router := gin.Default()
+	s := &http.Server{
+		Addr:         cfg.Server.Addr,
+		Handler:      router,
+		ReadTimeout:  cfg.Server.ReadTimeout,
+		WriteTimeout: cfg.Server.WriteTimeout,
+	}
 	router.Use(middleware.ErrorHandler())
 
 	api := router.Group("/api")
@@ -52,5 +62,5 @@ func main() {
 		categories.PUT("/:id", categoryHandler.Update)
 	}
 
-	router.Run(":9000")
+	s.ListenAndServe()
 }

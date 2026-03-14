@@ -27,3 +27,5 @@ go.work
 tmp/
 uploads/
 */cmd/uploads
+
+.env

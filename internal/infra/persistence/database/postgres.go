@@ -2,23 +2,23 @@ package database
 
 import (
 	"fmt"
-	"time"
 
+	"github.com/BramAristyo/go-pos-mawish/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var dbClient *gorm.DB
 
-func InitDb() error {
+func InitDb(cfg *config.Config) error {
 	conn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Singapore",
-		"localhost",
-		"5433",
-		"postgres",
-		"postgres",
-		"go_pos_mawish",
-		"disable",
+		cfg.Postgres.Host,
+		cfg.Postgres.Port,
+		cfg.Postgres.User,
+		cfg.Postgres.Password,
+		cfg.Postgres.DbName,
+		cfg.Postgres.SSLMode,
 	)
 	var err error
 	dbClient, err = gorm.Open(postgres.Open(conn))
@@ -28,9 +28,9 @@ func InitDb() error {
 		return err
 	}
 
-	sqlDb.SetMaxIdleConns(10)
-	sqlDb.SetMaxOpenConns(100)
-	sqlDb.SetConnMaxLifetime(30 * time.Minute)
+	sqlDb.SetMaxIdleConns(cfg.Postgres.MaxIdleCons)
+	sqlDb.SetMaxOpenConns(cfg.Postgres.MaxOpenCons)
+	sqlDb.SetConnMaxLifetime(cfg.Postgres.ConnMaxLifetime)
 
 	fmt.Printf("Database connected successfully")
 	return nil
