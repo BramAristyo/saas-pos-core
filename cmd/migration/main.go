@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -25,6 +26,8 @@ func main() {
 
 	err = goose.RunContext(context.Background(), os.Args[1], sqlDb, "internal/infra/persistence/migrations")
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatalf("Migration failed: %v", err)
 	}
+
+	fmt.Println("Migration executed successfully!")
 }

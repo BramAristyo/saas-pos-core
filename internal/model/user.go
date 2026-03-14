@@ -10,7 +10,7 @@ import (
 // https://gorm.io/docs/hooks.html
 
 type User struct {
-	ID        string    `gorm:"type:uuid;primaryKey"`
+	ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
 	Name      string    `gorm:"type:varchar(100);not null"`
 	Email     string    `gorm:"type:varchar(100);uniqueIndex;not null"`
 	Password  string    `gorm:"type:varchar(255);not null"`
@@ -20,6 +20,6 @@ type User struct {
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) error {
-	u.ID = uuid.New().String()
+	u.ID = uuid.New()
 	return nil
 }

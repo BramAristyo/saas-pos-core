@@ -3,14 +3,15 @@ package dto
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/model"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/google/uuid"
 )
 
 type CategoryResponse struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	IsActive    bool   `json:"is_active"`
-	CreatedAt   string `json:"created_at"`
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	IsActive    bool      `json:"is_active"`
+	CreatedAt   string    `json:"created_at"`
 }
 
 type CategoryResponsePagination struct {
@@ -47,7 +48,7 @@ func ToUpdateCategoryModel(req UpdateCategoryRequest) model.Category {
 
 func ToCategoryResponse(c model.Category) CategoryResponse {
 	return CategoryResponse{
-		ID:          int(c.ID),
+		ID:          c.ID,
 		Name:        c.Name,
 		Description: c.Description,
 		IsActive:    c.IsActive,

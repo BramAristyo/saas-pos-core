@@ -1,6 +1,9 @@
 package dto
 
-import "github.com/BramAristyo/go-pos-mawish/internal/model"
+import (
+	"github.com/BramAristyo/go-pos-mawish/internal/model"
+	"github.com/google/uuid"
+)
 
 type CreateUserRequest struct {
 	Name     string `json:"name" binding:"required,min=2,max=100"`
@@ -15,11 +18,11 @@ type UpdateUserRequest struct {
 }
 
 type UserResponse struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Email     string `json:"email"`
-	IsActive  bool   `json:"isActive"`
-	CreatedAt string `json:"createdAt"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	IsActive  bool      `json:"isActive"`
+	CreatedAt string    `json:"createdAt"`
 }
 
 func ToUserResponse(u model.User) UserResponse {
