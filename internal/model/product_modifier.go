@@ -7,11 +7,11 @@ import (
 )
 
 type ProductModifier struct {
-	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	ProductID       uuid.UUID `gorm:"type:uuid;uniqueIndex:idx_product_modifier;not null"`
-	ModifierGroupID uuid.UUID `gorm:"type:uuid;uniqueIndex:idx_product_modifier;not null"`
+	ID              uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
+	ProductID       uuid.UUID `gorm:"uniqueIndex:idx_product_modifier"`
+	ModifierGroupID uuid.UUID `gorm:"uniqueIndex:idx_product_modifier"`
+	CreatedAt       time.Time `gorm:"autoCreateTime"`
 
 	Product       Product       `gorm:"foreignKey:ProductID"`
 	ModifierGroup ModifierGroup `gorm:"foreignKey:ModifierGroupID"`
-	CreatedAt     time.Time     `gorm:"autoCreateTime"`
 }

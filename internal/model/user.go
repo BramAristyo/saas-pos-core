@@ -4,22 +4,25 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
-// https://gorm.io/docs/hooks.html
+type Role string
+
+const (
+	RoleAdmin   Role = "admin"
+	RoleCashier Role = "cashier"
+)
 
 type User struct {
-	ID        uuid.UUID `gorm:"type:uuid;primaryKey"`
-	Name      string    `gorm:"type:varchar(100);not null"`
-	Email     string    `gorm:"type:varchar(100);uniqueIndex;not null"`
-	Password  string    `gorm:"type:varchar(255);not null"`
-	IsActive  bool      `gorm:"default:true"`
+	ID        uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
+	Name      string
+	Email     string `gorm:"uniqueIndex"`
+	Password  string
+	Role      Role
+	IsActive  bool
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-}
 
-func (u *User) BeforeCreate(tx *gorm.DB) error {
-	u.ID = uuid.New()
-	return nil
+	OpenShifts   []Shift `gorm:"foreignKey:OpenedBy"`
+	ClosedShifts []Shift `gorm:"foreignKey:ClosedBy"`
 }

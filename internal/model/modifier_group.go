@@ -7,12 +7,13 @@ import (
 )
 
 type ModifierGroup struct {
-	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Name       string    `gorm:"type:varchar(100);uniqueIndex;not null"`
-	IsRequired bool      `gorm:"not null;default:false"`
-	IsActive   bool      `gorm:"not null;default:true"`
+	ID         uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
+	Name       string    `gorm:"uniqueIndex"`
+	IsRequired bool
+	IsActive   bool
 	CreatedAt  time.Time `gorm:"autoCreateTime"`
 	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
 
+	ModifierOptions  []ModifierOption  `gorm:"foreignKey:ModifierGroupID"`
 	ProductModifiers []ProductModifier `gorm:"foreignKey:ModifierGroupID"`
 }

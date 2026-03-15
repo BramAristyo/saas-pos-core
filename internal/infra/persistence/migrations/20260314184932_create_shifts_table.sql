@@ -2,7 +2,7 @@
 CREATE TABLE shifts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   opened_by UUID NOT NULL REFERENCES users(id),
-  closed_by UUID NOT NULL REFERENCES users(id),
+  closed_by UUID REFERENCES users(id),
   opening_cash DECIMAL(12, 2) NOT NULL DEFAULT 0,
   closing_cash DECIMAL(12, 2),
   notes TEXT,
