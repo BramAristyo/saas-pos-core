@@ -26,4 +26,7 @@ var (
 	DuplicateEntry  = &ServiceError{http.StatusConflict, "data already exist"}
 	UserNotActive   = &ServiceError{http.StatusForbidden, "user is not active"}
 	InvalidPassword = &ServiceError{http.StatusUnauthorized, "invalid email or password"}
+	TokenRequired   = &ServiceError{http.StatusUnauthorized, "token required"}
+	TokenExpired    = &ServiceError{http.StatusUnauthorized, "token expired"}
+	TokenInvalid    = &ServiceError{http.StatusUnauthorized, "token invalid"}
 )
