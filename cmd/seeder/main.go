@@ -1,5 +1,24 @@
 package main
 
-func main() {
+import (
+	"log"
 
+	"github.com/BramAristyo/go-pos-mawish/internal/config"
+	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
+	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/seeder"
+)
+
+func main() {
+	cfg := config.GetConfig()
+	err := database.InitDb(cfg)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	defer database.CloseDb()
+
+	db := database.GetDb()
+
+	seeder.SeedUserData(db)
+	seeder.SeedCategoryData(db)
 }
