@@ -5,11 +5,10 @@ import (
 	"net/http"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/config"
-	"github.com/BramAristyo/go-pos-mawish/internal/handler"
+	"github.com/BramAristyo/go-pos-mawish/internal/dependecy"
 	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/internal/middleware"
-	"github.com/BramAristyo/go-pos-mawish/internal/repository"
-	"github.com/BramAristyo/go-pos-mawish/internal/service"
+	"github.com/BramAristyo/go-pos-mawish/internal/router"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,41 +24,17 @@ func main() {
 
 	db := database.GetDb()
 
-	userRepository := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepository)
-	userHandler := handler.NewUserHandler(userService)
+	r := gin.Default()
+	r.Use(middleware.ErrorHandler())
 
-	categoryRepository := repository.NewCategoryRepository(db)
-	categoryService := service.NewCategoryService(categoryRepository)
-	categoryHandler := handler.NewCategoryHandler(categoryService)
+	handlers := dependecy.Bootstrap(db)
+	router.RegisterRoutes(r, handlers)
 
-	router := gin.Default()
 	s := &http.Server{
 		Addr:         cfg.Server.Addr,
-		Handler:      router,
+		Handler:      r,
 		ReadTimeout:  cfg.Server.ReadTimeout,
 		WriteTimeout: cfg.Server.WriteTimeout,
-	}
-	router.Use(middleware.ErrorHandler())
-
-	api := router.Group("/api")
-	v1 := api.Group("/v1")
-
-	users := v1.Group("/users")
-	{
-		users.GET("/", userHandler.GetAll)
-		users.GET("/:id", userHandler.FindById)
-		users.POST("/", userHandler.Store)
-		users.PUT("/:id", userHandler.Update)
-		users.DELETE("/:id", userHandler.Delete)
-	}
-
-	categories := v1.Group("/categories")
-	{
-		categories.GET("/", categoryHandler.Paginate)
-		categories.GET("/:id", categoryHandler.FindById)
-		categories.POST("/", categoryHandler.Store)
-		categories.PUT("/:id", categoryHandler.Update)
 	}
 
 	s.ListenAndServe()
