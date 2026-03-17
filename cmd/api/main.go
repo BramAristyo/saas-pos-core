@@ -28,7 +28,7 @@ func main() {
 	r.Use(middleware.ErrorHandler())
 
 	handlers := dependecy.Bootstrap(db, cfg)
-	router.RegisterRoutes(r, handlers)
+	router.RegisterRoutes(r, handlers, cfg)
 
 	s := &http.Server{
 		Addr:         cfg.Server.Addr,
