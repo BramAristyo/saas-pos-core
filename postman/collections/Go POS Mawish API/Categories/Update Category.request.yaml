@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Update Category :id'
+method: PUT
+url: '{{base_url}}/api/v1/categories/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: '1'
+    description: Category ID
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Beverages Updated",
+      "description": "Updated description",
+      "isActive": true
+    }

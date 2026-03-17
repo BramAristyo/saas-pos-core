@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Update User :id'
+method: PUT
+url: '{{base_url}}/api/v1/users/:id'
+order: 4000
+pathVariables:
+  - key: id
+    value: '1'
+    description: User ID
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "John Updated",
+      "email": "john.updated@example.com",
+      "isActive": true
+    }

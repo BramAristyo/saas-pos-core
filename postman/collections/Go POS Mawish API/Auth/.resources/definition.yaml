@@ -1,0 +1,5 @@
+$kind: collection
+description: Authentication endpoints (no token required)
+auth:
+  type: noauth
+  credentials: []

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"maps"
 	"net/http"
 	"strings"
@@ -15,6 +16,8 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		auth := c.GetHeader("Authorization")
 		token := strings.Split(auth, " ")
+
+		fmt.Println(token[1])
 
 		if auth == "" || len(token) < 2 {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token required"})
@@ -35,6 +38,7 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 
 		claims, ok := at.Claims.(jwt.MapClaims)
 		if !ok || !at.Valid {
+			fmt.Println("Failed")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			return
 		}

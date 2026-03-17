@@ -1,0 +1,2 @@
+$kind: collection
+description: User management endpoints (JWT auth required)
