@@ -27,7 +27,7 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.ErrorHandler())
 
-	handlers := dependecy.Bootstrap(db)
+	handlers := dependecy.Bootstrap(db, cfg)
 	router.RegisterRoutes(r, handlers)
 
 	s := &http.Server{

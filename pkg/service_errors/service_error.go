@@ -22,6 +22,8 @@ func IsUniqueViolation(err error) bool {
 }
 
 var (
-	EmailExist     = &ServiceError{http.StatusConflict, "email already registered"}
-	DuplicateEntry = &ServiceError{http.StatusConflict, "data already exist"}
+	EmailExist      = &ServiceError{http.StatusConflict, "email already registered"}
+	DuplicateEntry  = &ServiceError{http.StatusConflict, "data already exist"}
+	UserNotActive   = &ServiceError{http.StatusForbidden, "user is not active"}
+	InvalidPassword = &ServiceError{http.StatusUnauthorized, "invalid email or password"}
 )

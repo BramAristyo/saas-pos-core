@@ -9,7 +9,7 @@ import (
 
 type BaseHTTPResponse struct {
 	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 	Data    any    `json:"data,omitempty"`
 	Error   any    `json:"error,omitempty"`
 }
@@ -30,10 +30,11 @@ func Created(c *gin.Context, data any, message string) {
 	})
 }
 
-func Error(c *gin.Context, code int, message string) {
+func Error(c *gin.Context, code int, message string, err error) {
 	c.JSON(code, BaseHTTPResponse{
 		Success: false,
-		Error:   message,
+		Message: message,
+		Error:   err.Error(),
 	})
 }
 

@@ -12,6 +12,8 @@ func RegisterRoutes(r *gin.Engine, h *dependecy.Handlers) {
 		users := v1.Group("/users")
 		categories := v1.Group("/categories")
 
+		v1.POST("/", h.Auth.Login)
+
 		UserRoutes(users, h.User)
 		CategoryRoutes(categories, h.Category)
 	}

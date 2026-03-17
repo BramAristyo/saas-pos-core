@@ -18,17 +18,19 @@ type UpdateUserRequest struct {
 }
 
 type UserResponse struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	IsActive  bool      `json:"isActive"`
-	CreatedAt string    `json:"createdAt"`
+	ID        uuid.UUID  `json:"id"`
+	Name      string     `json:"name"`
+	Role      model.Role `json:"role"`
+	Email     string     `json:"email"`
+	IsActive  bool       `json:"isActive"`
+	CreatedAt string     `json:"createdAt"`
 }
 
 func ToUserResponse(u model.User) UserResponse {
 	return UserResponse{
 		ID:        u.ID,
 		Name:      u.Name,
+		Role:      u.Role,
 		Email:     u.Email,
 		IsActive:  u.IsActive,
 		CreatedAt: u.CreatedAt.Format("2006-01-02 15:04:05"),

@@ -27,9 +27,15 @@ type PostgresConfig struct {
 	ConnMaxLifetime time.Duration
 }
 
+type JWTConfig struct {
+	AccessTokenExpireDuration time.Duration
+	Secret                    string
+}
+
 type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
+	JWT      JWTConfig
 }
 
 func GetConfig() *Config {
@@ -57,6 +63,10 @@ func GetConfig() *Config {
 			MaxIdleCons:     viper.GetInt("DB_MAX_IDLE_CONNS"),
 			MaxOpenCons:     viper.GetInt("DB_MAX_OPEN_CONNS"),
 			ConnMaxLifetime: viper.GetDuration("DB_CONN_MAX_LIFETIME"),
+		},
+		JWT: JWTConfig{
+			AccessTokenExpireDuration: viper.GetDuration("JWT_ACCESS_TOKEN_EXPIRE_DURATION"),
+			Secret:                    viper.GetString("JWT_SECRET_KEY"),
 		},
 	}
 }

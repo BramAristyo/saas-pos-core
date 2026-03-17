@@ -3,6 +3,7 @@ package seeder
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/model"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -49,6 +50,11 @@ func SeedUserData(db *gorm.DB) {
 			Role:     model.RoleCashier,
 			IsActive: true,
 		},
+	}
+
+	for _, user := range users {
+		hashed, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+		user.Password = string(hashed)
 	}
 
 	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&users)
