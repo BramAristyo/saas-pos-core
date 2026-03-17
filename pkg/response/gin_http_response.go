@@ -12,6 +12,15 @@ type BaseHTTPResponse struct {
 	Message string `json:"message,omitempty"`
 	Data    any    `json:"data,omitempty"`
 	Error   any    `json:"error,omitempty"`
+	Meta    any    `json:"meta,omitempty"`
+}
+
+func OKPaginate[T any, M any](c *gin.Context, data T, meta M) {
+	c.JSON(http.StatusOK, BaseHTTPResponse{
+		Success: true,
+		Data:    data,
+		Meta:    meta,
+	})
 }
 
 func OK(c *gin.Context, data any, message string) {

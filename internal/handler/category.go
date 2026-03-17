@@ -33,7 +33,7 @@ func (h *CategoryHandler) Paginate(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "success get categories")
+	response.OKPaginate(c, res.Data, res.Meta)
 }
 
 func (h *CategoryHandler) FindById(c *gin.Context) {
