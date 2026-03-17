@@ -17,8 +17,8 @@ CREATE TABLE modifier_options (
   price_adjustment DECIMAL(12, 2) NOT NULL DEFAULT 0,
   cogs_adjustment DECIMAL(12, 2) NOT NULL DEFAULT 0,
   is_active BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Product Modifier (Pivot table)
