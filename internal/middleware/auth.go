@@ -19,5 +19,7 @@ func Authentication() gin.HandlerFunc {
 		} else {
 			// TODO FUCKNG
 		}
+
+		c.Next()
 	}
 }
