@@ -65,7 +65,13 @@ func (r *ModifierGroupRepository) Update(ctx context.Context, id uuid.UUID, mg *
 		return nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).Model(&existing).Updates(mg).Error; err != nil {
+	updateData := map[string]any{
+		"name":        mg.Name,
+		"is_required": mg.IsRequired,
+		"is_active":   mg.IsActive,
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
 		return nil, err
 	}
 

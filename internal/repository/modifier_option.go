@@ -56,7 +56,15 @@ func (r *ModifierOptionRepository) Update(ctx context.Context, id uuid.UUID, mo 
 		return nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).Model(&existing).Updates(mo).Error; err != nil {
+	updateData := map[string]any{
+		"modifier_group_id": mo.ModifierGroupID,
+		"name":              mo.Name,
+		"price_adjustment":  mo.PriceAdjustment,
+		"cogs_adjustment":   mo.CogsAdjustment,
+		"is_active":         mo.IsActive,
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
 		return nil, err
 	}
 
