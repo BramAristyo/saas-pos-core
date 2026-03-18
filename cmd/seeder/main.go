@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/config"
-	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
-	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/seeder"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/seeder"
 )
 
 func main() {

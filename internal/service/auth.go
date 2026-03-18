@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/config"
-	"github.com/BramAristyo/go-pos-mawish/internal/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
+	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 	"github.com/golang-jwt/jwt/v5"

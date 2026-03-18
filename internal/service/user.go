@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
 	"golang.org/x/crypto/bcrypt"

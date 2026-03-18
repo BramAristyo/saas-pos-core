@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/config"
-	"github.com/BramAristyo/go-pos-mawish/internal/dependecy"
-	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
-	"github.com/BramAristyo/go-pos-mawish/internal/middleware"
-	"github.com/BramAristyo/go-pos-mawish/internal/router"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
+	"github.com/BramAristyo/go-pos-mawish/internal/dependency"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
+	"github.com/BramAristyo/go-pos-mawish/internal/api/middleware"
+	"github.com/BramAristyo/go-pos-mawish/internal/api/router"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +27,7 @@ func main() {
 	r := gin.Default()
 	r.Use(middleware.ErrorHandler())
 
-	handlers := dependecy.Bootstrap(db, cfg)
+	handlers := dependency.Bootstrap(db, cfg)
 	router.RegisterRoutes(r, handlers, cfg)
 
 	s := &http.Server{

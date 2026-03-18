@@ -6,12 +6,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/config"
-	"github.com/BramAristyo/go-pos-mawish/internal/infra/persistence/database"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/pressly/goose/v3"
 )
 
-// goose -dir internal/infra/persistence/migrations create create_users_table sql
+// goose -dir internal/infrastructure/persistence/migrations create create_users_table sql
 
 func main() {
 	cfg := config.GetConfig()
@@ -24,7 +24,7 @@ func main() {
 		log.Fatal("usage: migration [up|down|status|reset|version]")
 	}
 
-	err = goose.RunContext(context.Background(), os.Args[1], sqlDb, "internal/infra/persistence/migrations")
+	err = goose.RunContext(context.Background(), os.Args[1], sqlDb, "internal/infrastructure/persistence/migrations")
 	if err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

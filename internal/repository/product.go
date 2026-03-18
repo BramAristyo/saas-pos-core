@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/model"
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -19,11 +19,11 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 	}
 }
 
-func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []model.Product, error) {
-	var products []model.Product
+func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Product, error) {
+	var products []domain.Product
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&model.Product{}).Where("is_active = ?", true).Count(&totalRows).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Model(&domain.Product{}).Where("is_active = ?", true).Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
@@ -34,8 +34,8 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 	return totalRows, products, nil
 }
 
-func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (*model.Product, error) {
-	var product model.Product
+func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Product, error) {
+	var product domain.Product
 
 	if err := r.DB.WithContext(ctx).Preload("Category").Where("id = ? AND is_active = ?", id, true).First(&product).Error; err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (*model.
 	return &product, nil
 }
 
-func (r *ProductRepository) Store(ctx context.Context, product *model.Product) (*model.Product, error) {
+func (r *ProductRepository) Store(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 	if err := r.DB.WithContext(ctx).Create(product).Error; err != nil {
 		return nil, err
 	}
@@ -52,8 +52,8 @@ func (r *ProductRepository) Store(ctx context.Context, product *model.Product) (
 	return product, nil
 }
 
-func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, product *model.Product) (*model.Product, error) {
-	var existing model.Product
+func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, product *domain.Product) (*domain.Product, error) {
+	var existing domain.Product
 	if err := r.DB.WithContext(ctx).Where("id = ? AND is_active = ?", id, true).First(&existing).Error; err != nil {
 		return nil, err
 	}
@@ -65,8 +65,8 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, product *m
 	return &existing, nil
 }
 
-func (r *ProductRepository) ChangeStatus(ctx context.Context, id uuid.UUID, status bool) (*model.Product, error) {
-	var product model.Product
+func (r *ProductRepository) ChangeStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.Product, error) {
+	var product domain.Product
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&product).Error; err != nil {
 		return nil, err
 	}

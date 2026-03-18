@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/validation"
+	"github.com/BramAristyo/go-pos-mawish/internal/api/validation"
 	"github.com/gin-gonic/gin"
 )
 
