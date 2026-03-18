@@ -1,30 +1,24 @@
 info:
-  name: Change Status
+  name: Activate
   type: http
   seq: 5
 
 http:
   method: PATCH
-  url: "{{url}}/products/:id/status"
+  url: "{{url}}/products/:id/activate"
   auth: inherit
-  body:
-    type: json
-    data: |-
-      {
-        "is_active": false
-      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
 
 examples:
-  - name: success change status
+  - name: success activate
     request:
-      url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1/status"
+      url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1/activate"
       method: PATCH
-      body:
-        type: json
-        data: |-
-          {
-            "is_active": false
-          }
     response:
       status: 200
       statusText: OK
@@ -36,7 +30,7 @@ examples:
         data: |-
           {
             "success": true,
-            "message": "success change product status",
+            "message": "success activate product",
             "data": {
               "id": "e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1",
               "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
@@ -45,7 +39,7 @@ examples:
               "price": "3.5",
               "cogs": "0.5",
               "image_url": "https://example.com/espresso.jpg",
-              "is_active": false,
+              "is_active": true,
               "created_at": "2026-03-18 10:00:00",
               "updated_at": "2026-03-18 10:20:00"
             }

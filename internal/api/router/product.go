@@ -10,5 +10,6 @@ func ProductRoutes(r *gin.RouterGroup, h *handler.ProductHandler) {
 	r.POST("/", h.Store)
 	r.GET("/:id", h.FindById)
 	r.PUT("/:id", h.Update)
-	r.PATCH("/:id/status", h.ChangeStatus)
+	r.PATCH("/:id/activate", h.Activate)
+	r.PATCH("/:id/deactivate", h.Deactivate)
 }

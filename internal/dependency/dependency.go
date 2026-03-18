@@ -1,8 +1,8 @@
 package dependency
 
 import (
-	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/api/handler"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/internal/service"
 	"gorm.io/gorm"

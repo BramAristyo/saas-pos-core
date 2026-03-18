@@ -83,3 +83,25 @@ func (h *UserHandler) Delete(c *gin.Context) {
 
 	response.OK(c, nil, "success delete user")
 }
+
+func (h *UserHandler) Activate(c *gin.Context) {
+	id := c.Param("id")
+	res, err := h.Service.UpdateStatus(id, true)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success activate user")
+}
+
+func (h *UserHandler) Deactivate(c *gin.Context) {
+	id := c.Param("id")
+	res, err := h.Service.UpdateStatus(id, false)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success deactivate user")
+}

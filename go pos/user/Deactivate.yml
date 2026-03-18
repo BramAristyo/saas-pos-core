@@ -1,0 +1,41 @@
+info:
+  name: Deactivate
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: "{{url}}/users/:id/deactivate"
+  auth: inherit
+  body:
+    type: none
+
+examples:
+  - name: success deactivate
+    request:
+      url: "{{url}}/users/f47ac10b-58cc-4372-a567-0e02b2c3d479/deactivate"
+      method: PATCH
+      body:
+        type: none
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success deactivate user",
+            "data": {
+              "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+              "name": "Admin User",
+              "email": "admin@example.com",
+              "role": "admin",
+              "is_active": false,
+              "created_at": "2026-03-10 10:00:00",
+              "updated_at": "2026-03-10 10:20:00"
+            }
+          }

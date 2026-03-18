@@ -75,7 +75,7 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.
 	return &existing, nil
 }
 
-func (r *ProductRepository) ChangeStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.Product, error) {
+func (r *ProductRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.Product, error) {
 	var existing domain.Product
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
 		return nil, err

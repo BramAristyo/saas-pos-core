@@ -68,3 +68,16 @@ func (r *CategoryRepository) Update(ctx context.Context, id uuid.UUID, c *domain
 
 	return &existing, nil
 }
+
+func (r *CategoryRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.Category, error) {
+	var c domain.Category
+	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&c).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&c).Update("is_active", status).Error; err != nil {
+		return nil, err
+	}
+
+	return &c, nil
+}

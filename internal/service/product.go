@@ -69,8 +69,8 @@ func (s *ProductService) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 	return dto.ToProductResponse(*updated), nil
 }
 
-func (s *ProductService) ChangeStatus(ctx context.Context, id uuid.UUID, req dto.ChangeProductStatusRequest) (dto.ProductResponse, error) {
-	product, err := s.Repo.ChangeStatus(ctx, id, req.IsActive)
+func (s *ProductService) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
+	product, err := s.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}

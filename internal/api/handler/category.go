@@ -88,3 +88,37 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 
 	response.OK(c, res, "success update category")
 }
+
+func (h *CategoryHandler) Activate(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	res, err := h.Service.UpdateStatus(c.Request.Context(), id, true)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success activate category")
+}
+
+func (h *CategoryHandler) Deactivate(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	res, err := h.Service.UpdateStatus(c.Request.Context(), id, false)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success deactivate category")
+}

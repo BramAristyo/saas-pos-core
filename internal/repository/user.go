@@ -72,6 +72,19 @@ func (r *UserRepository) Update(id string, u *domain.User) (*domain.User, error)
 	return &existing, nil
 }
 
+func (r *UserRepository) UpdateStatus(id string, status bool) (*domain.User, error) {
+	var u domain.User
+	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.Model(&u).Update("is_active", status).Error; err != nil {
+		return nil, err
+	}
+
+	return &u, nil
+}
+
 func (r *UserRepository) Destroy(id string) error {
 	var u domain.User
 	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {

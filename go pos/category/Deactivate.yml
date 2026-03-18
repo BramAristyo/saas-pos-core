@@ -1,0 +1,39 @@
+info:
+  name: Deactivate
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: "{{url}}/categories/:id/deactivate"
+  auth: inherit
+  body:
+    type: none
+
+examples:
+  - name: success deactivate
+    request:
+      url: "{{url}}/categories/d98569cc-27d1-42fb-8ad2-98aab03e9401/deactivate"
+      method: PATCH
+      body:
+        type: none
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success deactivate category",
+            "data": {
+              "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+              "name": "Coffee",
+              "description": "All coffee based drinks",
+              "is_active": false,
+              "created_at": "2026-03-10 10:00:00"
+            }
+          }

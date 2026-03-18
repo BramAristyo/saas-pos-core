@@ -45,9 +45,6 @@ type UpdateProductRequest struct {
 	IsActive    bool            `json:"is_active"`
 }
 
-type ChangeProductStatusRequest struct {
-	IsActive bool `json:"is_active"`
-}
 
 func ToProductResponse(p domain.Product) ProductResponse {
 	var category *CategoryResponse

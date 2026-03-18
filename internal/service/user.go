@@ -93,6 +93,15 @@ func (s *UserService) Update(id string, req dto.UpdateUserRequest) (dto.UserResp
 	return dto.ToUserResponse(*updatedUser), nil
 }
 
+func (s *UserService) UpdateStatus(id string, status bool) (dto.UserResponse, error) {
+	user, err := s.Repo.UpdateStatus(id, status)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	return dto.ToUserResponse(*user), nil
+}
+
 func (s *UserService) Destroy(id string) error {
 	return s.Repo.Destroy(id)
 }

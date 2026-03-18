@@ -78,7 +78,7 @@ func (r *ModifierGroupRepository) Update(ctx context.Context, id uuid.UUID, mg *
 	return &existing, nil
 }
 
-func (r *ModifierGroupRepository) ChangeStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.ModifierGroup, error) {
+func (r *ModifierGroupRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.ModifierGroup, error) {
 	var existing domain.ModifierGroup
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
 		return nil, err

@@ -69,3 +69,12 @@ func (s *CategoryService) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 
 	return dto.ToCategoryResponse(*updated), nil
 }
+
+func (s *CategoryService) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
+	category, err := s.Repo.UpdateStatus(ctx, id, status)
+	if err != nil {
+		return dto.CategoryResponse{}, err
+	}
+
+	return dto.ToCategoryResponse(*category), nil
+}

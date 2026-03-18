@@ -9,17 +9,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type ProductHandler struct {
-	Service *service.ProductService
+type ModifierGroupHandler struct {
+	Service *service.ModifierGroupService
 }
 
-func NewProductHandler(s *service.ProductService) *ProductHandler {
-	return &ProductHandler{
+func NewModifierGroupHandler(s *service.ModifierGroupService) *ModifierGroupHandler {
+	return &ModifierGroupHandler{
 		Service: s,
 	}
 }
 
-func (h *ProductHandler) Paginate(c *gin.Context) {
+func (h *ModifierGroupHandler) Paginate(c *gin.Context) {
 	var req filter.PaginationWithInputFilter
 	if err := c.ShouldBindQuery(&req); err != nil {
 		c.Error(err)
@@ -35,46 +35,48 @@ func (h *ProductHandler) Paginate(c *gin.Context) {
 	response.OKPaginate(c, res.Data, res.Meta)
 }
 
-func (h *ProductHandler) FindById(c *gin.Context) {
+func (h *ModifierGroupHandler) FindById(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		c.Error(err)
 		return
 	}
-	product, err := h.Service.FindById(c.Request.Context(), id)
+
+	res, err := h.Service.FindById(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, product, "success get product")
+	response.OK(c, res, "success get modifier group")
 }
 
-func (h *ProductHandler) Store(c *gin.Context) {
-	var req dto.CreateProductRequest
+func (h *ModifierGroupHandler) Store(c *gin.Context) {
+	var req dto.CreateModifierGroupRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Error(err)
 		return
 	}
 
-	created, err := h.Service.Store(c.Request.Context(), req)
+	res, err := h.Service.Store(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.Created(c, created, "success create product")
+	response.Created(c, res, "success created modifier group")
 }
 
-func (h *ProductHandler) Update(c *gin.Context) {
-	var req dto.UpdateProductRequest
+func (h *ModifierGroupHandler) Update(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
 		c.Error(err)
 		return
 	}
+
+	var req dto.UpdateModifierGroupRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Error(err)
 		return
@@ -86,10 +88,10 @@ func (h *ProductHandler) Update(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "success update product")
+	response.OK(c, res, "success update modifer group")
 }
 
-func (h *ProductHandler) Activate(c *gin.Context) {
+func (h *ModifierGroupHandler) Activate(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -103,10 +105,10 @@ func (h *ProductHandler) Activate(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "success activate product")
+	response.OK(c, res, "success activate modifier group")
 }
 
-func (h *ProductHandler) Deactivate(c *gin.Context) {
+func (h *ModifierGroupHandler) Deactivate(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)
 	if err != nil {
@@ -120,5 +122,5 @@ func (h *ProductHandler) Deactivate(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "success deactivate product")
+	response.OK(c, res, "success deactivate modifier group")
 }

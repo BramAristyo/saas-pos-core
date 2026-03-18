@@ -10,5 +10,7 @@ func UserRoutes(r *gin.RouterGroup, h *handler.UserHandler) {
 	r.GET("/:id", h.FindById)
 	r.POST("/", h.Store)
 	r.PUT("/:id", h.Update)
+	r.PATCH("/:id/activate", h.Activate)
+	r.PATCH("/:id/deactivate", h.Deactivate)
 	r.DELETE("/:id", h.Delete)
 }
