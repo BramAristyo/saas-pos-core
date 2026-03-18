@@ -1,0 +1,64 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/products/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+        "name": "Espresso Updated",
+        "description": "Updated description",
+        "price": "4.00",
+        "cogs": "0.60",
+        "image_url": "https://example.com/espresso_updated.jpg",
+        "is_active": true
+      }
+
+examples:
+  - name: success update product
+    request:
+      url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+            "name": "Espresso Updated",
+            "description": "Updated description",
+            "price": "4.00",
+            "cogs": "0.60",
+            "image_url": "https://example.com/espresso_updated.jpg",
+            "is_active": true
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success update product",
+            "data": {
+              "id": "e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1",
+              "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+              "name": "Espresso Updated",
+              "description": "Updated description",
+              "price": "4",
+              "cogs": "0.6",
+              "image_url": "https://example.com/espresso_updated.jpg",
+              "is_active": true,
+              "created_at": "2026-03-18 10:00:00",
+              "updated_at": "2026-03-18 10:15:00"
+            }
+          }

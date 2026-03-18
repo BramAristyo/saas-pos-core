@@ -1,0 +1,52 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/users/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated User",
+        "email": "updateduser@example.com",
+        "isActive": true
+      }
+
+examples:
+  - name: success update user
+    request:
+      url: "{{url}}/users/a2078c32-633c-6e4f-16f5-e5e408f8e503"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated User",
+            "email": "updateduser@example.com",
+            "isActive": true
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success update user",
+            "data": {
+              "id": "a2078c32-633c-6e4f-16f5-e5e408f8e503",
+              "name": "Updated User",
+              "role": "user",
+              "email": "updateduser@example.com",
+              "isActive": true,
+              "createdAt": "2026-03-18 10:40:00"
+            }
+          }

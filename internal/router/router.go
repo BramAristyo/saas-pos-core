@@ -13,10 +13,12 @@ func RegisterRoutes(r *gin.Engine, h *dependecy.Handlers, cfg *config.Config) {
 	{
 		users := v1.Group("/users", middleware.Authentication(cfg))
 		categories := v1.Group("/categories", middleware.Authentication(cfg))
+		products := v1.Group("/products", middleware.Authentication(cfg))
 
 		v1.POST("/", h.Auth.Login)
 
 		UserRoutes(users, h.User)
 		CategoryRoutes(categories, h.Category)
+		ProductRoutes(products, h.Product)
 	}
 }

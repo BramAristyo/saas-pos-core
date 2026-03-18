@@ -27,7 +27,7 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 		return 0, nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&products).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Preload("Category").Where("is_active = ?", true).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&products).Error; err != nil {
 		return 0, nil, err
 	}
 
@@ -37,7 +37,7 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (*model.Product, error) {
 	var product model.Product
 
-	if err := r.DB.WithContext(ctx).Where("id = ? AND is_active = ?", id, true).Find(&product).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Preload("Category").Where("id = ? AND is_active = ?", id, true).First(&product).Error; err != nil {
 		return nil, err
 	}
 
@@ -63,4 +63,17 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, product *m
 	}
 
 	return &existing, nil
+}
+
+func (r *ProductRepository) ChangeStatus(ctx context.Context, id uuid.UUID, status bool) (*model.Product, error) {
+	var product model.Product
+	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&product).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&product).Update("is_active", status).Error; err != nil {
+		return nil, err
+	}
+
+	return &product, nil
 }

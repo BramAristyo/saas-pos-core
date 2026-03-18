@@ -12,6 +12,7 @@ type Handlers struct {
 	Auth     *handler.AuthHandler
 	User     *handler.UserHandler
 	Category *handler.CategoryHandler
+	Product  *handler.ProductHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -23,9 +24,13 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	categoryRepository := repository.NewCategoryRepository(db)
 	categoryService := service.NewCategoryService(categoryRepository)
 
+	productRepository := repository.NewProductRepository(db)
+	productService := service.NewProductService(productRepository)
+
 	return &Handlers{
 		Auth:     handler.NewAuthHandler(authService),
 		User:     handler.NewUserHandler(userService),
 		Category: handler.NewCategoryHandler(categoryService),
+		Product:  handler.NewProductHandler(productService),
 	}
 }

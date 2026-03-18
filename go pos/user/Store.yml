@@ -1,0 +1,52 @@
+info:
+  name: Store
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{url}}/users"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "New User",
+        "email": "newuser@example.com",
+        "password": "password123"
+      }
+
+examples:
+  - name: success create user
+    request:
+      url: "{{url}}/users"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "New User",
+            "email": "newuser@example.com",
+            "password": "password123"
+          }
+    response:
+      status: 201
+      statusText: Created
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success create user",
+            "data": {
+              "id": "a2078c32-633c-6e4f-16f5-e5e408f8e503",
+              "name": "New User",
+              "role": "user",
+              "email": "newuser@example.com",
+              "isActive": true,
+              "createdAt": "2026-03-18 10:40:00"
+            }
+          }
