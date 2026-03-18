@@ -6,18 +6,24 @@ info:
 http:
   method: POST
   url: "{{url}}/products"
-  auth: inherit
   body:
     type: json
     data: |-
       {
-        "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
-        "name": "Espresso",
+        "category_id": "ce42ab55-7eea-4589-addd-2e185b764f27",
+        "name": "EspressoNew",
         "description": "Double shot of rich, smooth espresso",
         "price": "3.50",
         "cogs": "0.50",
         "image_url": "https://example.com/espresso.jpg"
       }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
 
 examples:
   - name: success create product

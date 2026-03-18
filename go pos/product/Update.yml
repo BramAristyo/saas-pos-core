@@ -5,8 +5,7 @@ info:
 
 http:
   method: PUT
-  url: "{{url}}/products/:id"
-  auth: inherit
+  url: "{{url}}/products/b25f1c84-92d7-4378-88d4-739084df3f5"
   body:
     type: json
     data: |-
@@ -19,6 +18,13 @@ http:
         "image_url": "https://example.com/espresso_updated.jpg",
         "is_active": true
       }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
 
 examples:
   - name: success update product

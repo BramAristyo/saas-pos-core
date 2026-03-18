@@ -5,7 +5,7 @@ info:
 
 http:
   method: PATCH
-  url: "{{url}}/products/:id/activate"
+  url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1/activate"
   auth: inherit
 
 settings:
