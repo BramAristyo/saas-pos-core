@@ -31,4 +31,4 @@ CREATE TABLE product_modifiers (
 );
 
 -- +goose Down
-DROP TABLE IF EXISTS modifier_groups, modifier_options, product_modifier;
+DROP TABLE IF EXISTS modifier_groups, modifier_options, product_modifiers;

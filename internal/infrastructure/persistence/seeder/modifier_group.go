@@ -21,7 +21,6 @@ func SeedModifierGroupData(db *gorm.DB) {
 			IsActive:   true,
 			ModifierOptions: []domain.ModifierOption{
 				{
-					ID:              uuid.New(),
 					ModifierGroupID: milkID,
 					Name:            "Oat Milk",
 					PriceAdjustment: decimal.NewFromFloat(15000),
@@ -29,7 +28,6 @@ func SeedModifierGroupData(db *gorm.DB) {
 					IsActive:        true,
 				},
 				{
-					ID:              uuid.New(),
 					ModifierGroupID: milkID,
 					Name:            "Almond Milk",
 					PriceAdjustment: decimal.NewFromFloat(15000),
@@ -45,7 +43,6 @@ func SeedModifierGroupData(db *gorm.DB) {
 			IsActive:   true,
 			ModifierOptions: []domain.ModifierOption{
 				{
-					ID:              uuid.New(),
 					ModifierGroupID: sugarID,
 					Name:            "Normal Sugar",
 					PriceAdjustment: decimal.NewFromFloat(0),
@@ -53,7 +50,6 @@ func SeedModifierGroupData(db *gorm.DB) {
 					IsActive:        true,
 				},
 				{
-					ID:              uuid.New(),
 					ModifierGroupID: sugarID,
 					Name:            "Less Sugar",
 					PriceAdjustment: decimal.NewFromFloat(0),
@@ -69,7 +65,6 @@ func SeedModifierGroupData(db *gorm.DB) {
 			IsActive:   true,
 			ModifierOptions: []domain.ModifierOption{
 				{
-					ID:              uuid.New(),
 					ModifierGroupID: sizeID,
 					Name:            "Regular",
 					PriceAdjustment: decimal.NewFromFloat(0),
@@ -77,7 +72,6 @@ func SeedModifierGroupData(db *gorm.DB) {
 					IsActive:        true,
 				},
 				{
-					ID:              uuid.New(),
 					ModifierGroupID: sizeID,
 					Name:            "Large",
 					PriceAdjustment: decimal.NewFromFloat(5000),
