@@ -1,0 +1,19 @@
+info:
+  name: Find By Id
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{url}}/modifier-groups/:id"
+  auth: inherit
+
+params:
+  path:
+    id: 12345678-1234-1234-1234-123456789012
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -15,3 +15,7 @@ type ProductModifier struct {
 	Product       Product       `gorm:"foreignKey:ProductID"`
 	ModifierGroup ModifierGroup `gorm:"foreignKey:ModifierGroupID"`
 }
+
+func (ProductModifier) TableName() string {
+	return "product_modifiers"
+}

@@ -1,0 +1,22 @@
+info:
+  name: Store
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{url}}/modifier-groups"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "New Modifier Group",
+        "is_required": true
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

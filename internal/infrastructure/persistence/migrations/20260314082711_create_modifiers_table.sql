@@ -22,7 +22,7 @@ CREATE TABLE modifier_options (
 );
 
 -- Product Modifier (Pivot table)
-CREATE TABLE product_modifier (
+CREATE TABLE product_modifiers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   modifier_group_id UUID NOT NULL REFERENCES modifier_groups(id) ON DELETE CASCADE,

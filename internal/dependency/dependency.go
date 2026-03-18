@@ -9,10 +9,11 @@ import (
 )
 
 type Handlers struct {
-	Auth     *handler.AuthHandler
-	User     *handler.UserHandler
-	Category *handler.CategoryHandler
-	Product  *handler.ProductHandler
+	Auth          *handler.AuthHandler
+	User          *handler.UserHandler
+	Category      *handler.CategoryHandler
+	Product       *handler.ProductHandler
+	ModifierGroup *handler.ModifierGroupHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -27,10 +28,14 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	productRepository := repository.NewProductRepository(db)
 	productService := service.NewProductService(productRepository)
 
+	modifierGroupRepository := repository.NewModifierGroupRepository(db)
+	modifierGroupService := service.NewModifierGroupRepository(modifierGroupRepository)
+
 	return &Handlers{
-		Auth:     handler.NewAuthHandler(authService),
-		User:     handler.NewUserHandler(userService),
-		Category: handler.NewCategoryHandler(categoryService),
-		Product:  handler.NewProductHandler(productService),
+		Auth:          handler.NewAuthHandler(authService),
+		User:          handler.NewUserHandler(userService),
+		Category:      handler.NewCategoryHandler(categoryService),
+		Product:       handler.NewProductHandler(productService),
+		ModifierGroup: handler.NewModifierGroupHandler(modifierGroupService),
 	}
 }

@@ -39,7 +39,7 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (*
 
 	err := r.DB.WithContext(ctx).
 		Preload("ModifierOptions", "is_active = ?", true).
-		Preload("ProductModifiers", "is_active = ?", true).
+		Preload("ProductModifiers").
 		Where("id = ?", id).
 		First(&mg).
 		Error
