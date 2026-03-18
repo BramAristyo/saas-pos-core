@@ -1,0 +1,6 @@
+name: GO 9000
+variables:
+  - name: url
+    value: http://localhost:9000/api/v1
+  - name: token
+    value: ""

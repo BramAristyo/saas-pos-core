@@ -17,8 +17,6 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 		auth := c.GetHeader("Authorization")
 		token := strings.Split(auth, " ")
 
-		fmt.Println(token[1])
-
 		if auth == "" || len(token) < 2 {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token required"})
 			return

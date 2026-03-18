@@ -1,0 +1,46 @@
+info:
+  name: Find By Id
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{url}}/users/b5630983-c284-4859-8928-3e963d6d467b"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/users/b5630983-c284-4859-8928-3e963d6d467b"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+        - name: date
+          value: Wed, 18 Mar 2026 01:35:10 GMT
+        - name: content-length
+          value: "218"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success get user",
+            "data": {
+              "id": "b5630983-c284-4859-8928-3e963d6d467b",
+              "name": "Alice Admin",
+              "role": "admin",
+              "email": "alice.admin@example.com",
+              "isActive": true,
+              "createdAt": "2026-03-17 14:41:45"
+            }
+          }

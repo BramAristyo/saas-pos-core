@@ -1,0 +1,117 @@
+info:
+  name: Paginate
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{url}}/categories"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/categories"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+        - name: date
+          value: Wed, 18 Mar 2026 01:32:37 GMT
+        - name: content-length
+          value: "1811"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": [
+              {
+                "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+                "name": "Coffee",
+                "description": "Espresso, brewed, and specialty coffee drinks",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "9733ee9b-a8df-427d-9880-839004aa21c0",
+                "name": "Tea",
+                "description": "Hot and iced teas, herbal infusions",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "ead04fa9-afe7-456b-b781-e5142a5a5397",
+                "name": "Pastries",
+                "description": "Croissants, muffins, scones, and baked goods",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "d7ab7dfc-6f58-478f-b8cc-e2327dd57e6e",
+                "name": "Sandwiches",
+                "description": "Freshly made sandwiches and wraps",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "25b171d8-a8af-4a24-8fc9-4a29c8055dcf",
+                "name": "Salads",
+                "description": "Healthy salads and light meals",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "3fc7db87-f66b-47a1-9eda-2ad2549378a1",
+                "name": "Cold Drinks",
+                "description": "Iced coffee, smoothies, and cold beverages",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "da804e5e-3d27-4850-87a1-90399a870eb8",
+                "name": "Snacks",
+                "description": "Cookies, chips, and small bites",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "d72ba235-855e-4a88-bafa-caf120b7f8db",
+                "name": "Breakfast",
+                "description": "Breakfast sets and morning specials",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "57e7b4a3-7f09-43e4-ae31-53fdebbccc4b",
+                "name": "Desserts",
+                "description": "Cakes, brownies, and sweet treats",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "81ef6b02-08d5-4036-a92e-df3e05b3cbb0",
+                "name": "Merchandise",
+                "description": "Coffee beans, mugs, and branded items",
+                "is_active": true,
+                "created_at": "2026-03-17 14:41:45"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "pageSize": 10,
+              "totalRows": 10,
+              "totalPages": 1,
+              "hasNext": true,
+              "hasPrev": false
+            }
+          }

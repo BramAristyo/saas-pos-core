@@ -1,13 +1,12 @@
 package handler
 
 import (
-	"strconv"
-
 	"github.com/BramAristyo/go-pos-mawish/internal/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/service"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type CategoryHandler struct {
@@ -37,7 +36,12 @@ func (h *CategoryHandler) Paginate(c *gin.Context) {
 }
 
 func (h *CategoryHandler) FindById(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	category, err := h.Service.FindById(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
@@ -65,7 +69,12 @@ func (h *CategoryHandler) Store(c *gin.Context) {
 
 func (h *CategoryHandler) Update(c *gin.Context) {
 	var req dto.UpdateCategoryRequest
-	id, _ := strconv.Atoi(c.Param("id"))
+	idStr := c.Param("id")
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Error(err)
 		return

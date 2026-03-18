@@ -54,7 +54,7 @@ func (s *AuthService) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 	}
 
 	return dto.LoginResponse{
-		Token: "Bearer " + token,
+		Token: token,
 		User:  dto.ToUserResponse(*user),
 	}, nil
 }

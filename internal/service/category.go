@@ -7,6 +7,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
+	"github.com/google/uuid"
 )
 
 type CategoryService struct {
@@ -33,7 +34,7 @@ func (s *CategoryService) Paginate(ctx context.Context, req filter.PaginationWit
 	return dto.ToCategoryResponsePagination(categoriesResponses, req, totalRows), nil
 }
 
-func (s *CategoryService) FindById(ctx context.Context, id int) (dto.CategoryResponse, error) {
+func (s *CategoryService) FindById(ctx context.Context, id uuid.UUID) (dto.CategoryResponse, error) {
 
 	category, err := s.Repo.FindById(ctx, id)
 	if err != nil {
@@ -56,7 +57,7 @@ func (s *CategoryService) Store(ctx context.Context, req dto.CreateCategoryReque
 	return dto.ToCategoryResponse(category), nil
 }
 
-func (s *CategoryService) Update(ctx context.Context, id int, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
+func (s *CategoryService) Update(ctx context.Context, id uuid.UUID, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
 	category := dto.ToUpdateCategoryModel(req)
 	updated, err := s.Repo.Update(ctx, id, &category)
 	if err != nil {

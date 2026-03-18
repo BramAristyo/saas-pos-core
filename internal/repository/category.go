@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/model"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +32,7 @@ func (r *CategoryRepository) Paginate(ctx context.Context, req filter.Pagination
 	return totalRows, categories, nil
 }
 
-func (r *CategoryRepository) FindById(ctx context.Context, id int) (*model.Category, error) {
+func (r *CategoryRepository) FindById(ctx context.Context, id uuid.UUID) (*model.Category, error) {
 	var category model.Category
 
 	if err := r.DB.WithContext(ctx).First(&category, "id = ?", id).Error; err != nil {
@@ -49,7 +50,7 @@ func (r *CategoryRepository) Store(ctx context.Context, category *model.Category
 	return category, nil
 }
 
-func (r *CategoryRepository) Update(ctx context.Context, id int, data *model.Category) (*model.Category, error) {
+func (r *CategoryRepository) Update(ctx context.Context, id uuid.UUID, data *model.Category) (*model.Category, error) {
 	category, err := r.FindById(ctx, id)
 	if err != nil {
 		return nil, err
