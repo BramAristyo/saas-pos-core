@@ -70,3 +70,16 @@ func (r *ModifierOptionRepository) Update(ctx context.Context, id uuid.UUID, mo 
 
 	return &existing, nil
 }
+
+func (r *ModifierOptionRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.ModifierOption, error) {
+	var mo domain.ModifierOption
+	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&mo).Error; err != nil {
+		return nil, err
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&mo).Update("is_active", status).Error; err != nil {
+		return nil, err
+	}
+
+	return &mo, nil
+}

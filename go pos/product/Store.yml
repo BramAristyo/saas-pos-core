@@ -11,6 +11,7 @@ http:
     data: |-
       {
         "category_id": "ce42ab55-7eea-4589-addd-2e185b764f27",
+        "modifier_group_ids": ["00000000-0000-0000-0000-000000000000"],
         "name": "EspressoNew",
         "description": "Double shot of rich, smooth espresso",
         "price": "3.50",

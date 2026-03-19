@@ -11,6 +11,7 @@ http:
     data: |-
       {
         "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+        "modifier_group_ids": ["00000000-0000-0000-0000-000000000000"],
         "name": "Espresso Updated",
         "description": "Updated description",
         "price": "4.00",

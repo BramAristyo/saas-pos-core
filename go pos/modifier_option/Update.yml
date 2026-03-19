@@ -1,0 +1,29 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/modifier-options/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "modifier_group_id": "00000000-0000-0000-0000-000000000000",
+        "name": "Medium",
+        "price_adjustment": 1000,
+        "cogs_adjustment": 400,
+        "is_active": true
+      }
+
+params:
+  path:
+    id: 00000000-0000-0000-0000-000000000000
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

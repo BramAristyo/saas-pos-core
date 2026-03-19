@@ -1,0 +1,19 @@
+info:
+  name: Activate
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{url}}/modifier-options/:id/activate"
+  auth: inherit
+
+params:
+  path:
+    id: 00000000-0000-0000-0000-000000000000
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

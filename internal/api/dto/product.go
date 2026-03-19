@@ -8,17 +8,18 @@ import (
 )
 
 type ProductResponse struct {
-	ID          uuid.UUID         `json:"id"`
-	CategoryID  uuid.UUID         `json:"category_id"`
-	Category    *CategoryResponse `json:"category,omitempty"`
-	Name        string            `json:"name"`
-	Description *string           `json:"description"`
-	Price       decimal.Decimal   `json:"price"`
-	Cogs        decimal.Decimal   `json:"cogs"`
-	ImageURL    *string           `json:"image_url"`
-	IsActive    bool              `json:"is_active"`
-	CreatedAt   string            `json:"created_at"`
-	UpdatedAt   string            `json:"updated_at"`
+	ID             uuid.UUID               `json:"id"`
+	CategoryID     uuid.UUID               `json:"category_id"`
+	Category       *CategoryResponse       `json:"category,omitempty"`
+	ModifierGroups []ModifierGroupResponse `json:"modifier_groups,omitempty"`
+	Name           string                  `json:"name"`
+	Description    *string                 `json:"description"`
+	Price          decimal.Decimal         `json:"price"`
+	Cogs           decimal.Decimal         `json:"cogs"`
+	ImageURL       *string                 `json:"image_url"`
+	IsActive       bool                    `json:"is_active"`
+	CreatedAt      string                  `json:"created_at"`
+	UpdatedAt      string                  `json:"updated_at"`
 }
 
 type ProductResponsePagination struct {
@@ -27,24 +28,25 @@ type ProductResponsePagination struct {
 }
 
 type CreateProductRequest struct {
-	CategoryID  uuid.UUID       `json:"category_id" binding:"required"`
-	Name        string          `json:"name" binding:"required,min=3,max=100"`
-	Description *string         `json:"description"`
-	Price       decimal.Decimal `json:"price" binding:"required"`
-	Cogs        decimal.Decimal `json:"cogs" binding:"required"`
-	ImageURL    *string         `json:"image_url"`
+	CategoryID       uuid.UUID       `json:"category_id" binding:"required"`
+	ModifierGroupIDs []uuid.UUID     `json:"modifier_group_ids"`
+	Name             string          `json:"name" binding:"required,min=3,max=100"`
+	Description      *string         `json:"description"`
+	Price            decimal.Decimal `json:"price" binding:"required"`
+	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
+	ImageURL         *string         `json:"image_url"`
 }
 
 type UpdateProductRequest struct {
-	CategoryID  uuid.UUID       `json:"category_id" binding:"required"`
-	Name        string          `json:"name" binding:"required,min=3,max=100"`
-	Description *string         `json:"description"`
-	Price       decimal.Decimal `json:"price" binding:"required"`
-	Cogs        decimal.Decimal `json:"cogs" binding:"required"`
-	ImageURL    *string         `json:"image_url"`
-	IsActive    bool            `json:"is_active"`
+	CategoryID       uuid.UUID       `json:"category_id" binding:"required"`
+	ModifierGroupIDs []uuid.UUID     `json:"modifier_group_ids"`
+	Name             string          `json:"name" binding:"required,min=3,max=100"`
+	Description      *string         `json:"description"`
+	Price            decimal.Decimal `json:"price" binding:"required"`
+	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
+	ImageURL         *string         `json:"image_url"`
+	IsActive         bool            `json:"is_active"`
 }
-
 
 func ToProductResponse(p domain.Product) ProductResponse {
 	var category *CategoryResponse
@@ -53,18 +55,26 @@ func ToProductResponse(p domain.Product) ProductResponse {
 		category = &c
 	}
 
+	var mgs []ModifierGroupResponse
+	if len(p.ProductModifiers) > 0 {
+		for _, pm := range p.ProductModifiers {
+			mgs = append(mgs, ToModifierGroupResponse(pm.ModifierGroup))
+		}
+	}
+
 	return ProductResponse{
-		ID:          p.ID,
-		CategoryID:  p.CategoryID,
-		Category:    category,
-		Name:        p.Name,
-		Description: p.Description,
-		Price:       p.Price,
-		Cogs:        p.Cogs,
-		ImageURL:    p.ImageURL,
-		IsActive:    p.IsActive,
-		CreatedAt:   p.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:   p.UpdatedAt.Format("2006-01-02 15:04:05"),
+		ID:             p.ID,
+		CategoryID:     p.CategoryID,
+		Category:       category,
+		ModifierGroups: mgs,
+		Name:           p.Name,
+		Description:    p.Description,
+		Price:          p.Price,
+		Cogs:           p.Cogs,
+		ImageURL:       p.ImageURL,
+		IsActive:       p.IsActive,
+		CreatedAt:      p.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:      p.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
 
@@ -76,25 +86,41 @@ func ToProductResponsePagination(p []ProductResponse, f filter.PaginationWithInp
 }
 
 func ToProductModel(req CreateProductRequest) domain.Product {
+	var pms []domain.ProductModifier
+	for _, mgID := range req.ModifierGroupIDs {
+		pms = append(pms, domain.ProductModifier{
+			ModifierGroupID: mgID,
+		})
+	}
+
 	return domain.Product{
-		CategoryID:  req.CategoryID,
-		Name:        req.Name,
-		Description: req.Description,
-		Price:       req.Price,
-		Cogs:        req.Cogs,
-		ImageURL:    req.ImageURL,
-		IsActive:    true,
+		CategoryID:       req.CategoryID,
+		ProductModifiers: pms,
+		Name:             req.Name,
+		Description:      req.Description,
+		Price:            req.Price,
+		Cogs:             req.Cogs,
+		ImageURL:         req.ImageURL,
+		IsActive:         true,
 	}
 }
 
 func ToUpdateProductModel(req UpdateProductRequest) domain.Product {
+	var pms []domain.ProductModifier
+	for _, mgID := range req.ModifierGroupIDs {
+		pms = append(pms, domain.ProductModifier{
+			ModifierGroupID: mgID,
+		})
+	}
+
 	return domain.Product{
-		CategoryID:  req.CategoryID,
-		Name:        req.Name,
-		Description: req.Description,
-		Price:       req.Price,
-		Cogs:        req.Cogs,
-		ImageURL:    req.ImageURL,
-		IsActive:    req.IsActive,
+		CategoryID:       req.CategoryID,
+		ProductModifiers: pms,
+		Name:             req.Name,
+		Description:      req.Description,
+		Price:            req.Price,
+		Cogs:             req.Cogs,
+		ImageURL:         req.ImageURL,
+		IsActive:         req.IsActive,
 	}
 }
