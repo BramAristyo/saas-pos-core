@@ -20,8 +20,8 @@ func NewProductUseCase(repo *repository.ProductRepository) *ProductUseCase {
 	}
 }
 
-func (s *ProductUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ProductResponsePagination, error) {
-	totalRows, products, err := s.Repo.Paginate(ctx, req)
+func (u *ProductUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ProductResponsePagination, error) {
+	totalRows, products, err := u.Repo.Paginate(ctx, req)
 	if err != nil {
 		return dto.ProductResponsePagination{}, err
 	}
@@ -34,19 +34,19 @@ func (s *ProductUseCase) Paginate(ctx context.Context, req filter.PaginationWith
 	return dto.ToProductResponsePagination(productResponses, req, totalRows), nil
 }
 
-func (s *ProductUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ProductResponse, error) {
-	product, err := s.Repo.FindById(ctx, id)
+func (u *ProductUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ProductResponse, error) {
+	product, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(*product), nil
+	return dto.ToProductResponse(product), nil
 }
 
-func (s *ProductUseCase) Store(ctx context.Context, req dto.CreateProductRequest) (dto.ProductResponse, error) {
+func (u *ProductUseCase) Store(ctx context.Context, req dto.CreateProductRequest) (dto.ProductResponse, error) {
 	product := dto.ToProductModel(req)
 
-	if _, err := s.Repo.Store(ctx, &product); err != nil {
+	if _, err := u.Repo.Store(ctx, &product); err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
 		}
@@ -56,9 +56,9 @@ func (s *ProductUseCase) Store(ctx context.Context, req dto.CreateProductRequest
 	return dto.ToProductResponse(product), nil
 }
 
-func (s *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateProductRequest) (dto.ProductResponse, error) {
+func (u *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateProductRequest) (dto.ProductResponse, error) {
 	product := dto.ToUpdateProductModel(req)
-	updated, err := s.Repo.Update(ctx, id, &product)
+	updated, err := u.Repo.Update(ctx, id, &product)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
@@ -66,14 +66,14 @@ func (s *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(*updated), nil
+	return dto.ToProductResponse(updated), nil
 }
 
-func (s *ProductUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
-	product, err := s.Repo.UpdateStatus(ctx, id, status)
+func (u *ProductUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
+	product, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(*product), nil
+	return dto.ToProductResponse(product), nil
 }

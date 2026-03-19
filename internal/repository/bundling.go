@@ -42,27 +42,27 @@ func (r *BundlingRepository) Paginate(ctx context.Context, req filter.Pagination
 	return totalRows, bps, nil
 }
 
-func (r *BundlingRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.BundlingPackage, error) {
+func (r *BundlingRepository) FindById(ctx context.Context, id uuid.UUID) (domain.BundlingPackage, error) {
 	var bp domain.BundlingPackage
 	if err := r.DB.WithContext(ctx).
 		Preload("BundlingItems.Product.Category").
 		Where("id = ?", id).
 		First(&bp).Error; err != nil {
-		return nil, err
-	}
-
-	return &bp, nil
-}
-
-func (r *BundlingRepository) Store(ctx context.Context, bp *domain.BundlingPackage) (*domain.BundlingPackage, error) {
-	if err := r.DB.WithContext(ctx).Create(bp).Error; err != nil {
-		return nil, err
+		return domain.BundlingPackage{}, err
 	}
 
 	return bp, nil
 }
 
-func (r *BundlingRepository) Update(ctx context.Context, id uuid.UUID, bp *domain.BundlingPackage) (*domain.BundlingPackage, error) {
+func (r *BundlingRepository) Store(ctx context.Context, bp *domain.BundlingPackage) (domain.BundlingPackage, error) {
+	if err := r.DB.WithContext(ctx).Create(bp).Error; err != nil {
+		return domain.BundlingPackage{}, err
+	}
+
+	return *bp, nil
+}
+
+func (r *BundlingRepository) Update(ctx context.Context, id uuid.UUID, bp *domain.BundlingPackage) (domain.BundlingPackage, error) {
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var existing domain.BundlingPackage
 		if err := tx.Where("id = ?", id).Preload("BundlingItems").First(&existing).Error; err != nil {
@@ -93,21 +93,21 @@ func (r *BundlingRepository) Update(ctx context.Context, id uuid.UUID, bp *domai
 	})
 
 	if err != nil {
-		return nil, err
+		return domain.BundlingPackage{}, err
 	}
 
 	return r.FindById(ctx, id)
 }
 
-func (r *BundlingRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.BundlingPackage, error) {
+func (r *BundlingRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.BundlingPackage, error) {
 	var existing domain.BundlingPackage
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return nil, err
+		return domain.BundlingPackage{}, err
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Update("is_active", status).Error; err != nil {
-		return nil, err
+		return domain.BundlingPackage{}, err
 	}
 
-	return &existing, nil
+	return existing, nil
 }

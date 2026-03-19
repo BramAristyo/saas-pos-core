@@ -25,37 +25,37 @@ func (r *UserRepository) GetAll() ([]domain.User, error) {
 	return u, nil
 }
 
-func (r *UserRepository) Store(u *domain.User) (*domain.User, error) {
+func (r *UserRepository) Store(u *domain.User) (domain.User, error) {
 	if err := r.DB.Create(u).Error; err != nil {
-		return nil, err
+		return domain.User{}, err
+	}
+
+	return *u, nil
+}
+
+func (r *UserRepository) FindById(id string) (domain.User, error) {
+	var u domain.User
+
+	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
+		return domain.User{}, err
 	}
 
 	return u, nil
 }
 
-func (r *UserRepository) FindById(id string) (*domain.User, error) {
-	var u domain.User
-
-	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
-		return nil, err
-	}
-
-	return &u, nil
-}
-
-func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
+func (r *UserRepository) FindByEmail(email string) (domain.User, error) {
 	var u domain.User
 
 	if err := r.DB.Where("email = ?", email).First(&u).Error; err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
-	return &u, nil
+	return u, nil
 }
 
-func (r *UserRepository) Update(id string, u *domain.User) (*domain.User, error) {
+func (r *UserRepository) Update(id string, u *domain.User) (domain.User, error) {
 	var existing domain.User
 	if err := r.DB.Where("id = ?", id).First(&existing).Error; err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
 
 	updateData := map[string]any{
@@ -66,23 +66,23 @@ func (r *UserRepository) Update(id string, u *domain.User) (*domain.User, error)
 	}
 
 	if err := r.DB.Model(&existing).Updates(updateData).Error; err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
 
-	return &existing, nil
+	return existing, nil
 }
 
-func (r *UserRepository) UpdateStatus(id string, status bool) (*domain.User, error) {
+func (r *UserRepository) UpdateStatus(id string, status bool) (domain.User, error) {
 	var u domain.User
 	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
 
 	if err := r.DB.Model(&u).Update("is_active", status).Error; err != nil {
-		return nil, err
+		return domain.User{}, err
 	}
 
-	return &u, nil
+	return u, nil
 }
 
 func (r *UserRepository) Destroy(id string) error {

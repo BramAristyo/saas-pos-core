@@ -38,28 +38,28 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 	return totalRows, p, nil
 }
 
-func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (*domain.Product, error) {
+func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Product, error) {
 	var p domain.Product
 
 	if err := r.DB.WithContext(ctx).
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Where("id = ?", id).First(&p).Error; err != nil {
-		return nil, err
-	}
-
-	return &p, nil
-}
-
-func (r *ProductRepository) Store(ctx context.Context, p *domain.Product) (*domain.Product, error) {
-	if err := r.DB.WithContext(ctx).Create(p).Error; err != nil {
-		return nil, err
+		return domain.Product{}, err
 	}
 
 	return p, nil
 }
 
-func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.Product) (*domain.Product, error) {
+func (r *ProductRepository) Store(ctx context.Context, p *domain.Product) (domain.Product, error) {
+	if err := r.DB.WithContext(ctx).Create(p).Error; err != nil {
+		return domain.Product{}, err
+	}
+
+	return *p, nil
+}
+
+func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.Product) (domain.Product, error) {
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var existing domain.Product
 		if err := tx.Where("id = ?", id).First(&existing).Error; err != nil {
@@ -122,21 +122,21 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.
 	})
 
 	if err != nil {
-		return nil, err
+		return domain.Product{}, err
 	}
 
 	return r.FindById(ctx, id)
 }
 
-func (r *ProductRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (*domain.Product, error) {
+func (r *ProductRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.Product, error) {
 	var existing domain.Product
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return nil, err
+		return domain.Product{}, err
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Update("is_active", status).Error; err != nil {
-		return nil, err
+		return domain.Product{}, err
 	}
 
-	return &existing, nil
+	return existing, nil
 }

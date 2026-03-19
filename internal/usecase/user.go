@@ -19,33 +19,33 @@ func NewUserUseCase(r *repository.UserRepository) *UserUseCase {
 	}
 }
 
-func (s *UserUseCase) GetAll() ([]dto.UserResponse, error) {
-	users, err := s.Repo.GetAll()
+func (u *UserUseCase) GetAll() ([]dto.UserResponse, error) {
+	users, err := u.Repo.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
 	// https://pkg.go.dev/builtin#make
 	responses := make([]dto.UserResponse, 0, len(users))
-	for _, u := range users {
-		responses = append(responses, dto.ToUserResponse(u))
+	for _, usr := range users {
+		responses = append(responses, dto.ToUserResponse(usr))
 	}
 
 	return responses, nil
 }
 
-func (s *UserUseCase) FindById(id string) (dto.UserResponse, error) {
-	user, err := s.Repo.FindById(id)
+func (u *UserUseCase) FindById(id string) (dto.UserResponse, error) {
+	user, err := u.Repo.FindById(id)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
 
-	res := dto.ToUserResponse(*user)
+	res := dto.ToUserResponse(user)
 	return res, nil
 }
 
-func (s *UserUseCase) Store(req dto.CreateUserRequest) (dto.UserResponse, error) {
-	exist, err := s.Repo.IsEmailExist(req.Email)
+func (u *UserUseCase) Store(req dto.CreateUserRequest) (dto.UserResponse, error) {
+	exist, err := u.Repo.IsEmailExist(req.Email)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
@@ -63,7 +63,7 @@ func (s *UserUseCase) Store(req dto.CreateUserRequest) (dto.UserResponse, error)
 
 	user := dto.ToCreateUserModel(req)
 
-	_, err = s.Repo.Store(&user)
+	_, err = u.Repo.Store(&user)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
@@ -71,11 +71,11 @@ func (s *UserUseCase) Store(req dto.CreateUserRequest) (dto.UserResponse, error)
 	return dto.ToUserResponse(user), nil
 }
 
-func (s *UserUseCase) Update(id string, req dto.UpdateUserRequest) (dto.UserResponse, error) {
+func (u *UserUseCase) Update(id string, req dto.UpdateUserRequest) (dto.UserResponse, error) {
 	user := dto.ToUpdateUserModel(req)
 
 	fmt.Println(id, req.Email)
-	exist, err := s.Repo.IsEmailTaken(id, req.Email)
+	exist, err := u.Repo.IsEmailTaken(id, req.Email)
 
 	if err != nil {
 		return dto.UserResponse{}, err
@@ -85,23 +85,23 @@ func (s *UserUseCase) Update(id string, req dto.UpdateUserRequest) (dto.UserResp
 		return dto.UserResponse{}, usecase_errors.EmailExist
 	}
 
-	updatedUser, err := s.Repo.Update(id, &user)
+	updatedUser, err := u.Repo.Update(id, &user)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
 
-	return dto.ToUserResponse(*updatedUser), nil
+	return dto.ToUserResponse(updatedUser), nil
 }
 
-func (s *UserUseCase) UpdateStatus(id string, status bool) (dto.UserResponse, error) {
-	user, err := s.Repo.UpdateStatus(id, status)
+func (u *UserUseCase) UpdateStatus(id string, status bool) (dto.UserResponse, error) {
+	user, err := u.Repo.UpdateStatus(id, status)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
 
-	return dto.ToUserResponse(*user), nil
+	return dto.ToUserResponse(user), nil
 }
 
-func (s *UserUseCase) Destroy(id string) error {
-	return s.Repo.Destroy(id)
+func (u *UserUseCase) Destroy(id string) error {
+	return u.Repo.Destroy(id)
 }

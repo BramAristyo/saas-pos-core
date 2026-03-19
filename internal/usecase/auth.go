@@ -24,8 +24,8 @@ func NewAuthUseCase(repo *repository.UserRepository, cfg *config.Config) *AuthUs
 	}
 }
 
-func (s *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
-	user, err := s.Repo.FindByEmail(req.Email)
+func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
+	user, err := u.Repo.FindByEmail(req.Email)
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
@@ -45,16 +45,16 @@ func (s *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 	atc["userID"] = user.ID
 	atc["email"] = user.Email
 	atc["role"] = user.Role
-	atc["exp"] = time.Now().Add(s.Cfg.JWT.AccessTokenExpireDuration).Unix()
+	atc["exp"] = time.Now().Add(u.Cfg.JWT.AccessTokenExpireDuration).Unix()
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atc)
-	token, err := at.SignedString([]byte(s.Cfg.JWT.Secret))
+	token, err := at.SignedString([]byte(u.Cfg.JWT.Secret))
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
 
 	return dto.LoginResponse{
 		Token: token,
-		User:  dto.ToUserResponse(*user),
+		User:  dto.ToUserResponse(user),
 	}, nil
 }

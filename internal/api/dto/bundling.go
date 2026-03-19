@@ -88,7 +88,7 @@ func ToBundlingPackageResponse(bp domain.BundlingPackage) BundlingPackageRespons
 	}
 }
 
-func ToBundlingPackageResponses(bps []domain.BundlingPackage) []BundlingPackageResponse {
+func toBundlingPackageResponses(bps []domain.BundlingPackage) []BundlingPackageResponse {
 	bpsRes := make([]BundlingPackageResponse, len(bps))
 	for i, bp := range bps {
 		bpsRes[i] = ToBundlingPackageResponse(bp)
@@ -97,10 +97,10 @@ func ToBundlingPackageResponses(bps []domain.BundlingPackage) []BundlingPackageR
 	return bpsRes
 }
 
-func ToBundlingPackagePaginationResponse(bps []domain.BundlingPackage, meta filter.Meta) BundlingPackagePaginationResponse {
+func ToBundlingPackagePaginationResponse(bps []domain.BundlingPackage, f filter.PaginationWithInputFilter, totalRows int64) BundlingPackagePaginationResponse {
 	return BundlingPackagePaginationResponse{
-		Data: ToBundlingPackageResponses(bps),
-		Meta: meta,
+		Data: toBundlingPackageResponses(bps),
+		Meta: f.ToMeta(totalRows),
 	}
 }
 

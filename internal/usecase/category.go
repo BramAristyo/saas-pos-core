@@ -20,8 +20,8 @@ func NewCategoryUseCase(repo *repository.CategoryRepository) *CategoryUseCase {
 	}
 }
 
-func (s *CategoryUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.CategoryResponsePagination, error) {
-	totalRows, categories, err := s.Repo.Paginate(ctx, req)
+func (u *CategoryUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.CategoryResponsePagination, error) {
+	totalRows, categories, err := u.Repo.Paginate(ctx, req)
 	if err != nil {
 		return dto.CategoryResponsePagination{}, err
 	}
@@ -34,20 +34,20 @@ func (s *CategoryUseCase) Paginate(ctx context.Context, req filter.PaginationWit
 	return dto.ToCategoryResponsePagination(categoriesResponses, req, totalRows), nil
 }
 
-func (s *CategoryUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.CategoryResponse, error) {
+func (u *CategoryUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.CategoryResponse, error) {
 
-	category, err := s.Repo.FindById(ctx, id)
+	category, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(*category), nil
+	return dto.ToCategoryResponse(category), nil
 }
 
-func (s *CategoryUseCase) Store(ctx context.Context, req dto.CreateCategoryRequest) (dto.CategoryResponse, error) {
+func (u *CategoryUseCase) Store(ctx context.Context, req dto.CreateCategoryRequest) (dto.CategoryResponse, error) {
 	category := dto.ToCreateCategoryModel(req)
 
-	if _, err := s.Repo.Store(ctx, &category); err != nil {
+	if _, err := u.Repo.Store(ctx, &category); err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.CategoryResponse{}, usecase_errors.DuplicateEntry
 		}
@@ -57,9 +57,9 @@ func (s *CategoryUseCase) Store(ctx context.Context, req dto.CreateCategoryReque
 	return dto.ToCategoryResponse(category), nil
 }
 
-func (s *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
+func (u *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
 	category := dto.ToUpdateCategoryModel(req)
-	updated, err := s.Repo.Update(ctx, id, &category)
+	updated, err := u.Repo.Update(ctx, id, &category)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.CategoryResponse{}, usecase_errors.DuplicateEntry
@@ -67,14 +67,14 @@ func (s *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(*updated), nil
+	return dto.ToCategoryResponse(updated), nil
 }
 
-func (s *CategoryUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
-	category, err := s.Repo.UpdateStatus(ctx, id, status)
+func (u *CategoryUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
+	category, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(*category), nil
+	return dto.ToCategoryResponse(category), nil
 }

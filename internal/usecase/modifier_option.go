@@ -17,8 +17,8 @@ func NewModifierOptionUseCase(repo *repository.ModifierOptionRepository) *Modifi
 	return &ModifierOptionUseCase{Repo: repo}
 }
 
-func (s *ModifierOptionUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ModifierOptionResponsePagination, error) {
-	totalRows, mos, err := s.Repo.Paginate(ctx, req)
+func (u *ModifierOptionUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ModifierOptionResponsePagination, error) {
+	totalRows, mos, err := u.Repo.Paginate(ctx, req)
 	if err != nil {
 		return dto.ModifierOptionResponsePagination{}, err
 	}
@@ -31,40 +31,40 @@ func (s *ModifierOptionUseCase) Paginate(ctx context.Context, req filter.Paginat
 	return dto.ToModifierOptionResponsePagination(modifierOptions, req, totalRows), nil
 }
 
-func (s *ModifierOptionUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierOptionResponse, error) {
-	mo, err := s.Repo.FindById(ctx, id)
+func (u *ModifierOptionUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierOptionResponse, error) {
+	mo, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(*mo), nil
+	return dto.ToModifierOptionResponse(mo), nil
 }
 
-func (s *ModifierOptionUseCase) Store(ctx context.Context, req dto.CreateModifierOptionRequest) (dto.ModifierOptionResponse, error) {
+func (u *ModifierOptionUseCase) Store(ctx context.Context, req dto.CreateModifierOptionRequest) (dto.ModifierOptionResponse, error) {
 	mo := dto.ToModifierOptionModel(req)
-	stored, err := s.Repo.Store(ctx, &mo)
+	stored, err := u.Repo.Store(ctx, &mo)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(*stored), nil
+	return dto.ToModifierOptionResponse(stored), nil
 }
 
-func (s *ModifierOptionUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierOptionRequest) (dto.ModifierOptionResponse, error) {
+func (u *ModifierOptionUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierOptionRequest) (dto.ModifierOptionResponse, error) {
 	mo := dto.ToUpdateModifierOptionModel(req)
-	updated, err := s.Repo.Update(ctx, id, &mo)
+	updated, err := u.Repo.Update(ctx, id, &mo)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(*updated), nil
+	return dto.ToModifierOptionResponse(updated), nil
 }
 
-func (s *ModifierOptionUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierOptionResponse, error) {
-	updated, err := s.Repo.UpdateStatus(ctx, id, status)
+func (u *ModifierOptionUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierOptionResponse, error) {
+	updated, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(*updated), nil
+	return dto.ToModifierOptionResponse(updated), nil
 }
