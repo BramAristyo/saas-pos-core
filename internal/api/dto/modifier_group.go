@@ -9,11 +9,11 @@ import (
 type ModifierGroupResponse struct {
 	ID         uuid.UUID                `json:"id"`
 	Name       string                   `json:"name"`
-	IsRequired bool                     `json:"is_required"`
-	IsActive   bool                     `json:"is_active"`
+	IsRequired bool                     `json:"isRequired"`
+	IsActive   bool                     `json:"isActive"`
 	Options    []ModifierOptionResponse `json:"options,omitempty"`
-	CreatedAt  string                   `json:"created_at"`
-	UpdatedAt  string                   `json:"updated_at"`
+	CreatedAt  string                   `json:"createdAt"`
+	UpdatedAt  string                   `json:"updatedAt"`
 }
 
 type ModifierGroupResponsePagination struct {
@@ -23,13 +23,13 @@ type ModifierGroupResponsePagination struct {
 
 type CreateModifierGroupRequest struct {
 	Name       string `json:"name" binding:"required,min=3,max=100"`
-	IsRequired bool   `json:"is_required"`
+	IsRequired bool   `json:"isRequired"`
 }
 
 type UpdateModifierGroupRequest struct {
 	Name       string `json:"name" binding:"required,min=3,max=100"`
-	IsRequired bool   `json:"is_required"`
-	IsActive   bool   `json:"is_active"`
+	IsRequired bool   `json:"isRequired"`
+	IsActive   bool   `json:"isActive"`
 }
 
 func ToModifierGroupResponse(mg domain.ModifierGroup) ModifierGroupResponse {

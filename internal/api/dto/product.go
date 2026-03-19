@@ -9,17 +9,17 @@ import (
 
 type ProductResponse struct {
 	ID             uuid.UUID               `json:"id"`
-	CategoryID     uuid.UUID               `json:"category_id"`
+	CategoryID     uuid.UUID               `json:"categoryId"`
 	Category       *CategoryResponse       `json:"category,omitempty"`
-	ModifierGroups []ModifierGroupResponse `json:"modifier_groups,omitempty"`
+	ModifierGroups []ModifierGroupResponse `json:"modifierGroups,omitempty"`
 	Name           string                  `json:"name"`
 	Description    *string                 `json:"description"`
 	Price          decimal.Decimal         `json:"price"`
 	Cogs           decimal.Decimal         `json:"cogs"`
-	ImageURL       *string                 `json:"image_url"`
-	IsActive       bool                    `json:"is_active"`
-	CreatedAt      string                  `json:"created_at"`
-	UpdatedAt      string                  `json:"updated_at"`
+	ImageURL       *string                 `json:"imageUrl"`
+	IsActive       bool                    `json:"isActive"`
+	CreatedAt      string                  `json:"createdAt"`
+	UpdatedAt      string                  `json:"updatedAt"`
 }
 
 type ProductResponsePagination struct {
@@ -28,24 +28,24 @@ type ProductResponsePagination struct {
 }
 
 type CreateProductRequest struct {
-	CategoryID       uuid.UUID       `json:"category_id" binding:"required"`
-	ModifierGroupIDs []uuid.UUID     `json:"modifier_group_ids"`
+	CategoryID       uuid.UUID       `json:"categoryId" binding:"required"`
+	ModifierGroupIDs []uuid.UUID     `json:"modifierGroupIds"`
 	Name             string          `json:"name" binding:"required,min=3,max=100"`
 	Description      *string         `json:"description"`
 	Price            decimal.Decimal `json:"price" binding:"required"`
 	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
-	ImageURL         *string         `json:"image_url"`
+	ImageURL         *string         `json:"imageUrl"`
 }
 
 type UpdateProductRequest struct {
-	CategoryID       uuid.UUID       `json:"category_id" binding:"required"`
-	ModifierGroupIDs []uuid.UUID     `json:"modifier_group_ids"`
+	CategoryID       uuid.UUID       `json:"categoryId" binding:"required"`
+	ModifierGroupIDs []uuid.UUID     `json:"modifierGroupIds"`
 	Name             string          `json:"name" binding:"required,min=3,max=100"`
 	Description      *string         `json:"description"`
 	Price            decimal.Decimal `json:"price" binding:"required"`
 	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
-	ImageURL         *string         `json:"image_url"`
-	IsActive         bool            `json:"is_active"`
+	ImageURL         *string         `json:"imageUrl"`
+	IsActive         bool            `json:"isActive"`
 }
 
 func ToProductResponse(p domain.Product) ProductResponse {

@@ -20,7 +20,7 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 }
 
 func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Product, error) {
-	var p []domain.Product
+	p := make([]domain.Product, req.PaginationInput.PageSize)
 	var totalRows int64
 
 	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {

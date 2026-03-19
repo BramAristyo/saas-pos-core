@@ -18,7 +18,7 @@ func NewBundlingRepository(db *gorm.DB) *BundlingRepository {
 }
 
 func (r *BundlingRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.BundlingPackage, error) {
-	var bps []domain.BundlingPackage
+	bps := make([]domain.BundlingPackage, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
 	if err := r.DB.WithContext(ctx).
@@ -26,6 +26,10 @@ func (r *BundlingRepository) Paginate(ctx context.Context, req filter.Pagination
 		Where("is_active = ?", true).
 		Count(&totalRows).Error; err != nil {
 		return 0, nil, err
+	}
+
+	if totalRows == 0 {
+		return totalRows, nil, nil
 	}
 
 	if err := r.DB.WithContext(ctx).

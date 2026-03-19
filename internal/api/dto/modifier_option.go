@@ -9,14 +9,14 @@ import (
 
 type ModifierOptionResponse struct {
 	ID              uuid.UUID              `json:"id"`
-	ModifierGroupID uuid.UUID              `json:"modifier_group_id"`
-	ModifierGroup   *ModifierGroupResponse `json:"modifier_group,omitempty"`
+	ModifierGroupID uuid.UUID              `json:"modifierGroupId"`
+	ModifierGroup   *ModifierGroupResponse `json:"modifierGroup,omitempty"`
 	Name            string                 `json:"name"`
-	PriceAdjustment decimal.Decimal        `json:"price_adjustment"`
-	CogsAdjustment  decimal.Decimal        `json:"cogs_adjustment"`
-	IsActive        bool                   `json:"is_active"`
-	CreatedAt       string                 `json:"created_at"`
-	UpdatedAt       string                 `json:"updated_at"`
+	PriceAdjustment decimal.Decimal        `json:"priceAdjustment"`
+	CogsAdjustment  decimal.Decimal        `json:"cogsAdjustment"`
+	IsActive        bool                   `json:"isActive"`
+	CreatedAt       string                 `json:"createdAt"`
+	UpdatedAt       string                 `json:"updatedAt"`
 }
 
 type ModifierOptionResponsePagination struct {
@@ -25,18 +25,18 @@ type ModifierOptionResponsePagination struct {
 }
 
 type CreateModifierOptionRequest struct {
-	ModifierGroupID uuid.UUID       `json:"modifier_group_id" binding:"required"`
+	ModifierGroupID uuid.UUID       `json:"modifierGroupId" binding:"required"`
 	Name            string          `json:"name" binding:"required,min=3,max=100"`
-	PriceAdjustment decimal.Decimal `json:"price_adjustment" binding:"required"`
-	CogsAdjustment  decimal.Decimal `json:"cogs_adjustment" binding:"required"`
+	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
+	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`
 }
 
 type UpdateModifierOptionRequest struct {
-	ModifierGroupID uuid.UUID       `json:"modifier_group_id" binding:"required"`
+	ModifierGroupID uuid.UUID       `json:"modifierGroupId" binding:"required"`
 	Name            string          `json:"name" binding:"required,min=3,max=100"`
-	PriceAdjustment decimal.Decimal `json:"price_adjustment" binding:"required"`
-	CogsAdjustment  decimal.Decimal `json:"cogs_adjustment" binding:"required"`
-	IsActive        bool            `json:"is_active"`
+	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
+	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`
+	IsActive        bool            `json:"isActive"`
 }
 
 func ToModifierOptionResponse(mo domain.ModifierOption) ModifierOptionResponse {
