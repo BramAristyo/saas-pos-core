@@ -12,6 +12,11 @@ func SeedModifierGroupData(db *gorm.DB) {
 	milkID := uuid.New()
 	sugarID := uuid.New()
 	sizeID := uuid.New()
+	iceID := uuid.New()
+	toppingID := uuid.New()
+	beanID := uuid.New()
+	donenessID := uuid.New()
+	sideID := uuid.New()
 
 	modifierGroups := []*domain.ModifierGroup{
 		{
@@ -20,20 +25,10 @@ func SeedModifierGroupData(db *gorm.DB) {
 			IsRequired: false,
 			IsActive:   true,
 			ModifierOptions: []domain.ModifierOption{
-				{
-					ModifierGroupID: milkID,
-					Name:            "Oat Milk",
-					PriceAdjustment: decimal.NewFromFloat(15000),
-					CogsAdjustment:  decimal.NewFromFloat(10000),
-					IsActive:        true,
-				},
-				{
-					ModifierGroupID: milkID,
-					Name:            "Almond Milk",
-					PriceAdjustment: decimal.NewFromFloat(15000),
-					CogsAdjustment:  decimal.NewFromFloat(10000),
-					IsActive:        true,
-				},
+				{ModifierGroupID: milkID, Name: "Full Cream Milk", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: milkID, Name: "Oat Milk", PriceAdjustment: decimal.NewFromFloat(15000), CogsAdjustment: decimal.NewFromFloat(10000), IsActive: true},
+				{ModifierGroupID: milkID, Name: "Almond Milk", PriceAdjustment: decimal.NewFromFloat(15000), CogsAdjustment: decimal.NewFromFloat(10000), IsActive: true},
+				{ModifierGroupID: milkID, Name: "Soy Milk", PriceAdjustment: decimal.NewFromFloat(12000), CogsAdjustment: decimal.NewFromFloat(8000), IsActive: true},
 			},
 		},
 		{
@@ -42,20 +37,10 @@ func SeedModifierGroupData(db *gorm.DB) {
 			IsRequired: true,
 			IsActive:   true,
 			ModifierOptions: []domain.ModifierOption{
-				{
-					ModifierGroupID: sugarID,
-					Name:            "Normal Sugar",
-					PriceAdjustment: decimal.NewFromFloat(0),
-					CogsAdjustment:  decimal.NewFromFloat(0),
-					IsActive:        true,
-				},
-				{
-					ModifierGroupID: sugarID,
-					Name:            "Less Sugar",
-					PriceAdjustment: decimal.NewFromFloat(0),
-					CogsAdjustment:  decimal.NewFromFloat(0),
-					IsActive:        true,
-				},
+				{ModifierGroupID: sugarID, Name: "Normal Sugar", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: sugarID, Name: "Less Sugar (50%)", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: sugarID, Name: "No Sugar", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: sugarID, Name: "Extra Sugar", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
 			},
 		},
 		{
@@ -64,20 +49,66 @@ func SeedModifierGroupData(db *gorm.DB) {
 			IsRequired: true,
 			IsActive:   true,
 			ModifierOptions: []domain.ModifierOption{
-				{
-					ModifierGroupID: sizeID,
-					Name:            "Regular",
-					PriceAdjustment: decimal.NewFromFloat(0),
-					CogsAdjustment:  decimal.NewFromFloat(0),
-					IsActive:        true,
-				},
-				{
-					ModifierGroupID: sizeID,
-					Name:            "Large",
-					PriceAdjustment: decimal.NewFromFloat(5000),
-					CogsAdjustment:  decimal.NewFromFloat(2000),
-					IsActive:        true,
-				},
+				{ModifierGroupID: sizeID, Name: "Regular", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: sizeID, Name: "Large", PriceAdjustment: decimal.NewFromFloat(5000), CogsAdjustment: decimal.NewFromFloat(2000), IsActive: true},
+				{ModifierGroupID: sizeID, Name: "Extra Large", PriceAdjustment: decimal.NewFromFloat(10000), CogsAdjustment: decimal.NewFromFloat(4000), IsActive: true},
+			},
+		},
+		{
+			ID:         iceID,
+			Name:       "Ice Level",
+			IsRequired: true,
+			IsActive:   true,
+			ModifierOptions: []domain.ModifierOption{
+				{ModifierGroupID: iceID, Name: "Normal Ice", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: iceID, Name: "Less Ice", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: iceID, Name: "No Ice", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+			},
+		},
+		{
+			ID:         toppingID,
+			Name:       "Extra Toppings",
+			IsRequired: false,
+			IsActive:   true,
+			ModifierOptions: []domain.ModifierOption{
+				{ModifierGroupID: toppingID, Name: "Pearl (Boba)", PriceAdjustment: decimal.NewFromFloat(5000), CogsAdjustment: decimal.NewFromFloat(2000), IsActive: true},
+				{ModifierGroupID: toppingID, Name: "Grass Jelly", PriceAdjustment: decimal.NewFromFloat(4000), CogsAdjustment: decimal.NewFromFloat(1500), IsActive: true},
+				{ModifierGroupID: toppingID, Name: "Whipped Cream", PriceAdjustment: decimal.NewFromFloat(6000), CogsAdjustment: decimal.NewFromFloat(2500), IsActive: true},
+				{ModifierGroupID: toppingID, Name: "Caramel Drizzle", PriceAdjustment: decimal.NewFromFloat(3000), CogsAdjustment: decimal.NewFromFloat(1000), IsActive: true},
+			},
+		},
+		{
+			ID:         beanID,
+			Name:       "Coffee Bean Type",
+			IsRequired: true,
+			IsActive:   true,
+			ModifierOptions: []domain.ModifierOption{
+				{ModifierGroupID: beanID, Name: "House Blend", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: beanID, Name: "100% Arabica", PriceAdjustment: decimal.NewFromFloat(5000), CogsAdjustment: decimal.NewFromFloat(2000), IsActive: true},
+				{ModifierGroupID: beanID, Name: "Single Origin", PriceAdjustment: decimal.NewFromFloat(8000), CogsAdjustment: decimal.NewFromFloat(3000), IsActive: true},
+			},
+		},
+		{
+			ID:         donenessID,
+			Name:       "Meat Doneness",
+			IsRequired: true,
+			IsActive:   true,
+			ModifierOptions: []domain.ModifierOption{
+				{ModifierGroupID: donenessID, Name: "Rare", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: donenessID, Name: "Medium Rare", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: donenessID, Name: "Medium", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+				{ModifierGroupID: donenessID, Name: "Well Done", PriceAdjustment: decimal.NewFromFloat(0), CogsAdjustment: decimal.NewFromFloat(0), IsActive: true},
+			},
+		},
+		{
+			ID:         sideID,
+			Name:       "Side Dish",
+			IsRequired: false,
+			IsActive:   true,
+			ModifierOptions: []domain.ModifierOption{
+				{ModifierGroupID: sideID, Name: "French Fries", PriceAdjustment: decimal.NewFromFloat(15000), CogsAdjustment: decimal.NewFromFloat(5000), IsActive: true},
+				{ModifierGroupID: sideID, Name: "Side Salad", PriceAdjustment: decimal.NewFromFloat(12000), CogsAdjustment: decimal.NewFromFloat(4000), IsActive: true},
+				{ModifierGroupID: sideID, Name: "Mashed Potato", PriceAdjustment: decimal.NewFromFloat(18000), CogsAdjustment: decimal.NewFromFloat(6000), IsActive: true},
 			},
 		},
 	}
