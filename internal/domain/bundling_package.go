@@ -10,7 +10,7 @@ import (
 type BundlingPackage struct {
 	ID          uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	Name        string
-	Description string
+	Description *string
 	Price       decimal.Decimal
 	Cogs        decimal.Decimal
 	ImageURL    *string

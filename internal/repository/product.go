@@ -23,11 +23,12 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 	var p []domain.Product
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
 	if err := r.DB.WithContext(ctx).
+		Where("is_active = ?", true).
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {

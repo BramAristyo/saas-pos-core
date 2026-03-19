@@ -33,13 +33,23 @@ func SeedProductData(db *gorm.DB) {
 		"Classic triple-decker", "Juicy beef patty", "Simple and authentic", "Creamy and savory", "Zesty and tart",
 		"Mixed berry blend", "Rich and warming", "Classic English pastry", "Savory custard tart", "Fresh and filling",
 	}
+
 	productPrices := []decimal.Decimal{
-		decimal.NewFromFloat(2.5), decimal.NewFromFloat(3.0), decimal.NewFromFloat(2.0), decimal.NewFromFloat(1.5), decimal.NewFromFloat(4.0),
-		decimal.NewFromFloat(3.5), decimal.NewFromFloat(2.0), decimal.NewFromFloat(4.5), decimal.NewFromFloat(3.8), decimal.NewFromFloat(4.0),
-		decimal.NewFromFloat(2.5), decimal.NewFromFloat(2.5), decimal.NewFromFloat(3.0), decimal.NewFromFloat(2.5), decimal.NewFromFloat(1.8),
-		decimal.NewFromFloat(3.2), decimal.NewFromFloat(6.5), decimal.NewFromFloat(7.0), decimal.NewFromFloat(5.5), decimal.NewFromFloat(6.0),
-		decimal.NewFromFloat(8.5), decimal.NewFromFloat(9.5), decimal.NewFromFloat(10.0), decimal.NewFromFloat(11.0), decimal.NewFromFloat(2.8),
-		decimal.NewFromFloat(4.5), decimal.NewFromFloat(3.5), decimal.NewFromFloat(2.2), decimal.NewFromFloat(5.0), decimal.NewFromFloat(7.5),
+		decimal.NewFromInt(20000), decimal.NewFromInt(28000), decimal.NewFromInt(22000), decimal.NewFromInt(18000), decimal.NewFromInt(45000),
+		decimal.NewFromInt(32000), decimal.NewFromInt(22000), decimal.NewFromInt(38000), decimal.NewFromInt(35000), decimal.NewFromInt(30000),
+		decimal.NewFromInt(25000), decimal.NewFromInt(25000), decimal.NewFromInt(28000), decimal.NewFromInt(22000), decimal.NewFromInt(15000),
+		decimal.NewFromInt(32000), decimal.NewFromInt(55000), decimal.NewFromInt(48000), decimal.NewFromInt(42000), decimal.NewFromInt(45000),
+		decimal.NewFromInt(65000), decimal.NewFromInt(85000), decimal.NewFromInt(95000), decimal.NewFromInt(88000), decimal.NewFromInt(20000),
+		decimal.NewFromInt(35000), decimal.NewFromInt(30000), decimal.NewFromInt(18000), decimal.NewFromInt(45000), decimal.NewFromInt(42000),
+	}
+
+	productCogs := []decimal.Decimal{
+		decimal.NewFromInt(8000), decimal.NewFromInt(12000), decimal.NewFromInt(9000), decimal.NewFromInt(7000), decimal.NewFromInt(18000),
+		decimal.NewFromInt(14000), decimal.NewFromInt(9000), decimal.NewFromInt(16000), decimal.NewFromInt(15000), decimal.NewFromInt(12000),
+		decimal.NewFromInt(10000), decimal.NewFromInt(10000), decimal.NewFromInt(12000), decimal.NewFromInt(9000), decimal.NewFromInt(6000),
+		decimal.NewFromInt(14000), decimal.NewFromInt(22000), decimal.NewFromInt(20000), decimal.NewFromInt(18000), decimal.NewFromInt(20000),
+		decimal.NewFromInt(28000), decimal.NewFromInt(40000), decimal.NewFromInt(45000), decimal.NewFromInt(42000), decimal.NewFromInt(8000),
+		decimal.NewFromInt(15000), decimal.NewFromInt(12000), decimal.NewFromInt(7000), decimal.NewFromInt(20000), decimal.NewFromInt(18000),
 	}
 
 	products := make([]domain.Product, len(productNames))
@@ -49,6 +59,7 @@ func SeedProductData(db *gorm.DB) {
 			Name:        productNames[i],
 			Description: &productDescriptions[i],
 			Price:       productPrices[i],
+			Cogs:        productCogs[i],
 			CategoryID:  category.ID,
 			IsActive:    true,
 		}
