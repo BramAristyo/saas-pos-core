@@ -4,7 +4,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/handler"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
-	"github.com/BramAristyo/go-pos-mawish/internal/service"
+	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
 	"gorm.io/gorm"
 )
 
@@ -20,27 +20,27 @@ type Handlers struct {
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	userRepository := repository.NewUserRepository(db)
 
-	authService := service.NewAuthService(userRepository, cfg)
-	userService := service.NewUserService(userRepository)
+	authUseCase := usecase.NewAuthUseCase(userRepository, cfg)
+	userUseCase := usecase.NewUserUseCase(userRepository)
 
 	categoryRepository := repository.NewCategoryRepository(db)
-	categoryService := service.NewCategoryService(categoryRepository)
+	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
 
 	productRepository := repository.NewProductRepository(db)
-	productService := service.NewProductService(productRepository)
+	productUseCase := usecase.NewProductUseCase(productRepository)
 
 	modifierGroupRepository := repository.NewModifierGroupRepository(db)
-	modifierGroupService := service.NewModifierGroupRepository(modifierGroupRepository)
+	modifierGroupUseCase := usecase.NewModifierGroupUseCase(modifierGroupRepository)
 
 	modifierOptionRepository := repository.NewModifierOptionRepository(db)
-	modifierOptionService := service.NewModifierOptionService(modifierOptionRepository)
+	modifierOptionUseCase := usecase.NewModifierOptionUseCase(modifierOptionRepository)
 
 	return &Handlers{
-		Auth:           handler.NewAuthHandler(authService),
-		User:           handler.NewUserHandler(userService),
-		Category:       handler.NewCategoryHandler(categoryService),
-		Product:        handler.NewProductHandler(productService),
-		ModifierGroup:  handler.NewModifierGroupHandler(modifierGroupService),
-		ModifierOption: handler.NewModifierOptionHandler(modifierOptionService),
+		Auth:           handler.NewAuthHandler(authUseCase),
+		User:           handler.NewUserHandler(userUseCase),
+		Category:       handler.NewCategoryHandler(categoryUseCase),
+		Product:        handler.NewProductHandler(productUseCase),
+		ModifierGroup:  handler.NewModifierGroupHandler(modifierGroupUseCase),
+		ModifierOption: handler.NewModifierOptionHandler(modifierOptionUseCase),
 	}
 }

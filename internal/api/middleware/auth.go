@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
-	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -24,7 +24,7 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 
 		at, err := jwt.Parse(token[1], func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, service_errors.TokenInvalid
+				return nil, usecase_errors.TokenInvalid
 			}
 			return []byte(cfg.JWT.Secret), nil
 		})

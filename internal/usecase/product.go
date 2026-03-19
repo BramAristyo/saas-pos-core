@@ -1,4 +1,4 @@
-package service
+package usecase
 
 import (
 	"context"
@@ -6,21 +6,21 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
-	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
-type ProductService struct {
+type ProductUseCase struct {
 	Repo *repository.ProductRepository
 }
 
-func NewProductService(repo *repository.ProductRepository) *ProductService {
-	return &ProductService{
+func NewProductUseCase(repo *repository.ProductRepository) *ProductUseCase {
+	return &ProductUseCase{
 		Repo: repo,
 	}
 }
 
-func (s *ProductService) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ProductResponsePagination, error) {
+func (s *ProductUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ProductResponsePagination, error) {
 	totalRows, products, err := s.Repo.Paginate(ctx, req)
 	if err != nil {
 		return dto.ProductResponsePagination{}, err
@@ -34,7 +34,7 @@ func (s *ProductService) Paginate(ctx context.Context, req filter.PaginationWith
 	return dto.ToProductResponsePagination(productResponses, req, totalRows), nil
 }
 
-func (s *ProductService) FindById(ctx context.Context, id uuid.UUID) (dto.ProductResponse, error) {
+func (s *ProductUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ProductResponse, error) {
 	product, err := s.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.ProductResponse{}, err
@@ -43,12 +43,12 @@ func (s *ProductService) FindById(ctx context.Context, id uuid.UUID) (dto.Produc
 	return dto.ToProductResponse(*product), nil
 }
 
-func (s *ProductService) Store(ctx context.Context, req dto.CreateProductRequest) (dto.ProductResponse, error) {
+func (s *ProductUseCase) Store(ctx context.Context, req dto.CreateProductRequest) (dto.ProductResponse, error) {
 	product := dto.ToProductModel(req)
 
 	if _, err := s.Repo.Store(ctx, &product); err != nil {
-		if service_errors.IsUniqueViolation(err) {
-			return dto.ProductResponse{}, service_errors.DuplicateEntry
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
 		}
 		return dto.ProductResponse{}, err
 	}
@@ -56,12 +56,12 @@ func (s *ProductService) Store(ctx context.Context, req dto.CreateProductRequest
 	return dto.ToProductResponse(product), nil
 }
 
-func (s *ProductService) Update(ctx context.Context, id uuid.UUID, req dto.UpdateProductRequest) (dto.ProductResponse, error) {
+func (s *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateProductRequest) (dto.ProductResponse, error) {
 	product := dto.ToUpdateProductModel(req)
 	updated, err := s.Repo.Update(ctx, id, &product)
 	if err != nil {
-		if service_errors.IsUniqueViolation(err) {
-			return dto.ProductResponse{}, service_errors.DuplicateEntry
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
 		}
 		return dto.ProductResponse{}, err
 	}
@@ -69,7 +69,7 @@ func (s *ProductService) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 	return dto.ToProductResponse(*updated), nil
 }
 
-func (s *ProductService) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
+func (s *ProductUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
 	product, err := s.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ProductResponse{}, err

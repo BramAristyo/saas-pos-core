@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/service"
+	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
@@ -10,12 +10,12 @@ import (
 )
 
 type ProductHandler struct {
-	Service *service.ProductService
+	UseCase *usecase.ProductUseCase
 }
 
-func NewProductHandler(s *service.ProductService) *ProductHandler {
+func NewProductHandler(u *usecase.ProductUseCase) *ProductHandler {
 	return &ProductHandler{
-		Service: s,
+		UseCase: u,
 	}
 }
 
@@ -26,7 +26,7 @@ func (h *ProductHandler) Paginate(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Service.Paginate(c.Request.Context(), req)
+	res, err := h.UseCase.Paginate(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
 		return
@@ -42,7 +42,7 @@ func (h *ProductHandler) FindById(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	product, err := h.Service.FindById(c.Request.Context(), id)
+	product, err := h.UseCase.FindById(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
@@ -58,7 +58,7 @@ func (h *ProductHandler) Store(c *gin.Context) {
 		return
 	}
 
-	created, err := h.Service.Store(c.Request.Context(), req)
+	created, err := h.UseCase.Store(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
 		return
@@ -80,7 +80,7 @@ func (h *ProductHandler) Update(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Service.Update(c.Request.Context(), id, req)
+	res, err := h.UseCase.Update(c.Request.Context(), id, req)
 	if err != nil {
 		c.Error(err)
 		return
@@ -97,7 +97,7 @@ func (h *ProductHandler) Activate(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Service.UpdateStatus(c.Request.Context(), id, true)
+	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
 	if err != nil {
 		c.Error(err)
 		return
@@ -114,7 +114,7 @@ func (h *ProductHandler) Deactivate(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Service.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
 	if err != nil {
 		c.Error(err)
 		return

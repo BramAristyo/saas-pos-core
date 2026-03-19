@@ -1,4 +1,4 @@
-package service
+package usecase
 
 import (
 	"context"
@@ -9,17 +9,17 @@ import (
 	"github.com/google/uuid"
 )
 
-type ModifierGroupService struct {
+type ModifierGroupUseCase struct {
 	Repo *repository.ModifierGroupRepository
 }
 
-func NewModifierGroupRepository(repo *repository.ModifierGroupRepository) *ModifierGroupService {
-	return &ModifierGroupService{
+func NewModifierGroupUseCase(repo *repository.ModifierGroupRepository) *ModifierGroupUseCase {
+	return &ModifierGroupUseCase{
 		Repo: repo,
 	}
 }
 
-func (s *ModifierGroupService) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ModifierGroupResponsePagination, error) {
+func (s *ModifierGroupUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ModifierGroupResponsePagination, error) {
 	totalRows, mgs, err := s.Repo.Paginate(ctx, req)
 	if err != nil {
 		return dto.ModifierGroupResponsePagination{}, err
@@ -33,7 +33,7 @@ func (s *ModifierGroupService) Paginate(ctx context.Context, req filter.Paginati
 	return dto.ToModifierGroupResponsePagination(modifierGroups, req, totalRows), nil
 }
 
-func (s *ModifierGroupService) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierGroupResponse, error) {
+func (s *ModifierGroupUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierGroupResponse, error) {
 	mg, err := s.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.ModifierGroupResponse{}, err
@@ -42,7 +42,7 @@ func (s *ModifierGroupService) FindById(ctx context.Context, id uuid.UUID) (dto.
 	return dto.ToModifierGroupResponse(*mg), nil
 }
 
-func (s *ModifierGroupService) Store(ctx context.Context, req dto.CreateModifierGroupRequest) (dto.ModifierGroupResponse, error) {
+func (s *ModifierGroupUseCase) Store(ctx context.Context, req dto.CreateModifierGroupRequest) (dto.ModifierGroupResponse, error) {
 	mg := dto.ToModifierGroupModel(req)
 	if _, err := s.Repo.Store(ctx, &mg); err != nil {
 		return dto.ModifierGroupResponse{}, nil
@@ -51,7 +51,7 @@ func (s *ModifierGroupService) Store(ctx context.Context, req dto.CreateModifier
 	return dto.ToModifierGroupResponse(mg), nil
 }
 
-func (s *ModifierGroupService) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierGroupRequest) (dto.ModifierGroupResponse, error) {
+func (s *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierGroupRequest) (dto.ModifierGroupResponse, error) {
 	mg := dto.ToUpdateModifierGroupModel(req)
 	updated, err := s.Repo.Update(ctx, id, &mg)
 	if err != nil {
@@ -61,7 +61,7 @@ func (s *ModifierGroupService) Update(ctx context.Context, id uuid.UUID, req dto
 	return dto.ToModifierGroupResponse(*updated), nil
 }
 
-func (s *ModifierGroupService) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierGroupResponse, error) {
+func (s *ModifierGroupUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierGroupResponse, error) {
 	updated, err := s.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ModifierGroupResponse{}, err

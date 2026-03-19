@@ -1,4 +1,4 @@
-package service
+package usecase
 
 import (
 	"context"
@@ -6,21 +6,21 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
-	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
-type CategoryService struct {
+type CategoryUseCase struct {
 	Repo *repository.CategoryRepository
 }
 
-func NewCategoryService(repo *repository.CategoryRepository) *CategoryService {
-	return &CategoryService{
+func NewCategoryUseCase(repo *repository.CategoryRepository) *CategoryUseCase {
+	return &CategoryUseCase{
 		Repo: repo,
 	}
 }
 
-func (s *CategoryService) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.CategoryResponsePagination, error) {
+func (s *CategoryUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.CategoryResponsePagination, error) {
 	totalRows, categories, err := s.Repo.Paginate(ctx, req)
 	if err != nil {
 		return dto.CategoryResponsePagination{}, err
@@ -34,7 +34,7 @@ func (s *CategoryService) Paginate(ctx context.Context, req filter.PaginationWit
 	return dto.ToCategoryResponsePagination(categoriesResponses, req, totalRows), nil
 }
 
-func (s *CategoryService) FindById(ctx context.Context, id uuid.UUID) (dto.CategoryResponse, error) {
+func (s *CategoryUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.CategoryResponse, error) {
 
 	category, err := s.Repo.FindById(ctx, id)
 	if err != nil {
@@ -44,12 +44,12 @@ func (s *CategoryService) FindById(ctx context.Context, id uuid.UUID) (dto.Categ
 	return dto.ToCategoryResponse(*category), nil
 }
 
-func (s *CategoryService) Store(ctx context.Context, req dto.CreateCategoryRequest) (dto.CategoryResponse, error) {
+func (s *CategoryUseCase) Store(ctx context.Context, req dto.CreateCategoryRequest) (dto.CategoryResponse, error) {
 	category := dto.ToCreateCategoryModel(req)
 
 	if _, err := s.Repo.Store(ctx, &category); err != nil {
-		if service_errors.IsUniqueViolation(err) {
-			return dto.CategoryResponse{}, service_errors.DuplicateEntry
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.CategoryResponse{}, usecase_errors.DuplicateEntry
 		}
 		return dto.CategoryResponse{}, err
 	}
@@ -57,12 +57,12 @@ func (s *CategoryService) Store(ctx context.Context, req dto.CreateCategoryReque
 	return dto.ToCategoryResponse(category), nil
 }
 
-func (s *CategoryService) Update(ctx context.Context, id uuid.UUID, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
+func (s *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
 	category := dto.ToUpdateCategoryModel(req)
 	updated, err := s.Repo.Update(ctx, id, &category)
 	if err != nil {
-		if service_errors.IsUniqueViolation(err) {
-			return dto.CategoryResponse{}, service_errors.DuplicateEntry
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.CategoryResponse{}, usecase_errors.DuplicateEntry
 		}
 		return dto.CategoryResponse{}, err
 	}
@@ -70,7 +70,7 @@ func (s *CategoryService) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 	return dto.ToCategoryResponse(*updated), nil
 }
 
-func (s *CategoryService) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
+func (s *CategoryUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
 	category, err := s.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.CategoryResponse{}, err

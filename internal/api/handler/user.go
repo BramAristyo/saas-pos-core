@@ -4,23 +4,23 @@ import (
 	"fmt"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/service"
+	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
-	Service *service.UserService
+	UseCase *usecase.UserUseCase
 }
 
-func NewUserHandler(s *service.UserService) *UserHandler {
+func NewUserHandler(u *usecase.UserUseCase) *UserHandler {
 	return &UserHandler{
-		Service: s,
+		UseCase: u,
 	}
 }
 
 func (h *UserHandler) GetAll(c *gin.Context) {
-	users, err := h.Service.GetAll()
+	users, err := h.UseCase.GetAll()
 	if err != nil {
 		c.Error(err)
 		return
@@ -31,7 +31,7 @@ func (h *UserHandler) GetAll(c *gin.Context) {
 
 func (h *UserHandler) FindById(c *gin.Context) {
 	id := c.Param("id")
-	user, err := h.Service.FindById(id)
+	user, err := h.UseCase.FindById(id)
 	if err != nil {
 		c.Error(err)
 		return
@@ -47,7 +47,7 @@ func (h *UserHandler) Store(c *gin.Context) {
 		return
 	}
 
-	created, err := h.Service.Store(user)
+	created, err := h.UseCase.Store(user)
 	if err != nil {
 		c.Error(err)
 		return
@@ -65,7 +65,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 	}
 
 	fmt.Println(id, req.Email)
-	updated, err := h.Service.Update(id, req)
+	updated, err := h.UseCase.Update(id, req)
 	if err != nil {
 		c.Error(err)
 		return
@@ -76,7 +76,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 
 func (h *UserHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
-	if err := h.Service.Destroy(id); err != nil {
+	if err := h.UseCase.Destroy(id); err != nil {
 		c.Error(err)
 		return
 	}
@@ -86,7 +86,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 
 func (h *UserHandler) Activate(c *gin.Context) {
 	id := c.Param("id")
-	res, err := h.Service.UpdateStatus(id, true)
+	res, err := h.UseCase.UpdateStatus(id, true)
 	if err != nil {
 		c.Error(err)
 		return
@@ -97,7 +97,7 @@ func (h *UserHandler) Activate(c *gin.Context) {
 
 func (h *UserHandler) Deactivate(c *gin.Context) {
 	id := c.Param("id")
-	res, err := h.Service.UpdateStatus(id, false)
+	res, err := h.UseCase.UpdateStatus(id, false)
 	if err != nil {
 		c.Error(err)
 		return

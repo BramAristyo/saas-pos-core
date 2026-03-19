@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
-	"github.com/BramAristyo/go-pos-mawish/pkg/service_errors"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
@@ -30,9 +30,9 @@ func ErrorHandler() gin.HandlerFunc {
 				return
 			}
 
-			var se *service_errors.ServiceError
-			if errors.As(err, &se) {
-				response.Error(c, se.Code, se.Message, err)
+			var ue *usecase_errors.UseCaseError
+			if errors.As(err, &ue) {
+				response.Error(c, ue.Code, ue.Message, err)
 				return
 			}
 
@@ -41,7 +41,7 @@ func ErrorHandler() gin.HandlerFunc {
 				return
 			}
 
-			if service_errors.IsUniqueViolation(err) {
+			if usecase_errors.IsUniqueViolation(err) {
 				response.Error(c, http.StatusConflict, "data already exists", err)
 				return
 			}

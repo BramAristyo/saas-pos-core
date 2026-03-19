@@ -2,18 +2,18 @@ package handler
 
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
-	"github.com/BramAristyo/go-pos-mawish/internal/service"
+	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
-	Service *service.AuthService
+	UseCase *usecase.AuthUseCase
 }
 
-func NewAuthHandler(s *service.AuthService) *AuthHandler {
+func NewAuthHandler(u *usecase.AuthUseCase) *AuthHandler {
 	return &AuthHandler{
-		Service: s,
+		UseCase: u,
 	}
 }
 
@@ -24,7 +24,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Service.Login(req)
+	res, err := h.UseCase.Login(req)
 	if err != nil {
 		c.Error(err)
 		return
