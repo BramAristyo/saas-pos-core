@@ -6,8 +6,8 @@ import (
 )
 
 func ProductRoutes(r *gin.RouterGroup, h *handler.ProductHandler) {
-	r.GET("/", h.Paginate)
-	r.POST("/", h.Store)
+	r.GET("", h.Paginate)
+	r.POST("", h.Store)
 	r.GET("/:id", h.FindById)
 	r.PUT("/:id", h.Update)
 	r.PATCH("/:id/activate", h.Activate)

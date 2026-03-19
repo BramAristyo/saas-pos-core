@@ -17,7 +17,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		modifierGroups := v1.Group("/modifier-groups", middleware.Authentication(cfg))
 		modifierOptions := v1.Group("/modifier-options", middleware.Authentication(cfg))
 
-		v1.POST("/", h.Auth.Login)
+		v1.POST("", h.Auth.Login)
 
 		UserRoutes(users, h.User)
 		CategoryRoutes(categories, h.Category)

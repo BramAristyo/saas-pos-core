@@ -6,9 +6,9 @@ import (
 )
 
 func CategoryRoutes(r *gin.RouterGroup, h *handler.CategoryHandler) {
-	r.GET("/", h.Paginate)
+	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
-	r.POST("/", h.Store)
+	r.POST("", h.Store)
 	r.PUT("/:id", h.Update)
 	r.PATCH("/:id/activate", h.Activate)
 	r.PATCH("/:id/deactivate", h.Deactivate)

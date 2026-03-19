@@ -6,9 +6,9 @@ import (
 )
 
 func UserRoutes(r *gin.RouterGroup, h *handler.UserHandler) {
-	r.GET("/", h.GetAll)
+	r.GET("", h.GetAll)
 	r.GET("/:id", h.FindById)
-	r.POST("/", h.Store)
+	r.POST("", h.Store)
 	r.PUT("/:id", h.Update)
 	r.PATCH("/:id/activate", h.Activate)
 	r.PATCH("/:id/deactivate", h.Deactivate)
