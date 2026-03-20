@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -30,7 +31,11 @@ func (h *UserHandler) GetAll(c *gin.Context) {
 }
 
 func (h *UserHandler) FindById(c *gin.Context) {
-	id := c.Param("id")
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	user, err := h.UseCase.FindById(id)
 	if err != nil {
 		c.Error(err)
@@ -57,7 +62,11 @@ func (h *UserHandler) Store(c *gin.Context) {
 }
 
 func (h *UserHandler) Update(c *gin.Context) {
-	id := c.Param("id")
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	var req dto.UpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Error(err)
@@ -75,7 +84,11 @@ func (h *UserHandler) Update(c *gin.Context) {
 }
 
 func (h *UserHandler) Delete(c *gin.Context) {
-	id := c.Param("id")
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	if err := h.UseCase.Destroy(id); err != nil {
 		c.Error(err)
 		return
@@ -85,7 +98,11 @@ func (h *UserHandler) Delete(c *gin.Context) {
 }
 
 func (h *UserHandler) Activate(c *gin.Context) {
-	id := c.Param("id")
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	res, err := h.UseCase.UpdateStatus(id, true)
 	if err != nil {
 		c.Error(err)
@@ -96,7 +113,11 @@ func (h *UserHandler) Activate(c *gin.Context) {
 }
 
 func (h *UserHandler) Deactivate(c *gin.Context) {
-	id := c.Param("id")
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 	res, err := h.UseCase.UpdateStatus(id, false)
 	if err != nil {
 		c.Error(err)

@@ -9,12 +9,13 @@ import (
 )
 
 type Handlers struct {
-	Auth          *handler.AuthHandler
-	User          *handler.UserHandler
-	Category      *handler.CategoryHandler
-	Product       *handler.ProductHandler
+	Auth           *handler.AuthHandler
+	User           *handler.UserHandler
+	Category       *handler.CategoryHandler
+	Product        *handler.ProductHandler
 	ModifierGroup  *handler.ModifierGroupHandler
 	ModifierOption *handler.ModifierOptionHandler
+	Bundling       *handler.BundlingHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -35,6 +36,9 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	modifierOptionRepository := repository.NewModifierOptionRepository(db)
 	modifierOptionUseCase := usecase.NewModifierOptionUseCase(modifierOptionRepository)
 
+	bundlingRepository := repository.NewBundlingRepository(db)
+	bundlingUseCase := usecase.NewBundlingUseCase(bundlingRepository)
+
 	return &Handlers{
 		Auth:           handler.NewAuthHandler(authUseCase),
 		User:           handler.NewUserHandler(userUseCase),
@@ -42,5 +46,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		Product:        handler.NewProductHandler(productUseCase),
 		ModifierGroup:  handler.NewModifierGroupHandler(modifierGroupUseCase),
 		ModifierOption: handler.NewModifierOptionHandler(modifierOptionUseCase),
+		Bundling:       handler.NewBundlingHandler(bundlingUseCase),
 	}
 }

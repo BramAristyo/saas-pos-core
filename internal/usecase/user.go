@@ -6,6 +6,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -34,7 +35,7 @@ func (u *UserUseCase) GetAll() ([]dto.UserResponse, error) {
 	return responses, nil
 }
 
-func (u *UserUseCase) FindById(id string) (dto.UserResponse, error) {
+func (u *UserUseCase) FindById(id uuid.UUID) (dto.UserResponse, error) {
 	user, err := u.Repo.FindById(id)
 	if err != nil {
 		return dto.UserResponse{}, err
@@ -71,7 +72,7 @@ func (u *UserUseCase) Store(req dto.CreateUserRequest) (dto.UserResponse, error)
 	return dto.ToUserResponse(user), nil
 }
 
-func (u *UserUseCase) Update(id string, req dto.UpdateUserRequest) (dto.UserResponse, error) {
+func (u *UserUseCase) Update(id uuid.UUID, req dto.UpdateUserRequest) (dto.UserResponse, error) {
 	user := dto.ToUpdateUserModel(req)
 
 	fmt.Println(id, req.Email)
@@ -93,7 +94,7 @@ func (u *UserUseCase) Update(id string, req dto.UpdateUserRequest) (dto.UserResp
 	return dto.ToUserResponse(updatedUser), nil
 }
 
-func (u *UserUseCase) UpdateStatus(id string, status bool) (dto.UserResponse, error) {
+func (u *UserUseCase) UpdateStatus(id uuid.UUID, status bool) (dto.UserResponse, error) {
 	user, err := u.Repo.UpdateStatus(id, status)
 	if err != nil {
 		return dto.UserResponse{}, err
@@ -102,6 +103,6 @@ func (u *UserUseCase) UpdateStatus(id string, status bool) (dto.UserResponse, er
 	return dto.ToUserResponse(user), nil
 }
 
-func (u *UserUseCase) Destroy(id string) error {
+func (u *UserUseCase) Destroy(id uuid.UUID) error {
 	return u.Repo.Destroy(id)
 }

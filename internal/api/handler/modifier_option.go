@@ -4,9 +4,9 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type ModifierOptionHandler struct {
@@ -34,8 +34,7 @@ func (h *ModifierOptionHandler) Paginate(c *gin.Context) {
 }
 
 func (h *ModifierOptionHandler) FindById(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -67,8 +66,7 @@ func (h *ModifierOptionHandler) Store(c *gin.Context) {
 }
 
 func (h *ModifierOptionHandler) Update(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -90,8 +88,7 @@ func (h *ModifierOptionHandler) Update(c *gin.Context) {
 }
 
 func (h *ModifierOptionHandler) Activate(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -107,8 +104,7 @@ func (h *ModifierOptionHandler) Activate(c *gin.Context) {
 }
 
 func (h *ModifierOptionHandler) Deactivate(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return

@@ -29,4 +29,6 @@ var (
 	TokenRequired   = &UseCaseError{http.StatusUnauthorized, "token required"}
 	TokenExpired    = &UseCaseError{http.StatusUnauthorized, "token expired"}
 	TokenInvalid    = &UseCaseError{http.StatusUnauthorized, "token invalid"}
+	InvalidID       = &UseCaseError{http.StatusBadRequest, "invalid ID format"}
+	NotFound        = &UseCaseError{http.StatusNotFound, "resource not found"}
 )

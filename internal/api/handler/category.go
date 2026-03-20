@@ -4,9 +4,9 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
 	"github.com/BramAristyo/go-pos-mawish/internal/usecase"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type CategoryHandler struct {
@@ -36,8 +36,7 @@ func (h *CategoryHandler) Paginate(c *gin.Context) {
 }
 
 func (h *CategoryHandler) FindById(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -69,8 +68,7 @@ func (h *CategoryHandler) Store(c *gin.Context) {
 
 func (h *CategoryHandler) Update(c *gin.Context) {
 	var req dto.UpdateCategoryRequest
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -90,8 +88,7 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 }
 
 func (h *CategoryHandler) Activate(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
@@ -107,8 +104,7 @@ func (h *CategoryHandler) Activate(c *gin.Context) {
 }
 
 func (h *CategoryHandler) Deactivate(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := uuid.Parse(idStr)
+	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return

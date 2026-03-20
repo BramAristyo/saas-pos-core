@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +34,7 @@ func (r *UserRepository) Store(u *domain.User) (domain.User, error) {
 	return *u, nil
 }
 
-func (r *UserRepository) FindById(id string) (domain.User, error) {
+func (r *UserRepository) FindById(id uuid.UUID) (domain.User, error) {
 	var u domain.User
 
 	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
@@ -52,7 +53,7 @@ func (r *UserRepository) FindByEmail(email string) (domain.User, error) {
 	return u, nil
 }
 
-func (r *UserRepository) Update(id string, u *domain.User) (domain.User, error) {
+func (r *UserRepository) Update(id uuid.UUID, u *domain.User) (domain.User, error) {
 	var existing domain.User
 	if err := r.DB.Where("id = ?", id).First(&existing).Error; err != nil {
 		return domain.User{}, err
@@ -72,7 +73,7 @@ func (r *UserRepository) Update(id string, u *domain.User) (domain.User, error) 
 	return existing, nil
 }
 
-func (r *UserRepository) UpdateStatus(id string, status bool) (domain.User, error) {
+func (r *UserRepository) UpdateStatus(id uuid.UUID, status bool) (domain.User, error) {
 	var u domain.User
 	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
 		return domain.User{}, err
@@ -85,7 +86,7 @@ func (r *UserRepository) UpdateStatus(id string, status bool) (domain.User, erro
 	return u, nil
 }
 
-func (r *UserRepository) Destroy(id string) error {
+func (r *UserRepository) Destroy(id uuid.UUID) error {
 	var u domain.User
 	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
 		return err
@@ -108,7 +109,7 @@ func (r *UserRepository) IsEmailExist(email string) (bool, error) {
 	return count > 0, nil
 }
 
-func (r *UserRepository) IsEmailTaken(id string, email string) (bool, error) {
+func (r *UserRepository) IsEmailTaken(id uuid.UUID, email string) (bool, error) {
 	var count int64
 
 	if err := r.DB.Model(&domain.User{}).Where("email = ? AND id != ?", email, id).Count(&count).Error; err != nil {
