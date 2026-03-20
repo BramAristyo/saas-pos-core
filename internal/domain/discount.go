@@ -11,7 +11,7 @@ type DiscountType string
 
 const (
 	Percentage DiscountType = "percentage"
-	Amount     DiscountType = "amount"
+	Fixed      DiscountType = "fixed"
 )
 
 type Discount struct {
@@ -21,6 +21,7 @@ type Discount struct {
 	Value     decimal.Decimal
 	StartDate *time.Time
 	EndDate   *time.Time
+	IsActive  bool
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }

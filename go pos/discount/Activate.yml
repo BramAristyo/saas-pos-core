@@ -1,0 +1,17 @@
+info:
+  name: Activate
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{url}}/discounts/{{discount_id}}/activate"
+  auth: inherit
+
+examples:
+  - name: success activate discount
+    request:
+      url: "{{url}}/discounts/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2/activate"
+      method: PATCH
+    response:
+      status: 200

@@ -1,0 +1,20 @@
+info:
+  name: Paginate
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{url}}/taxes"
+  auth: inherit
+  query:
+    page: 1
+    pageSize: 10
+
+examples:
+  - name: success paginate tax
+    request:
+      url: "{{url}}/taxes?page=1&pageSize=10"
+      method: GET
+    response:
+      status: 200

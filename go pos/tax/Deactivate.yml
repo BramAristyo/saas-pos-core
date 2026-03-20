@@ -1,0 +1,17 @@
+info:
+  name: Deactivate
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: "{{url}}/taxes/{{tax_id}}/deactivate"
+  auth: inherit
+
+examples:
+  - name: success deactivate tax
+    request:
+      url: "{{url}}/taxes/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2/deactivate"
+      method: PATCH
+    response:
+      status: 200

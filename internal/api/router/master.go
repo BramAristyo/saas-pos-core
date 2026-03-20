@@ -49,3 +49,21 @@ func BundlingRoutes(r *gin.RouterGroup, h *handler.BundlingHandler) {
 	r.PATCH("/:id/activate", h.Activate)
 	r.PATCH("/:id/deactivate", h.Deactivate)
 }
+
+func TaxRoutes(r *gin.RouterGroup, h *handler.TaxHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.PUT("/:id", h.Update)
+	r.PATCH("/:id/activate", h.Activate)
+	r.PATCH("/:id/deactivate", h.Deactivate)
+}
+
+func DiscountRoutes(r *gin.RouterGroup, h *handler.DiscountHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.PUT("/:id", h.Update)
+	r.PATCH("/:id/activate", h.Activate)
+	r.PATCH("/:id/deactivate", h.Deactivate)
+}

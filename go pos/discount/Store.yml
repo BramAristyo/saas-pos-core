@@ -1,0 +1,38 @@
+info:
+  name: Store
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/discounts"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Summer Sale 15%",
+        "type": "percentage",
+        "value": 15,
+        "startDate": "2026-06-01",
+        "endDate": "2026-08-31"
+      }
+
+examples:
+  - name: success create discount
+    request:
+      url: "{{url}}/discounts"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Summer Sale 15%",
+            "type": "percentage",
+            "value": 15,
+            "startDate": "2026-06-01",
+            "endDate": "2026-08-31"
+          }
+    response:
+      status: 201
+      statusText: Created

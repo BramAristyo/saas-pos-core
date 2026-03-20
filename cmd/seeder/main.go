@@ -24,4 +24,7 @@ func main() {
 	seeder.SeedProductData(db)
 	seeder.SeedModifierGroupData(db)
 	seeder.SeedProductModifierData(db)
+	seeder.SeedTaxData(db)
+	seeder.SeedDiscountData(db)
+	seeder.SeedBundlingData(db)
 }

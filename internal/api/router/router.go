@@ -16,6 +16,9 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		products := v1.Group("/products", middleware.Authentication(cfg))
 		modifierGroups := v1.Group("/modifier-groups", middleware.Authentication(cfg))
 		modifierOptions := v1.Group("/modifier-options", middleware.Authentication(cfg))
+		bundling := v1.Group("/bundling", middleware.Authentication(cfg))
+		taxes := v1.Group("/taxes", middleware.Authentication(cfg))
+		discounts := v1.Group("/discounts", middleware.Authentication(cfg))
 
 		v1.POST("", h.Auth.Login)
 
@@ -24,5 +27,8 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		ProductRoutes(products, h.Product)
 		ModifierRoutes(modifierGroups, h.ModifierGroup)
 		ModifierOptionRoutes(modifierOptions, h.ModifierOption)
+		BundlingRoutes(bundling, h.Bundling)
+		TaxRoutes(taxes, h.Tax)
+		DiscountRoutes(discounts, h.Discount)
 	}
 }

@@ -1,0 +1,55 @@
+info:
+  name: Store
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/bundling"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Breakfast Bundle",
+        "description": "Coffee and Croissant",
+        "price": 35000,
+        "cogs": 15000,
+        "bundlingItems": [
+          {
+            "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f1",
+            "qty": 1
+          },
+          {
+            "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+            "qty": 1
+          }
+        ]
+      }
+
+examples:
+  - name: success create bundling
+    request:
+      url: "{{url}}/bundling"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Breakfast Bundle",
+            "description": "Coffee and Croissant",
+            "price": 35000,
+            "cogs": 15000,
+            "bundlingItems": [
+              {
+                "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f1",
+                "qty": 1
+              },
+              {
+                "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+                "qty": 1
+              }
+            ]
+          }
+    response:
+      status: 201

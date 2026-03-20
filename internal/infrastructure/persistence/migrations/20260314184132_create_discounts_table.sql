@@ -4,6 +4,7 @@ CREATE TABLE discounts (
   name VARCHAR(100) NOT NULL,
   type VARCHAR(10) NOT NULL CHECK(type IN ('percentage', 'fixed')),
   value DECIMAL(12, 2) NOT NULL DEFAULT 0,
+  is_active BOOLEAN NOT NULL DEFAULT true,
   start_date DATE,
   end_date DATE,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),

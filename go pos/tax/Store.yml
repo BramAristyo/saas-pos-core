@@ -1,0 +1,32 @@
+info:
+  name: Store
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/taxes"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "VAT 10%",
+        "percentage": 10
+      }
+
+examples:
+  - name: success create tax
+    request:
+      url: "{{url}}/taxes"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "VAT 10%",
+            "percentage": 10
+          }
+    response:
+      status: 201
+      statusText: Created
