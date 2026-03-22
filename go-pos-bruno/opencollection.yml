@@ -1,7 +1,7 @@
 opencollection: 1.0.0
 
 info:
-  name: go pos
+  name: go-pos-bruno
 config:
   proxy:
     inherit: true

@@ -15,7 +15,7 @@ http:
             "type": "in",
             "amount": 10000,
             "description": "Buy milk (corrected)"
-          },
+          }
           ]
       }
   auth: inherit

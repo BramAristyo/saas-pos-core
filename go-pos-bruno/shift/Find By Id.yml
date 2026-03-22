@@ -1,0 +1,15 @@
+info:
+  name: Find By Id
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{url}}/shifts/e1c9fb8f-d483-4109-8245-88dde9ea63ed"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
