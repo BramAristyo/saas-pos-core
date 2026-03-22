@@ -67,11 +67,3 @@ func DiscountRoutes(r *gin.RouterGroup, h *handler.DiscountHandler) {
 	r.PATCH("/:id/activate", h.Activate)
 	r.PATCH("/:id/deactivate", h.Deactivate)
 }
-
-func ShiftRoutes(r *gin.RouterGroup, h *handler.ShiftHandler) {
-	r.GET("", h.Paginate)
-	r.GET("/:id", h.FindById)
-	r.POST("/open", h.OpenShift)
-	r.POST("/close", h.CloseShift)
-	r.PUT("/expenses", h.UpsertExpenses)
-}

@@ -139,6 +139,7 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 
 	if err := r.DB.WithContext(ctx).
 		Where("opened_by = ? AND closed_at IS NULL", userId).
+		Preload("OpenedByUser").
 		Preload("ShiftExpenses").
 		First(&shift).Error; err != nil {
 		return domain.Shift{}, err

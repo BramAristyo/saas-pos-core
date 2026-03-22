@@ -98,6 +98,20 @@ func (u *ShiftUseCase) CloseShift(ctx context.Context, req dto.CloseShiftRequest
 	return dto.ToShiftResponse(updated), nil
 }
 
+func (u *ShiftUseCase) FindOpenShiftByCurrent(ctx context.Context) (dto.ShiftResponse, error) {
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.ShiftResponse{}, err
+	}
+
+	shift, err := u.Repo.FindOpenShiftByUserId(ctx, userId)
+	if err != nil {
+		return dto.ShiftResponse{}, usecase_errors.NoOpenShift
+	}
+
+	return dto.ToShiftResponse(shift), nil
+}
+
 func (u *ShiftUseCase) UpsertExpenses(ctx context.Context, req dto.UpsertShiftExpensesRequest) (dto.ShiftResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {

@@ -82,6 +82,17 @@ func (h *ShiftHandler) CloseShift(c *gin.Context) {
 	response.OK(c, res, "shift closed successfully")
 }
 
+func (h *ShiftHandler) FindOpenShiftByCurrentUser(c *gin.Context) {
+
+	res, err := h.UseCase.FindOpenShiftByCurrent(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "successfully get active shift")
+}
+
 func (h *ShiftHandler) UpsertExpenses(c *gin.Context) {
 	var req dto.UpsertShiftExpensesRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
