@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
-	"github.com/BramAristyo/go-pos-mawish/internal/dependency"
-	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/internal/api/middleware"
 	"github.com/BramAristyo/go-pos-mawish/internal/api/router"
+	"github.com/BramAristyo/go-pos-mawish/internal/dependency"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,5 +37,8 @@ func main() {
 		WriteTimeout: cfg.Server.WriteTimeout,
 	}
 
-	s.ListenAndServe()
+	err = s.ListenAndServe()
+	if err != nil {
+		log.Fatalf("Http server failed: %v", err)
+	}
 }

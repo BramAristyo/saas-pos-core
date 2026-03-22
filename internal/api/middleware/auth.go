@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/BramAristyo/go-pos-mawish/internal/constant"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ import (
 
 func Authentication(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		auth := c.GetHeader("Authorization")
+		auth := c.GetHeader(constant.AuthHeader)
 		token := strings.Split(auth, " ")
 
 		if auth == "" || len(token) < 2 {
@@ -45,13 +46,15 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 		claimMap := make(map[string]any)
 		maps.Copy(claimMap, claims)
 
-		c.Set("userID", claimMap["userID"])
-		c.Set("role", claimMap["role"])
+		userID := claimMap[constant.ClaimUserID]
+		userRole := claimMap[constant.ClaimRole]
 
-		// Inject into Request Context for Usecase layer
+		c.Set(constant.ClaimUserID, userID)
+		c.Set(constant.ClaimRole, userRole)
+
 		ctx := c.Request.Context()
-		ctx = context.WithValue(ctx, "userID", claimMap["userID"])
-		ctx = context.WithValue(ctx, "role", claimMap["role"])
+		ctx = context.WithValue(ctx, constant.CtxUserID, userID)
+		ctx = context.WithValue(ctx, constant.CtxRole, userRole)
 		c.Request = c.Request.WithContext(ctx)
 
 		c.Next()

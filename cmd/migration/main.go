@@ -17,6 +17,9 @@ import (
 func main() {
 	cfg := config.GetConfig()
 	err := database.InitDb(cfg)
+	if err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
 	defer database.CloseDb()
 
 	sqlDb, _ := database.GetDb().DB()

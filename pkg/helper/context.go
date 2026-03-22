@@ -3,12 +3,13 @@ package helper
 import (
 	"context"
 
+	"github.com/BramAristyo/go-pos-mawish/internal/constant"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
 func ExtractUserID(ctx context.Context) (uuid.UUID, error) {
-	val := ctx.Value("userID")
+	val := ctx.Value(constant.CtxUserID)
 	if val == nil {
 		return uuid.Nil, usecase_errors.TokenRequired
 	}

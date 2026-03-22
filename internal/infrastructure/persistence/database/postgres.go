@@ -22,6 +22,10 @@ func InitDb(cfg *config.Config) error {
 	)
 	var err error
 	dbClient, err = gorm.Open(postgres.Open(conn))
+	if err != nil {
+		return err
+	}
+
 	sqlDb, _ := dbClient.DB()
 
 	if err = sqlDb.Ping(); err != nil {
