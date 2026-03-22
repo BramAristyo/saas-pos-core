@@ -22,7 +22,4 @@ type User struct {
 	IsActive  bool
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-
-	OpenShifts   []Shift `gorm:"foreignKey:OpenedBy"`
-	ClosedShifts []Shift `gorm:"foreignKey:ClosedBy"`
 }

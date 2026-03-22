@@ -140,3 +140,22 @@ func (r *ProductRepository) UpdateStatus(ctx context.Context, id uuid.UUID, stat
 
 	return existing, nil
 }
+
+func (r *ProductRepository) FindByCategoryId(ctx context.Context, categoryId uuid.UUID, req filter.PaginationWithInputFilter) (int64, []domain.Product, error) {
+	p := make([]domain.Product, req.PaginationInput.PageSize)
+	var totalRows int64
+
+	if err := r.DB.WithContext(ctx).Where("is_active = ? AND category_id = ?", true, categoryId).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
+		return 0, nil, err
+	}
+
+	if err := r.DB.WithContext(ctx).
+		Where("is_active = ? AND category_id = ?", true, categoryId).
+		Preload("Category").
+		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
+		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {
+		return 0, nil, err
+	}
+
+	return totalRows, p, nil
+}

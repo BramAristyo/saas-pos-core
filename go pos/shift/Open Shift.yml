@@ -1,0 +1,31 @@
+info:
+  name: Open Shift
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/shifts/open"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "openingCash": 500000,
+        "notes": "Morning shift start"
+      }
+
+examples:
+  - name: success open shift
+    request:
+      url: "{{url}}/shifts/open"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "openingCash": 500000,
+            "notes": "Morning shift start"
+          }
+    response:
+      status: 201

@@ -18,6 +18,7 @@ type Handlers struct {
 	Bundling       *handler.BundlingHandler
 	Tax            *handler.TaxHandler
 	Discount       *handler.DiscountHandler
+	Shift          *handler.ShiftHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -47,6 +48,9 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	discountRepository := repository.NewDiscountRepository(db)
 	discountUseCase := usecase.NewDiscountUseCase(discountRepository)
 
+	shiftRepository := repository.NewShiftRepository(db)
+	shiftUseCase := usecase.NewShiftUseCase(shiftRepository)
+
 	return &Handlers{
 		Auth:           handler.NewAuthHandler(authUseCase),
 		User:           handler.NewUserHandler(userUseCase),
@@ -57,5 +61,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		Bundling:       handler.NewBundlingHandler(bundlingUseCase),
 		Tax:            handler.NewTaxHandler(taxUseCase),
 		Discount:       handler.NewDiscountHandler(discountUseCase),
+		Shift:          handler.NewShiftHandler(shiftUseCase),
 	}
 }

@@ -31,4 +31,7 @@ var (
 	TokenInvalid    = &UseCaseError{http.StatusUnauthorized, "token invalid"}
 	InvalidID       = &UseCaseError{http.StatusBadRequest, "invalid ID format"}
 	NotFound        = &UseCaseError{http.StatusNotFound, "resource not found"}
+	ShiftAlreadyOpen = &UseCaseError{http.StatusBadRequest, "user already has an open shift"}
+	NoOpenShift      = &UseCaseError{http.StatusNotFound, "no open shift found for this user"}
+	ForbiddenAccess  = &UseCaseError{http.StatusForbidden, "you don't have access to this resource"}
 )

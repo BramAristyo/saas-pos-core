@@ -94,3 +94,22 @@ func (r *TaxRepository) DeactiveAll(ctx context.Context) error {
 
 	return nil
 }
+
+func (r *TaxRepository) FindActiveTaxes(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Tax, error) {
+	t := make([]domain.Tax, 0, req.PaginationInput.PageSize)
+	var totalRows int64
+
+	if err := r.DB.WithContext(ctx).Model(&domain.Tax{}).Where("is_active = ?", true).Count(&totalRows).Error; err != nil {
+		return 0, []domain.Tax{}, err
+	}
+
+	if totalRows == 0 {
+		return 0, []domain.Tax{}, nil
+	}
+
+	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&t).Error; err != nil {
+		return 0, []domain.Tax{}, err
+	}
+
+	return totalRows, t, nil
+}

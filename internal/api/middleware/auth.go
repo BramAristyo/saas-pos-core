@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"maps"
 	"net/http"
@@ -46,6 +47,13 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 
 		c.Set("userID", claimMap["userID"])
 		c.Set("role", claimMap["role"])
+
+		// Inject into Request Context for Usecase layer
+		ctx := c.Request.Context()
+		ctx = context.WithValue(ctx, "userID", claimMap["userID"])
+		ctx = context.WithValue(ctx, "role", claimMap["role"])
+		c.Request = c.Request.WithContext(ctx)
+
 		c.Next()
 	}
 }

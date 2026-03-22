@@ -1,0 +1,31 @@
+info:
+  name: Close Shift
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{url}}/shifts/close"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "closingCash": 1500000,
+        "notes": "Shift ended with good sales"
+      }
+
+examples:
+  - name: success close shift
+    request:
+      url: "{{url}}/shifts/close"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "closingCash": 1500000,
+            "notes": "Shift ended with good sales"
+          }
+    response:
+      status: 200

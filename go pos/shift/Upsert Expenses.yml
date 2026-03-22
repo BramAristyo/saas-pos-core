@@ -1,0 +1,47 @@
+info:
+  name: Upsert Expenses
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{url}}/shifts/expenses"
+  body:
+    type: json
+    data: |-
+      {
+        "expenses": [
+          {
+            "type": "in",
+            "amount": 10000,
+            "description": "Buy milk (corrected)"
+          },
+          ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: success upsert expenses
+    request:
+      url: "{{url}}/shifts/expenses"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "expenses": [
+              {
+                "type": "out",
+                "amount": 20000,
+                "description": "Buy milk"
+              }
+            ]
+          }
+    response:
+      status: 200

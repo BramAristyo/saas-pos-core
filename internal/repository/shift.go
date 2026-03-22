@@ -1,0 +1,148 @@
+package repository
+
+import (
+	"context"
+
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
+
+type ShiftRepository struct {
+	DB *gorm.DB
+}
+
+func NewShiftRepository(db *gorm.DB) *ShiftRepository {
+	return &ShiftRepository{DB: db}
+}
+
+func (r *ShiftRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Shift, error) {
+	var totalRows int64
+	if err := r.DB.WithContext(ctx).
+		Preload("OpenedByUser").
+		Preload("ClosedByUser").
+		Model(domain.Shift{}).
+		Count(&totalRows).
+		Error; err != nil {
+		return 0, []domain.Shift{}, err
+	}
+
+	if totalRows == 0 {
+		return 0, []domain.Shift{}, nil
+	}
+
+	shifts := make([]domain.Shift, 0, req.PaginationInput.PageSize)
+	if err := r.DB.WithContext(ctx).
+		Preload("OpenedByUser").
+		Preload("ClosedByUser").
+		Offset(req.Offset()).
+		Limit(req.PaginationInput.PageSize).
+		Find(&shifts).Error; err != nil {
+		return 0, []domain.Shift{}, err
+	}
+
+	return totalRows, shifts, nil
+}
+
+func (r *ShiftRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Shift, error) {
+	var shift domain.Shift
+	if err := r.DB.WithContext(ctx).
+		Preload("ShiftExpenses").
+		Preload("OpenedByUser").
+		Preload("ClosedByUser").
+		Where("id = ?", id).
+		First(&shift).
+		Error; err != nil {
+		return domain.Shift{}, err
+	}
+
+	return shift, nil
+}
+
+// Opening Shift
+func (r *ShiftRepository) Store(ctx context.Context, s *domain.Shift) (domain.Shift, error) {
+	if err := r.DB.WithContext(ctx).Create(s).Error; err != nil {
+		return domain.Shift{}, err
+	}
+
+	return *s, nil
+}
+
+func (r *ShiftRepository) Update(ctx context.Context, id uuid.UUID, s *domain.Shift) (domain.Shift, error) {
+	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var existing domain.Shift
+		if err := tx.Where("id = ?", id).Preload("ShiftExpenses").First(&existing).Error; err != nil {
+			return err
+		}
+
+		updateData := map[string]any{
+			"closed_by":    s.ClosedBy,
+			"closing_cash": s.ClosingCash,
+			"notes":        s.Notes,
+			"closed_at":    s.ClosedAt,
+			"opened_by":    s.OpenedBy,
+			"opening_cash": s.OpeningCash,
+		}
+
+		if err := tx.Model(&existing).Updates(updateData).Error; err != nil {
+			return err
+		}
+
+		var toCreate []domain.ShiftExpenses
+
+		for _, se := range s.ShiftExpenses {
+			if se.ID == uuid.Nil {
+				se.ShiftID = id
+				toCreate = append(toCreate, se)
+			}
+		}
+
+		if len(toCreate) > 0 {
+			if err := tx.Create(&toCreate).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return domain.Shift{}, err
+	}
+
+	return r.FindById(ctx, id)
+}
+
+func (r *ShiftRepository) CloseShift(ctx context.Context, id uuid.UUID, s *domain.Shift) (domain.Shift, error) {
+	var existing domain.Shift
+	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
+		return domain.Shift{}, nil
+	}
+
+	updateData := map[string]any{
+		"closed_by":    s.ClosedBy,
+		"closing_cash": s.ClosingCash,
+		"notes":        s.Notes,
+		"closed_at":    s.ClosedAt,
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
+		return domain.Shift{}, nil
+	}
+
+	return existing, nil
+}
+
+func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid.UUID) (domain.Shift, error) {
+	var shift domain.Shift
+
+	if err := r.DB.WithContext(ctx).
+		Where("opened_by = ? AND closed_at IS NULL", userId).
+		Preload("ShiftExpenses").
+		First(&shift).Error; err != nil {
+		return domain.Shift{}, err
+	}
+
+	return shift, nil
+}

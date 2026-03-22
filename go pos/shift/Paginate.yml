@@ -1,0 +1,12 @@
+info:
+  name: Paginate
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{url}}/shifts"
+  auth: inherit
+  query:
+    page: 1
+    pageSize: 10

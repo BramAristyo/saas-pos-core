@@ -17,14 +17,12 @@ const (
 type ShiftExpenses struct {
 	ID          uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	ShiftID     uuid.UUID
-	UserID      uuid.UUID
 	Type        ShiftExpensesType
 	Amount      decimal.Decimal
-	Description string
+	Description *string
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 
 	Shift Shift `gorm:"foreignKey:ShiftID"`
-	User  User  `gorm:"foreignKey:UserID"`
 }
 
 func (ShiftExpenses) TableName() string {

@@ -8,7 +8,7 @@ import (
 )
 
 type Shift struct {
-	ID          uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()	"`
+	ID          uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	OpenedBy    uuid.UUID
 	ClosedBy    *uuid.UUID
 	OpeningCash decimal.Decimal
@@ -19,6 +19,7 @@ type Shift struct {
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 
-	OpenedByUser User  `gorm:"foreignKey:OpenedBy"`
-	ClosedByUser *User `gorm:"foreignKey:ClosedBy"`
+	ShiftExpenses []ShiftExpenses `gorm:"foreignKey:ShiftID"`
+	OpenedByUser  User            `gorm:"foreignKey:OpenedBy"`
+	ClosedByUser  *User           `gorm:"foreignKey:ClosedBy"`
 }

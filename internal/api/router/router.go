@@ -19,6 +19,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		bundling := v1.Group("/bundling", middleware.Authentication(cfg))
 		taxes := v1.Group("/taxes", middleware.Authentication(cfg))
 		discounts := v1.Group("/discounts", middleware.Authentication(cfg))
+		shifts := v1.Group("/shifts", middleware.Authentication(cfg))
 
 		v1.POST("", h.Auth.Login)
 
@@ -30,5 +31,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		BundlingRoutes(bundling, h.Bundling)
 		TaxRoutes(taxes, h.Tax)
 		DiscountRoutes(discounts, h.Discount)
+		ShiftRoutes(shifts, h.Shift)
 	}
 }
