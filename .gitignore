@@ -17,7 +17,7 @@ go.work
 *.log.gz
 
 # Air (live reload)
-.air.toml
+# .air.toml
 .air/
 
 # Jupyter Notebooks

@@ -10,14 +10,14 @@ import (
 )
 
 type DiscountResponse struct {
-	ID        uuid.UUID           `json:"id"`
-	Name      string              `json:"name"`
-	Type      domain.DiscountType `json:"type"`
-	Value     decimal.Decimal     `json:"value"`
-	StartDate *string             `json:"startDate"`
-	EndDate   *string             `json:"endDate"`
-	IsActive  bool                `json:"isActive"`
-	CreatedAt string              `json:"createdAt"`
+	ID        uuid.UUID             `json:"id"`
+	Name      string                `json:"name"`
+	Type      domain.AdjustmentType `json:"type"`
+	Value     decimal.Decimal       `json:"value"`
+	StartDate *string               `json:"startDate"`
+	EndDate   *string               `json:"endDate"`
+	IsActive  bool                  `json:"isActive"`
+	CreatedAt string                `json:"createdAt"`
 }
 
 type DiscountResponsePagination struct {
@@ -26,20 +26,20 @@ type DiscountResponsePagination struct {
 }
 
 type CreateDiscountRequest struct {
-	Name      string              `json:"name" binding:"required,min=3,max=100"`
-	Type      domain.DiscountType `json:"type" binding:"required,oneof=percentage fixed"`
-	Value     decimal.Decimal     `json:"value" binding:"required"`
-	StartDate *string             `json:"startDate"`
-	EndDate   *string             `json:"endDate"`
+	Name      string                `json:"name" binding:"required,min=3,max=100"`
+	Type      domain.AdjustmentType `json:"type" binding:"required,oneof=percentage fixed"`
+	Value     decimal.Decimal       `json:"value" binding:"required"`
+	StartDate *string               `json:"startDate"`
+	EndDate   *string               `json:"endDate"`
 }
 
 type UpdateDiscountRequest struct {
-	Name      string              `json:"name" binding:"required,min=3,max=100"`
-	Type      domain.DiscountType `json:"type" binding:"required,oneof=percentage fixed"`
-	Value     decimal.Decimal     `json:"value" binding:"required"`
-	StartDate *string             `json:"startDate"`
-	EndDate   *string             `json:"endDate"`
-	IsActive  bool                `json:"isActive"`
+	Name      string                `json:"name" binding:"required,min=3,max=100"`
+	Type      domain.AdjustmentType `json:"type" binding:"required,oneof=percentage fixed"`
+	Value     decimal.Decimal       `json:"value" binding:"required"`
+	StartDate *string               `json:"startDate"`
+	EndDate   *string               `json:"endDate"`
+	IsActive  bool                  `json:"isActive"`
 }
 
 func ToCreateDiscountModel(req CreateDiscountRequest) domain.Discount {

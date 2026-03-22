@@ -67,3 +67,12 @@ func DiscountRoutes(r *gin.RouterGroup, h *handler.DiscountHandler) {
 	r.PATCH("/:id/activate", h.Activate)
 	r.PATCH("/:id/deactivate", h.Deactivate)
 }
+
+func SalesTypeRoutes(r *gin.RouterGroup, h *handler.SalesTypeHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.PUT("/:id", h.Update)
+	r.PATCH("/:id/activate", h.Activate)
+	r.PATCH("/:id/deactivate", h.Deactivate)
+}

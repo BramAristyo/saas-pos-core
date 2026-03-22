@@ -1,0 +1,9 @@
+info:
+  name: Deactivate
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: "{{url}}/sales-types/:id/deactivate"
+  auth: inherit

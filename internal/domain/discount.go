@@ -7,17 +7,10 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type DiscountType string
-
-const (
-	Percentage DiscountType = "percentage"
-	Fixed      DiscountType = "fixed"
-)
-
 type Discount struct {
 	ID        uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	Name      string
-	Type      DiscountType
+	Type      AdjustmentType
 	Value     decimal.Decimal
 	StartDate *time.Time
 	EndDate   *time.Time

@@ -1,11 +1,11 @@
 info:
-  name: "{{url}}/shifts/open"
+  name: Paginate
   type: http
-  seq: 6
+  seq: 1
 
 http:
   method: GET
-  url: "{{url}}/shifts/open"
+  url: "{{url}}/sales-types"
   auth: inherit
 
 settings:

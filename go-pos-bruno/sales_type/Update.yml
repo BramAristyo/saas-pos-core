@@ -1,0 +1,33 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/sales-types/783f6e1a-e5c6-4b0d-b8af-9257fa1e356222"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Dine In Updated",
+        "charges": [
+          {
+            "name": "Service Charge",
+            "type": "percentage",
+            "amount": 6
+          },
+          {
+            "name": "New Charge",
+            "type": "fixed",
+            "amount": 1000
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

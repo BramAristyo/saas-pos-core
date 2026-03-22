@@ -1,0 +1,28 @@
+root = "."
+
+# Command to run your app
+cmd = "go run ./cmd/api/main.go"
+
+# Watch these directories for changes
+[watch]
+  # Watch all .go files in the project
+  include = ["**/*.go"]
+  # Exclude vendor and test files
+  exclude = ["vendor", "**/*_test.go", "go-pos-bruno", "docs"]
+
+# Set environment variables (optional, .env is usually loaded by your app)
+# [env]
+#   SOME_ENV = "value"
+
+[build]
+  cmd = "go build -o main.exe ./cmd/api/main.go"
+  bin = "main.exe"
+  delay = 1000
+  log = "stdout"
+  kill_delay = "500ms"
+  stop_on_error = true
+
+# Log options
+[log]
+  color = "auto"
+  time = true

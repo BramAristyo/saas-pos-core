@@ -1,0 +1,15 @@
+info:
+  name: Activate
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{url}}/sales-types/783f6e1a-e5c6-4b0d-b8af-9257fa1e356f/activate"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

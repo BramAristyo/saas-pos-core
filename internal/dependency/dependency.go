@@ -19,6 +19,7 @@ type Handlers struct {
 	Tax            *handler.TaxHandler
 	Discount       *handler.DiscountHandler
 	Shift          *handler.ShiftHandler
+	SalesType      *handler.SalesTypeHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -51,6 +52,9 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	shiftRepository := repository.NewShiftRepository(db)
 	shiftUseCase := usecase.NewShiftUseCase(shiftRepository)
 
+	salesTypeRepository := repository.NewSalesTypeRepository(db)
+	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository)
+
 	return &Handlers{
 		Auth:           handler.NewAuthHandler(authUseCase),
 		User:           handler.NewUserHandler(userUseCase),
@@ -62,5 +66,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		Tax:            handler.NewTaxHandler(taxUseCase),
 		Discount:       handler.NewDiscountHandler(discountUseCase),
 		Shift:          handler.NewShiftHandler(shiftUseCase),
+		SalesType:      handler.NewSalesTypeHandler(salesTypeUseCase),
 	}
 }
