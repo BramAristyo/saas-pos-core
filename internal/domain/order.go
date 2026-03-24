@@ -43,8 +43,8 @@ type Order struct {
 	Discount     *Discount `gorm:"foreignKey:DiscountID"`
 	VoidedByUser *User     `gorm:"foreignKey:VoidedBy"`
 
-	Items    []OrderItem     `gorm:"OrderID"`
-	Payments []PaymentMethod `gorm:"OrderID"`
+	Items    []OrderItem `gorm:"foreignKey:OrderID"`
+	Payments []Payment   `gorm:"foreignKey:OrderID"`
 }
 
 func (o *Order) CalculateAll() {
