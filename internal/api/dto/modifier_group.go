@@ -32,11 +32,11 @@ type UpdateModifierGroupRequest struct {
 	IsActive   bool   `json:"isActive"`
 }
 
-func ToModifierGroupResponse(mg domain.ModifierGroup) ModifierGroupResponse {
+func ToModifierGroupResponse(mg *domain.ModifierGroup) ModifierGroupResponse {
 	var options []ModifierOptionResponse
 	if len(mg.ModifierOptions) > 0 {
 		for _, o := range mg.ModifierOptions {
-			options = append(options, ToModifierOptionResponse(o))
+			options = append(options, ToModifierOptionResponse(&o))
 		}
 	}
 
@@ -58,7 +58,7 @@ func ToModifierGroupResponsePagination(mg []ModifierGroupResponse, f filter.Pagi
 	}
 }
 
-func ToModifierGroupModel(req CreateModifierGroupRequest) domain.ModifierGroup {
+func ToModifierGroupModel(req *CreateModifierGroupRequest) domain.ModifierGroup {
 	return domain.ModifierGroup{
 		Name:       req.Name,
 		IsRequired: req.IsRequired,
@@ -66,7 +66,7 @@ func ToModifierGroupModel(req CreateModifierGroupRequest) domain.ModifierGroup {
 	}
 }
 
-func ToUpdateModifierGroupModel(req UpdateModifierGroupRequest) domain.ModifierGroup {
+func ToUpdateModifierGroupModel(req *UpdateModifierGroupRequest) domain.ModifierGroup {
 	return domain.ModifierGroup{
 		Name:       req.Name,
 		IsRequired: req.IsRequired,

@@ -4,17 +4,23 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/google/uuid"
 )
 
 type ModifierOptionUseCase struct {
-	Repo *repository.ModifierOptionRepository
+	Repo       *repository.ModifierOptionRepository
+	LogUseCase *AuditLogUseCase
 }
 
-func NewModifierOptionUseCase(repo *repository.ModifierOptionRepository) *ModifierOptionUseCase {
-	return &ModifierOptionUseCase{Repo: repo}
+func NewModifierOptionUseCase(repo *repository.ModifierOptionRepository, log *AuditLogUseCase) *ModifierOptionUseCase {
+	return &ModifierOptionUseCase{
+		Repo:       repo,
+		LogUseCase: log,
+	}
 }
 
 func (u *ModifierOptionUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ModifierOptionResponsePagination, error) {
@@ -24,8 +30,8 @@ func (u *ModifierOptionUseCase) Paginate(ctx context.Context, req filter.Paginat
 	}
 
 	modifierOptions := make([]dto.ModifierOptionResponse, 0, len(mos))
-	for _, mo := range mos {
-		modifierOptions = append(modifierOptions, dto.ToModifierOptionResponse(mo))
+	for i := range mos {
+		modifierOptions = append(modifierOptions, dto.ToModifierOptionResponse(&mos[i]))
 	}
 
 	return dto.ToModifierOptionResponsePagination(modifierOptions, req, totalRows), nil
@@ -37,34 +43,68 @@ func (u *ModifierOptionUseCase) FindById(ctx context.Context, id uuid.UUID) (dto
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(mo), nil
+	return dto.ToModifierOptionResponse(&mo), nil
 }
 
 func (u *ModifierOptionUseCase) Store(ctx context.Context, req dto.CreateModifierOptionRequest) (dto.ModifierOptionResponse, error) {
-	mo := dto.ToModifierOptionModel(req)
+	userId, _ := helper.ExtractUserID(ctx)
+	mo := dto.ToModifierOptionModel(&req)
 	stored, err := u.Repo.Store(ctx, &mo)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(stored), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionCreate,
+		Entity:      domain.EntityModifierOption,
+		EntityID:    &stored.ID,
+		Description: "User created a new modifier option: " + stored.Name,
+	})
+
+	return dto.ToModifierOptionResponse(&stored), nil
 }
 
 func (u *ModifierOptionUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierOptionRequest) (dto.ModifierOptionResponse, error) {
-	mo := dto.ToUpdateModifierOptionModel(req)
+	userId, _ := helper.ExtractUserID(ctx)
+	mo := dto.ToUpdateModifierOptionModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &mo)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(updated), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityModifierOption,
+		EntityID:    &updated.ID,
+		Description: "User updated modifier option: " + updated.Name,
+	})
+
+	return dto.ToModifierOptionResponse(&updated), nil
 }
 
 func (u *ModifierOptionUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierOptionResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
 	updated, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ModifierOptionResponse{}, err
 	}
 
-	return dto.ToModifierOptionResponse(updated), nil
+	action := domain.ActionActivate
+	desc := "User activated modifier option: " + updated.Name
+	if !status {
+		action = domain.ActionDeactivate
+		desc = "User deactivated modifier option: " + updated.Name
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      action,
+		Entity:      domain.EntityModifierOption,
+		EntityID:    &updated.ID,
+		Description: desc,
+	})
+
+	return dto.ToModifierOptionResponse(&updated), nil
 }

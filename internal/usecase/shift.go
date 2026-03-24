@@ -14,12 +14,14 @@ import (
 )
 
 type ShiftUseCase struct {
-	Repo *repository.ShiftRepository
+	Repo       *repository.ShiftRepository
+	LogUseCase *AuditLogUseCase
 }
 
-func NewShiftUseCase(repo *repository.ShiftRepository) *ShiftUseCase {
+func NewShiftUseCase(repo *repository.ShiftRepository, log *AuditLogUseCase) *ShiftUseCase {
 	return &ShiftUseCase{
-		Repo: repo,
+		Repo:       repo,
+		LogUseCase: log,
 	}
 }
 
@@ -30,8 +32,8 @@ func (u *ShiftUseCase) Paginate(ctx context.Context, req filter.PaginationWithIn
 	}
 
 	res := make([]dto.ShiftResponse, 0, len(shifts))
-	for _, s := range shifts {
-		res = append(res, dto.ToShiftResponse(s))
+	for i := range shifts {
+		res = append(res, dto.ToShiftResponse(&shifts[i]))
 	}
 
 	return dto.ToShiftResponsePagination(res, req, totalRows), nil
@@ -43,7 +45,7 @@ func (u *ShiftUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ShiftRes
 		return dto.ShiftResponse{}, err
 	}
 
-	return dto.ToShiftResponse(shift), nil
+	return dto.ToShiftResponse(&shift), nil
 }
 
 func (u *ShiftUseCase) OpenShift(ctx context.Context, req dto.OpenShiftRequest) (dto.ShiftResponse, error) {
@@ -70,6 +72,14 @@ func (u *ShiftUseCase) OpenShift(ctx context.Context, req dto.OpenShiftRequest) 
 		return dto.ShiftResponse{}, err
 	}
 
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionCreate,
+		Entity:      domain.EntityShift,
+		EntityID:    &stored.ID,
+		Description: "User opened a new shift",
+	})
+
 	return u.FindById(ctx, stored.ID)
 }
 
@@ -95,7 +105,15 @@ func (u *ShiftUseCase) CloseShift(ctx context.Context, req dto.CloseShiftRequest
 		return dto.ShiftResponse{}, err
 	}
 
-	return dto.ToShiftResponse(updated), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionCreate,
+		Entity:      domain.EntityShift,
+		EntityID:    &updated.ID,
+		Description: "User closed the shift",
+	})
+
+	return dto.ToShiftResponse(&updated), nil
 }
 
 func (u *ShiftUseCase) FindOpenShiftByCurrent(ctx context.Context) (dto.ShiftResponse, error) {
@@ -109,7 +127,7 @@ func (u *ShiftUseCase) FindOpenShiftByCurrent(ctx context.Context) (dto.ShiftRes
 		return dto.ShiftResponse{}, usecase_errors.NoOpenShift
 	}
 
-	return dto.ToShiftResponse(shift), nil
+	return dto.ToShiftResponse(&shift), nil
 }
 
 func (u *ShiftUseCase) UpsertExpenses(ctx context.Context, req dto.UpsertShiftExpensesRequest) (dto.ShiftResponse, error) {
@@ -148,5 +166,13 @@ func (u *ShiftUseCase) UpsertExpenses(ctx context.Context, req dto.UpsertShiftEx
 		return dto.ShiftResponse{}, err
 	}
 
-	return dto.ToShiftResponse(updated), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityShift,
+		EntityID:    &updated.ID,
+		Description: "User updated shift expenses",
+	})
+
+	return dto.ToShiftResponse(&updated), nil
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/golang-jwt/jwt/v5"
@@ -55,6 +55,6 @@ func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 
 	return dto.LoginResponse{
 		Token: token,
-		User:  dto.ToUserResponse(user),
+		User:  dto.ToUserResponse(&user),
 	}, nil
 }

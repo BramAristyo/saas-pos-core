@@ -31,7 +31,7 @@ type UpdateTaxRequest struct {
 	IsActive   bool            `json:"isActive"`
 }
 
-func ToCreateTaxModel(req CreateTaxRequest) domain.Tax {
+func ToCreateTaxModel(req *CreateTaxRequest) domain.Tax {
 	return domain.Tax{
 		Name:       req.Name,
 		Percentage: req.Percentage,
@@ -39,7 +39,7 @@ func ToCreateTaxModel(req CreateTaxRequest) domain.Tax {
 	}
 }
 
-func ToUpdateTaxModel(req UpdateTaxRequest) domain.Tax {
+func ToUpdateTaxModel(req *UpdateTaxRequest) domain.Tax {
 	return domain.Tax{
 		Name:       req.Name,
 		Percentage: req.Percentage,
@@ -47,7 +47,7 @@ func ToUpdateTaxModel(req UpdateTaxRequest) domain.Tax {
 	}
 }
 
-func ToTaxResponse(t domain.Tax) TaxResponse {
+func ToTaxResponse(t *domain.Tax) TaxResponse {
 	return TaxResponse{
 		ID:         t.ID,
 		Name:       t.Name,
@@ -60,7 +60,7 @@ func ToTaxResponse(t domain.Tax) TaxResponse {
 func ToTaxResponses(ts []domain.Tax) []TaxResponse {
 	tsRes := make([]TaxResponse, len(ts))
 	for i, t := range ts {
-		tsRes[i] = ToTaxResponse(t)
+		tsRes[i] = ToTaxResponse(&t)
 	}
 
 	return tsRes

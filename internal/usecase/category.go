@@ -4,19 +4,23 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
 type CategoryUseCase struct {
-	Repo *repository.CategoryRepository
+	Repo       *repository.CategoryRepository
+	LogUseCase *AuditLogUseCase
 }
 
-func NewCategoryUseCase(repo *repository.CategoryRepository) *CategoryUseCase {
+func NewCategoryUseCase(repo *repository.CategoryRepository, log *AuditLogUseCase) *CategoryUseCase {
 	return &CategoryUseCase{
-		Repo: repo,
+		Repo:       repo,
+		LogUseCase: log,
 	}
 }
 
@@ -27,8 +31,8 @@ func (u *CategoryUseCase) Paginate(ctx context.Context, req filter.PaginationWit
 	}
 
 	categoriesResponses := make([]dto.CategoryResponse, 0, len(categories))
-	for _, c := range categories {
-		categoriesResponses = append(categoriesResponses, dto.ToCategoryResponse(c))
+	for i := range categories {
+		categoriesResponses = append(categoriesResponses, dto.ToCategoryResponse(&categories[i]))
 	}
 
 	return dto.ToCategoryResponsePagination(categoriesResponses, req, totalRows), nil
@@ -41,24 +45,43 @@ func (u *CategoryUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.Categ
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(category), nil
+	return dto.ToCategoryResponse(&category), nil
 }
 
 func (u *CategoryUseCase) Store(ctx context.Context, req dto.CreateCategoryRequest) (dto.CategoryResponse, error) {
-	category := dto.ToCreateCategoryModel(req)
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.CategoryResponse{}, err
+	}
 
-	if _, err := u.Repo.Store(ctx, &category); err != nil {
+	category := dto.ToCreateCategoryModel(&req)
+
+	stored, err := u.Repo.Store(ctx, &category)
+	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.CategoryResponse{}, usecase_errors.DuplicateEntry
 		}
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(category), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionCreate,
+		Entity:      domain.EntityCategory,
+		EntityID:    &stored.ID,
+		Description: "User created a new category: " + stored.Name,
+	})
+
+	return dto.ToCategoryResponse(&stored), nil
 }
 
 func (u *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateCategoryRequest) (dto.CategoryResponse, error) {
-	category := dto.ToUpdateCategoryModel(req)
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.CategoryResponse{}, err
+	}
+
+	category := dto.ToUpdateCategoryModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &category)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
@@ -67,14 +90,42 @@ func (u *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(updated), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityCategory,
+		EntityID:    &updated.ID,
+		Description: "User updated category: " + updated.Name,
+	})
+
+	return dto.ToCategoryResponse(&updated), nil
 }
 
 func (u *CategoryUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.CategoryResponse{}, err
+	}
+
 	category, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.CategoryResponse{}, err
 	}
 
-	return dto.ToCategoryResponse(category), nil
+	action := domain.ActionActivate
+	desc := "User activated category: " + category.Name
+	if !status {
+		action = domain.ActionDeactivate
+		desc = "User deactivated category: " + category.Name
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      action,
+		Entity:      domain.EntityCategory,
+		EntityID:    &category.ID,
+		Description: desc,
+	})
+
+	return dto.ToCategoryResponse(&category), nil
 }

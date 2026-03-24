@@ -26,7 +26,7 @@ type UserResponse struct {
 	CreatedAt string     `json:"createdAt"`
 }
 
-func ToUserResponse(u domain.User) UserResponse {
+func ToUserResponse(u *domain.User) UserResponse {
 	return UserResponse{
 		ID:        u.ID,
 		Name:      u.Name,
@@ -37,7 +37,7 @@ func ToUserResponse(u domain.User) UserResponse {
 	}
 }
 
-func ToCreateUserModel(req CreateUserRequest) domain.User {
+func ToCreateUserModel(req *CreateUserRequest) domain.User {
 	return domain.User{
 		Name:     req.Name,
 		Email:    req.Email,
@@ -46,7 +46,7 @@ func ToCreateUserModel(req CreateUserRequest) domain.User {
 	}
 }
 
-func ToUpdateUserModel(req UpdateUserRequest) domain.User {
+func ToUpdateUserModel(req *UpdateUserRequest) domain.User {
 	return domain.User{
 		Name:     req.Name,
 		Email:    req.Email,

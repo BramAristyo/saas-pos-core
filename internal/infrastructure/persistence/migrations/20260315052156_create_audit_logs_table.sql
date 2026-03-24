@@ -6,7 +6,6 @@ CREATE TABLE audit_logs (
   entity      VARCHAR(50) NOT NULL,
   entity_id   UUID,
   description TEXT,
-  ip_address  VARCHAR(50),
   created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 

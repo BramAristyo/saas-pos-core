@@ -48,17 +48,17 @@ type UpdateProductRequest struct {
 	IsActive         bool            `json:"isActive"`
 }
 
-func ToProductResponse(p domain.Product) ProductResponse {
+func ToProductResponse(p *domain.Product) ProductResponse {
 	var category *CategoryResponse
 	if p.Category != nil {
-		c := ToCategoryResponse(*p.Category)
+		c := ToCategoryResponse(p.Category)
 		category = &c
 	}
 
 	var mgs []ModifierGroupResponse
 	if len(p.ProductModifiers) > 0 {
 		for _, pm := range p.ProductModifiers {
-			mgs = append(mgs, ToModifierGroupResponse(pm.ModifierGroup))
+			mgs = append(mgs, ToModifierGroupResponse(&pm.ModifierGroup))
 		}
 	}
 
@@ -85,7 +85,7 @@ func ToProductResponsePagination(p []ProductResponse, f filter.PaginationWithInp
 	}
 }
 
-func ToProductModel(req CreateProductRequest) domain.Product {
+func ToProductModel(req *CreateProductRequest) domain.Product {
 	var pms []domain.ProductModifier
 	for _, mgID := range req.ModifierGroupIDs {
 		pms = append(pms, domain.ProductModifier{
@@ -105,7 +105,7 @@ func ToProductModel(req CreateProductRequest) domain.Product {
 	}
 }
 
-func ToUpdateProductModel(req UpdateProductRequest) domain.Product {
+func ToUpdateProductModel(req *UpdateProductRequest) domain.Product {
 	var pms []domain.ProductModifier
 	for _, mgID := range req.ModifierGroupIDs {
 		pms = append(pms, domain.ProductModifier{

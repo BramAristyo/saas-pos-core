@@ -4,18 +4,24 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
 type BundlingUseCase struct {
-	Repo *repository.BundlingRepository
+	Repo       *repository.BundlingRepository
+	LogUseCase *AuditLogUseCase
 }
 
-func NewBundlingUseCase(r *repository.BundlingRepository) *BundlingUseCase {
-	return &BundlingUseCase{Repo: r}
+func NewBundlingUseCase(r *repository.BundlingRepository, log *AuditLogUseCase) *BundlingUseCase {
+	return &BundlingUseCase{
+		Repo:       r,
+		LogUseCase: log,
+	}
 }
 
 func (u *BundlingUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.BundlingPackagePaginationResponse, error) {
@@ -33,37 +39,72 @@ func (u *BundlingUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.Bundl
 		return dto.BundlingPackageResponse{}, err
 	}
 
-	return dto.ToBundlingPackageResponse(bp), nil
+	return dto.ToBundlingPackageResponse(&bp), nil
 }
 
 func (u *BundlingUseCase) Store(ctx context.Context, req dto.CreateBundlingPackageRequest) (dto.BundlingPackageResponse, error) {
-	bp := dto.ToBundlingPackageModel(req)
+	userId, _ := helper.ExtractUserID(ctx)
+	bp := dto.ToBundlingPackageModel(&req)
 
-	if _, err := u.Repo.Store(ctx, &bp); err != nil {
+	stored, err := u.Repo.Store(ctx, &bp)
+	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.BundlingPackageResponse{}, usecase_errors.DuplicateEntry
 		}
-		return dto.BundlingPackageResponse{}, nil
+		return dto.BundlingPackageResponse{}, err
 	}
 
-	return dto.ToBundlingPackageResponse(bp), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionCreate,
+		Entity:      domain.EntityBundling,
+		EntityID:    &stored.ID,
+		Description: "User created a new bundling package: " + stored.Name,
+	})
+
+	return dto.ToBundlingPackageResponse(&stored), nil
 }
 
 func (u *BundlingUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateBundlingPackageRequest) (dto.BundlingPackageResponse, error) {
-	bp := dto.ToUpdateBundlingPackageModel(req)
+	userId, _ := helper.ExtractUserID(ctx)
+	bp := dto.ToUpdateBundlingPackageModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &bp)
 	if err != nil {
 		return dto.BundlingPackageResponse{}, err
 	}
 
-	return dto.ToBundlingPackageResponse(updated), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityBundling,
+		EntityID:    &updated.ID,
+		Description: "User updated bundling package: " + updated.Name,
+	})
+
+	return dto.ToBundlingPackageResponse(&updated), nil
 }
 
 func (u *BundlingUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.BundlingPackageResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
 	bp, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.BundlingPackageResponse{}, err
 	}
 
-	return dto.ToBundlingPackageResponse(bp), nil
+	action := domain.ActionActivate
+	desc := "User activated bundling package: " + bp.Name
+	if !status {
+		action = domain.ActionDeactivate
+		desc = "User deactivated bundling package: " + bp.Name
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      action,
+		Entity:      domain.EntityBundling,
+		EntityID:    &bp.ID,
+		Description: desc,
+	})
+
+	return dto.ToBundlingPackageResponse(&bp), nil
 }

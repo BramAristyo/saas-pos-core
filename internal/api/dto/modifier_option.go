@@ -39,10 +39,10 @@ type UpdateModifierOptionRequest struct {
 	IsActive        bool            `json:"isActive"`
 }
 
-func ToModifierOptionResponse(mo domain.ModifierOption) ModifierOptionResponse {
+func ToModifierOptionResponse(mo *domain.ModifierOption) ModifierOptionResponse {
 	var mg *ModifierGroupResponse
 	if mo.ModifierGroup != nil {
-		c := ToModifierGroupResponse(*mo.ModifierGroup)
+		c := ToModifierGroupResponse(mo.ModifierGroup)
 		mg = &c
 	}
 
@@ -66,7 +66,7 @@ func ToModifierOptionResponsePagination(mo []ModifierOptionResponse, f filter.Pa
 	}
 }
 
-func ToModifierOptionModel(req CreateModifierOptionRequest) domain.ModifierOption {
+func ToModifierOptionModel(req *CreateModifierOptionRequest) domain.ModifierOption {
 	return domain.ModifierOption{
 		ModifierGroupID: req.ModifierGroupID,
 		Name:            req.Name,
@@ -76,7 +76,7 @@ func ToModifierOptionModel(req CreateModifierOptionRequest) domain.ModifierOptio
 	}
 }
 
-func ToUpdateModifierOptionModel(req UpdateModifierOptionRequest) domain.ModifierOption {
+func ToUpdateModifierOptionModel(req *UpdateModifierOptionRequest) domain.ModifierOption {
 	return domain.ModifierOption{
 		ModifierGroupID: req.ModifierGroupID,
 		Name:            req.Name,

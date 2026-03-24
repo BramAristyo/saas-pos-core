@@ -42,7 +42,7 @@ type UpdateDiscountRequest struct {
 	IsActive  bool                  `json:"isActive"`
 }
 
-func ToCreateDiscountModel(req CreateDiscountRequest) domain.Discount {
+func ToCreateDiscountModel(req *CreateDiscountRequest) domain.Discount {
 	var startDate, endDate *time.Time
 	if req.StartDate != nil {
 		t, _ := time.Parse("2006-01-02", *req.StartDate)
@@ -63,7 +63,7 @@ func ToCreateDiscountModel(req CreateDiscountRequest) domain.Discount {
 	}
 }
 
-func ToUpdateDiscountModel(req UpdateDiscountRequest) domain.Discount {
+func ToUpdateDiscountModel(req *UpdateDiscountRequest) domain.Discount {
 	var startDate, endDate *time.Time
 	if req.StartDate != nil {
 		t, _ := time.Parse("2006-01-02", *req.StartDate)
@@ -84,7 +84,7 @@ func ToUpdateDiscountModel(req UpdateDiscountRequest) domain.Discount {
 	}
 }
 
-func ToDiscountResponse(d domain.Discount) DiscountResponse {
+func ToDiscountResponse(d *domain.Discount) DiscountResponse {
 	var startDate, endDate *string
 	if d.StartDate != nil {
 		s := d.StartDate.Format("2006-01-02")
@@ -110,7 +110,7 @@ func ToDiscountResponse(d domain.Discount) DiscountResponse {
 func ToDiscountResponses(ds []domain.Discount) []DiscountResponse {
 	dsRes := make([]DiscountResponse, len(ds))
 	for i, d := range ds {
-		dsRes[i] = ToDiscountResponse(d)
+		dsRes[i] = ToDiscountResponse(&d)
 	}
 
 	return dsRes

@@ -67,14 +67,14 @@ func toBundlingItemResponses(bis []domain.BundlingItem) []BundlingItemResponse {
 			ID:                bi.ID,
 			BundlingPackageID: bi.BundlingPackageID,
 			ProductID:         bi.ProductID,
-			Product:           ToProductResponse(bi.Product),
+			Product:           ToProductResponse(&bi.Product),
 			Qty:               bi.Qty,
 		}
 	}
 	return bisRes
 }
 
-func ToBundlingPackageResponse(bp domain.BundlingPackage) BundlingPackageResponse {
+func ToBundlingPackageResponse(bp *domain.BundlingPackage) BundlingPackageResponse {
 	return BundlingPackageResponse{
 		ID:            bp.ID,
 		Name:          bp.Name,
@@ -91,7 +91,7 @@ func ToBundlingPackageResponse(bp domain.BundlingPackage) BundlingPackageRespons
 func toBundlingPackageResponses(bps []domain.BundlingPackage) []BundlingPackageResponse {
 	bpsRes := make([]BundlingPackageResponse, len(bps))
 	for i, bp := range bps {
-		bpsRes[i] = ToBundlingPackageResponse(bp)
+		bpsRes[i] = ToBundlingPackageResponse(&bp)
 	}
 
 	return bpsRes
@@ -115,7 +115,7 @@ func toBundlingItemModels(req []BundlingItemRequest) []domain.BundlingItem {
 	return bis
 }
 
-func ToBundlingPackageModel(req CreateBundlingPackageRequest) domain.BundlingPackage {
+func ToBundlingPackageModel(req *CreateBundlingPackageRequest) domain.BundlingPackage {
 	return domain.BundlingPackage{
 		Name:          req.Name,
 		Description:   req.Description,
@@ -126,7 +126,7 @@ func ToBundlingPackageModel(req CreateBundlingPackageRequest) domain.BundlingPac
 	}
 }
 
-func ToUpdateBundlingPackageModel(req UpdateBundlingPackageRequest) domain.BundlingPackage {
+func ToUpdateBundlingPackageModel(req *UpdateBundlingPackageRequest) domain.BundlingPackage {
 	return domain.BundlingPackage{
 		Name:          req.Name,
 		Description:   req.Description,

@@ -50,7 +50,7 @@ type UpdateSalesTypeRequest struct {
 	Charges []UpdateAdditionalChargeRequest `json:"charges"`
 }
 
-func ToAdditionalChargeResponse(c domain.AdditionalCharge) AdditionalChargeResponse {
+func ToAdditionalChargeResponse(c *domain.AdditionalCharge) AdditionalChargeResponse {
 	return AdditionalChargeResponse{
 		ID:     c.ID,
 		Name:   c.Name,
@@ -59,10 +59,10 @@ func ToAdditionalChargeResponse(c domain.AdditionalCharge) AdditionalChargeRespo
 	}
 }
 
-func ToSalesTypeResponse(s domain.SalesType) SalesTypeResponse {
+func ToSalesTypeResponse(s *domain.SalesType) SalesTypeResponse {
 	charges := make([]AdditionalChargeResponse, 0, len(s.Charges))
 	for _, c := range s.Charges {
-		charges = append(charges, ToAdditionalChargeResponse(c))
+		charges = append(charges, ToAdditionalChargeResponse(&c))
 	}
 
 	return SalesTypeResponse{
@@ -81,7 +81,7 @@ func ToSalesTypeResponsePagination(s []SalesTypeResponse, p filter.PaginationWit
 	}
 }
 
-func ToCreateSalesTypeModel(req CreateSalesTypeRequest) domain.SalesType {
+func ToCreateSalesTypeModel(req *CreateSalesTypeRequest) domain.SalesType {
 	charges := make([]domain.AdditionalCharge, 0, len(req.Charges))
 	for _, c := range req.Charges {
 		charges = append(charges, domain.AdditionalCharge{
@@ -99,7 +99,7 @@ func ToCreateSalesTypeModel(req CreateSalesTypeRequest) domain.SalesType {
 	}
 }
 
-func ToUpdateSalesTypeModel(req UpdateSalesTypeRequest) domain.SalesType {
+func ToUpdateSalesTypeModel(req *UpdateSalesTypeRequest) domain.SalesType {
 	charges := make([]domain.AdditionalCharge, 0, len(req.Charges))
 	for _, c := range req.Charges {
 		var id uuid.UUID

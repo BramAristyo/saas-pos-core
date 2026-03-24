@@ -30,7 +30,7 @@ type UpdateCategoryRequest struct {
 	IsActive    bool   `json:"isActive"`
 }
 
-func ToCreateCategoryModel(req CreateCategoryRequest) domain.Category {
+func ToCreateCategoryModel(req *CreateCategoryRequest) domain.Category {
 	return domain.Category{
 		Name:        req.Name,
 		Description: req.Description,
@@ -38,7 +38,7 @@ func ToCreateCategoryModel(req CreateCategoryRequest) domain.Category {
 	}
 }
 
-func ToUpdateCategoryModel(req UpdateCategoryRequest) domain.Category {
+func ToUpdateCategoryModel(req *UpdateCategoryRequest) domain.Category {
 	return domain.Category{
 		Name:        req.Name,
 		Description: req.Description,
@@ -46,7 +46,7 @@ func ToUpdateCategoryModel(req UpdateCategoryRequest) domain.Category {
 	}
 }
 
-func ToCategoryResponse(c domain.Category) CategoryResponse {
+func ToCategoryResponse(c *domain.Category) CategoryResponse {
 	return CategoryResponse{
 		ID:          c.ID,
 		Name:        c.Name,

@@ -4,19 +4,23 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/helper"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
 type ProductUseCase struct {
-	Repo *repository.ProductRepository
+	Repo       *repository.ProductRepository
+	LogUseCase *AuditLogUseCase
 }
 
-func NewProductUseCase(repo *repository.ProductRepository) *ProductUseCase {
+func NewProductUseCase(repo *repository.ProductRepository, log *AuditLogUseCase) *ProductUseCase {
 	return &ProductUseCase{
-		Repo: repo,
+		Repo:       repo,
+		LogUseCase: log,
 	}
 }
 
@@ -27,8 +31,8 @@ func (u *ProductUseCase) Paginate(ctx context.Context, req filter.PaginationWith
 	}
 
 	productResponses := make([]dto.ProductResponse, 0, len(products))
-	for _, p := range products {
-		productResponses = append(productResponses, dto.ToProductResponse(p))
+	for i := range products {
+		productResponses = append(productResponses, dto.ToProductResponse(&products[i]))
 	}
 
 	return dto.ToProductResponsePagination(productResponses, req, totalRows), nil
@@ -40,24 +44,43 @@ func (u *ProductUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.Produc
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(product), nil
+	return dto.ToProductResponse(&product), nil
 }
 
 func (u *ProductUseCase) Store(ctx context.Context, req dto.CreateProductRequest) (dto.ProductResponse, error) {
-	product := dto.ToProductModel(req)
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.ProductResponse{}, err
+	}
 
-	if _, err := u.Repo.Store(ctx, &product); err != nil {
+	product := dto.ToProductModel(&req)
+
+	stored, err := u.Repo.Store(ctx, &product)
+	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
 			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
 		}
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(product), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionCreate,
+		Entity:      domain.EntityProduct,
+		EntityID:    &stored.ID,
+		Description: "User created a new product: " + stored.Name,
+	})
+
+	return dto.ToProductResponse(&stored), nil
 }
 
 func (u *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateProductRequest) (dto.ProductResponse, error) {
-	product := dto.ToUpdateProductModel(req)
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.ProductResponse{}, err
+	}
+
+	product := dto.ToUpdateProductModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &product)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
@@ -66,14 +89,42 @@ func (u *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(updated), nil
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityProduct,
+		EntityID:    &updated.ID,
+		Description: "User updated product: " + updated.Name,
+	})
+
+	return dto.ToProductResponse(&updated), nil
 }
 
 func (u *ProductUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return dto.ProductResponse{}, err
+	}
+
 	product, err := u.Repo.UpdateStatus(ctx, id, status)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}
 
-	return dto.ToProductResponse(product), nil
+	action := domain.ActionActivate
+	desc := "User activated product: " + product.Name
+	if !status {
+		action = domain.ActionDeactivate
+		desc = "User deactivated product: " + product.Name
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      action,
+		Entity:      domain.EntityProduct,
+		EntityID:    &product.ID,
+		Description: desc,
+	})
+
+	return dto.ToProductResponse(&product), nil
 }

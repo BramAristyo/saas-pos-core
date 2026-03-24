@@ -21,7 +21,7 @@ func NewUserHandler(u *usecase.UserUseCase) *UserHandler {
 }
 
 func (h *UserHandler) GetAll(c *gin.Context) {
-	users, err := h.UseCase.GetAll()
+	users, err := h.UseCase.GetAll(c.Request.Context())
 	if err != nil {
 		c.Error(err)
 		return
@@ -36,7 +36,7 @@ func (h *UserHandler) FindById(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	user, err := h.UseCase.FindById(id)
+	user, err := h.UseCase.FindById(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
@@ -52,7 +52,7 @@ func (h *UserHandler) Store(c *gin.Context) {
 		return
 	}
 
-	created, err := h.UseCase.Store(user)
+	created, err := h.UseCase.Store(c.Request.Context(), user)
 	if err != nil {
 		c.Error(err)
 		return
@@ -74,7 +74,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 	}
 
 	fmt.Println(id, req.Email)
-	updated, err := h.UseCase.Update(id, req)
+	updated, err := h.UseCase.Update(c.Request.Context(), id, req)
 	if err != nil {
 		c.Error(err)
 		return
@@ -89,7 +89,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	if err := h.UseCase.Destroy(id); err != nil {
+	if err := h.UseCase.Destroy(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
@@ -103,7 +103,7 @@ func (h *UserHandler) Activate(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	res, err := h.UseCase.UpdateStatus(id, true)
+	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
 	if err != nil {
 		c.Error(err)
 		return
@@ -118,7 +118,7 @@ func (h *UserHandler) Deactivate(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	res, err := h.UseCase.UpdateStatus(id, false)
+	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
 	if err != nil {
 		c.Error(err)
 		return

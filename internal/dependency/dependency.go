@@ -24,36 +24,38 @@ type Handlers struct {
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	userRepository := repository.NewUserRepository(db)
+	auditLogRepository := repository.NewAuditLogRepository(db)
 
+	auditLogUseCase := usecase.NewAuditLogUseCase(auditLogRepository)
 	authUseCase := usecase.NewAuthUseCase(userRepository, cfg)
-	userUseCase := usecase.NewUserUseCase(userRepository)
+	userUseCase := usecase.NewUserUseCase(userRepository, auditLogUseCase)
 
 	categoryRepository := repository.NewCategoryRepository(db)
-	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository)
+	categoryUseCase := usecase.NewCategoryUseCase(categoryRepository, auditLogUseCase)
 
 	productRepository := repository.NewProductRepository(db)
-	productUseCase := usecase.NewProductUseCase(productRepository)
+	productUseCase := usecase.NewProductUseCase(productRepository, auditLogUseCase)
 
 	modifierGroupRepository := repository.NewModifierGroupRepository(db)
-	modifierGroupUseCase := usecase.NewModifierGroupUseCase(modifierGroupRepository)
+	modifierGroupUseCase := usecase.NewModifierGroupUseCase(modifierGroupRepository, auditLogUseCase)
 
 	modifierOptionRepository := repository.NewModifierOptionRepository(db)
-	modifierOptionUseCase := usecase.NewModifierOptionUseCase(modifierOptionRepository)
+	modifierOptionUseCase := usecase.NewModifierOptionUseCase(modifierOptionRepository, auditLogUseCase)
 
 	bundlingRepository := repository.NewBundlingRepository(db)
-	bundlingUseCase := usecase.NewBundlingUseCase(bundlingRepository)
+	bundlingUseCase := usecase.NewBundlingUseCase(bundlingRepository, auditLogUseCase)
 
 	taxRepository := repository.NewTaxRepository(db)
-	taxUseCase := usecase.NewTaxUseCase(taxRepository)
+	taxUseCase := usecase.NewTaxUseCase(taxRepository, auditLogUseCase)
 
 	discountRepository := repository.NewDiscountRepository(db)
-	discountUseCase := usecase.NewDiscountUseCase(discountRepository)
+	discountUseCase := usecase.NewDiscountUseCase(discountRepository, auditLogUseCase)
 
 	shiftRepository := repository.NewShiftRepository(db)
-	shiftUseCase := usecase.NewShiftUseCase(shiftRepository)
+	shiftUseCase := usecase.NewShiftUseCase(shiftRepository, auditLogUseCase)
 
 	salesTypeRepository := repository.NewSalesTypeRepository(db)
-	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository)
+	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository, auditLogUseCase)
 
 	return &Handlers{
 		Auth:           handler.NewAuthHandler(authUseCase),
