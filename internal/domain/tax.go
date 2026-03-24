@@ -19,3 +19,11 @@ type Tax struct {
 func (Tax) TableName() string {
 	return "taxes"
 }
+
+func (t *Tax) CalculateTaxAmount(base decimal.Decimal) decimal.Decimal {
+	if !t.IsActive {
+		return decimal.Zero
+	}
+
+	return base.Mul(t.Percentage).Div(decimal.NewFromInt(100))
+}

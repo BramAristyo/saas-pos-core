@@ -27,3 +27,26 @@ type AdditionalCharge struct {
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 }
+
+func (st *SalesType) CalculateTotalCharges(subtotal decimal.Decimal) decimal.Decimal {
+	total := decimal.Zero
+	for _, c := range st.Charges {
+		if !c.IsActive {
+			continue
+		}
+
+		switch c.Type {
+		case Percentage:
+			percent := c.Amount
+			if percent.GreaterThan(decimal.NewFromInt(100)) {
+				percent = decimal.NewFromInt(100)
+			}
+
+			total = total.Mul(percent.Div(decimal.NewFromInt(100)))
+		case Fixed:
+			total = total.Add(c.Amount)
+		}
+	}
+
+	return total
+}
