@@ -13,3 +13,11 @@ func ShiftRoutes(r *gin.RouterGroup, h *handler.ShiftHandler) {
 	r.POST("/close", h.CloseShift)
 	r.PUT("/expenses", h.UpsertExpenses)
 }
+
+func OrderRoutes(r *gin.RouterGroup, h *handler.OrderHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.POST("/calculate", h.CalculateAll)
+	r.PATCH("/:id/void", h.Void)
+}

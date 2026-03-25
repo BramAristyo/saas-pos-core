@@ -31,6 +31,7 @@ func (r *OrderRepository) Paginate(ctx context.Context, req filter.PaginationWit
 	orders := make([]domain.Order, 0, req.PaginationInput.PageSize)
 	if err := r.DB.WithContext(ctx).
 		Preload("Cashier").
+		Preload("SalesType").
 		Offset(req.Offset()).
 		Limit(req.PaginationInput.PageSize).
 		Find(&orders).

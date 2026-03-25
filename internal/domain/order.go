@@ -56,14 +56,31 @@ func (o *Order) CalculateAll() {
 	}
 	o.Subtotal = gross
 
-	// Calculate Order-level Discount
 	o.DiscountAmount = decimal.Zero
-	if o.Discount != nil {
-		switch o.Discount.Type {
-		case Percentage:
-			o.DiscountAmount = gross.Mul(o.Discount.Value.Div(decimal.NewFromInt(100)))
-		case Fixed:
-			o.DiscountAmount = o.Discount.Value
+	if o.Discount != nil && o.Discount.IsActive {
+		now := time.Now()
+		startOk := true
+		endOk := true
+
+		if o.Discount.StartDate != nil {
+			if now.Before(*o.Discount.StartDate) {
+				startOk = false
+			}
+		}
+
+		if o.Discount.EndDate != nil {
+			if now.After(*o.Discount.EndDate) {
+				endOk = false
+			}
+		}
+
+		if startOk && endOk {
+			switch o.Discount.Type {
+			case Percentage:
+				o.DiscountAmount = gross.Mul(o.Discount.Value.Div(decimal.NewFromInt(100)))
+			case Fixed:
+				o.DiscountAmount = o.Discount.Value
+			}
 		}
 	}
 

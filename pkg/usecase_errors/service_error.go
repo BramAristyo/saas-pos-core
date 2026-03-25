@@ -22,16 +22,19 @@ func IsUniqueViolation(err error) bool {
 }
 
 var (
-	EmailExist      = &UseCaseError{http.StatusConflict, "email already registered"}
-	DuplicateEntry  = &UseCaseError{http.StatusConflict, "data already exist"}
-	UserNotActive   = &UseCaseError{http.StatusForbidden, "user is not active"}
-	InvalidPassword = &UseCaseError{http.StatusUnauthorized, "invalid email or password"}
-	TokenRequired   = &UseCaseError{http.StatusUnauthorized, "token required"}
-	TokenExpired    = &UseCaseError{http.StatusUnauthorized, "token expired"}
-	TokenInvalid    = &UseCaseError{http.StatusUnauthorized, "token invalid"}
-	InvalidID       = &UseCaseError{http.StatusBadRequest, "invalid ID format"}
-	NotFound        = &UseCaseError{http.StatusNotFound, "resource not found"}
-	ShiftAlreadyOpen = &UseCaseError{http.StatusBadRequest, "user already has an open shift"}
-	NoOpenShift      = &UseCaseError{http.StatusNotFound, "no open shift found for this user"}
-	ForbiddenAccess  = &UseCaseError{http.StatusForbidden, "you don't have access to this resource"}
+	EmailExist         = &UseCaseError{http.StatusConflict, "email already registered"}
+	DuplicateEntry     = &UseCaseError{http.StatusConflict, "data already exist"}
+	UserNotActive      = &UseCaseError{http.StatusForbidden, "user is not active"}
+	InvalidPassword    = &UseCaseError{http.StatusUnauthorized, "invalid email or password"}
+	TokenRequired      = &UseCaseError{http.StatusUnauthorized, "token required"}
+	TokenExpired       = &UseCaseError{http.StatusUnauthorized, "token expired"}
+	TokenInvalid       = &UseCaseError{http.StatusUnauthorized, "token invalid"}
+	InvalidID          = &UseCaseError{http.StatusBadRequest, "invalid ID format"}
+	NotFound           = &UseCaseError{http.StatusNotFound, "resource not found"}
+	ShiftAlreadyOpen   = &UseCaseError{http.StatusBadRequest, "user already has an open shift"}
+	NoOpenShift        = &UseCaseError{http.StatusNotFound, "no open shift found for this user"}
+	ForbiddenAccess    = &UseCaseError{http.StatusForbidden, "you don't have access to this resource"}
+	InvalidOrderItem   = &UseCaseError{http.StatusBadRequest, "order item must have either product or bundling"}
+	EmptyOrderItems    = &UseCaseError{http.StatusBadRequest, "order must contain at least one item"}
+	OrderAlreadyVoided = &UseCaseError{http.StatusBadRequest, "order already voided"}
 )

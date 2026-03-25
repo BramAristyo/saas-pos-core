@@ -1,0 +1,21 @@
+info:
+  name: Void
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{url}}/orders/{{orderId}}/void"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "reason": "Wrong items"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

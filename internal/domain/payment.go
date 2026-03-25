@@ -22,4 +22,6 @@ type Payment struct {
 	Method    PaymentMethod
 	Amount    decimal.Decimal
 	CreatedAt time.Time `gorm:"autoCreateTime"`
+
+	Order Order `gorm:"foreignKey:OrderID"`
 }

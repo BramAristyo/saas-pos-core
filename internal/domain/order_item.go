@@ -35,17 +35,36 @@ func (oi *OrderItem) CalculateSubTotal() {
 	gross := price.Mul(qty)
 	discount := decimal.Zero
 
-	if oi.Discount != nil {
-		switch oi.Discount.Type {
-		case Percentage:
-			percent := oi.Discount.Value
-			if percent.GreaterThan(decimal.NewFromInt(100)) {
-				percent = decimal.NewFromInt(100)
-			}
+	// Apply discount only if present, active, and within its validity period (if provided).
+	if oi.Discount != nil && oi.Discount.IsActive {
+		now := time.Now()
+		startOk := true
+		endOk := true
 
-			discount = gross.Mul(percent.Div(decimal.NewFromInt(100)))
-		case Fixed:
-			discount = oi.Discount.Value
+		if oi.Discount.StartDate != nil {
+			if now.Before(*oi.Discount.StartDate) {
+				startOk = false
+			}
+		}
+
+		if oi.Discount.EndDate != nil {
+			if now.After(*oi.Discount.EndDate) {
+				endOk = false
+			}
+		}
+
+		if startOk && endOk {
+			switch oi.Discount.Type {
+			case Percentage:
+				percent := oi.Discount.Value
+				if percent.GreaterThan(decimal.NewFromInt(100)) {
+					percent = decimal.NewFromInt(100)
+				}
+
+				discount = gross.Mul(percent.Div(decimal.NewFromInt(100)))
+			case Fixed:
+				discount = oi.Discount.Value
+			}
 		}
 	}
 

@@ -21,6 +21,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		discounts := v1.Group("/discounts", middleware.Authentication(cfg))
 		shifts := v1.Group("/shifts", middleware.Authentication(cfg))
 		salesTypes := v1.Group("/sales-types", middleware.Authentication(cfg))
+		orders := v1.Group("/orders", middleware.Authentication(cfg))
 
 		v1.POST("", h.Auth.Login)
 
@@ -34,5 +35,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		DiscountRoutes(discounts, h.Discount)
 		ShiftRoutes(shifts, h.Shift)
 		SalesTypeRoutes(salesTypes, h.SalesType)
+		OrderRoutes(orders, h.Order)
 	}
 }

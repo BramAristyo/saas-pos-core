@@ -1,0 +1,35 @@
+info:
+  name: Calculate
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{url}}/orders/calculate"
+  body:
+    type: json
+    data: |-
+      {
+        "salesTypeId": "uuid",
+        "taxId": "uuid",
+        "discountId": "uuid",
+        "items": [
+          {
+            "productId": "uuid",
+            "quantity": 1
+          }
+        ],
+        "payments": [
+          {
+            "method": "cash",
+            "amount": 100000
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

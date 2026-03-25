@@ -16,6 +16,7 @@ const (
 	ActionActivate   AuditAction = "ACTIVATE"
 	ActionDeactivate AuditAction = "DEACTIVATE"
 	ActionLogin      AuditAction = "LOGIN"
+	ActionVoid       AuditAction = "VOID"
 )
 
 const (

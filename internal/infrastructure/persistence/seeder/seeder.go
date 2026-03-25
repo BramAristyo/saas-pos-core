@@ -23,4 +23,5 @@ func SeedAll(db *gorm.DB) {
 	SeedBundlingData(db)
 
 	SeedShiftData(db)
+	SeedOrderData(db)
 }

@@ -59,15 +59,15 @@ type OrderResponse struct {
 	CreatedAt  string             `json:"createdAt"`
 	UpdatedAt  string             `json:"updatedAt"`
 
-	Shift        ShiftResponse     `json:"shift"`
+	Shift        *ShiftResponse    `json:"shift,omitempty"`
 	Cashier      UserResponse      `json:"cashier"`
 	SalesType    SalesTypeResponse `json:"salesType"`
 	Tax          *TaxResponse      `json:"tax,omitempty"`
 	Discount     *DiscountResponse `json:"discount,omitempty"`
 	VoidedByUser *UserResponse     `json:"voidedByUser,omitempty"`
 
-	Items    []OrderItemResponse     `json:"items"`
-	Payments []PaymentMethodResponse `json:"payments"`
+	Items    []OrderItemResponse     `json:"items,omitempty"`
+	Payments []PaymentMethodResponse `json:"payments,omitempty"`
 }
 
 type OrderResponsePagination struct {
@@ -150,6 +150,9 @@ func ToOrderResponse(order domain.Order) OrderResponse {
 		voidedAt = &vStr
 	}
 
+	cashierRes := ToUserResponse(&order.Cashier)
+	salesTypeRes := ToSalesTypeResponse(&order.SalesType)
+
 	res := OrderResponse{
 		ID:             order.ID,
 		ShiftID:        order.ShiftID,
@@ -169,9 +172,14 @@ func ToOrderResponse(order domain.Order) OrderResponse {
 		VoidedAt:       voidedAt,
 		CreatedAt:      order.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt:      order.UpdatedAt.Format("2006-01-02 15:04:05"),
-		Shift:          ToShiftResponse(&order.Shift),
-		Cashier:        ToUserResponse(&order.Cashier),
-		SalesType:      ToSalesTypeResponse(&order.SalesType),
+		Cashier:        cashierRes,
+		SalesType:      salesTypeRes,
+	}
+
+	// Only include Shift when it's present (avoid always setting pointer which defeats omitempty)
+	if order.Shift.ID != uuid.Nil {
+		shiftRes := ToShiftResponse(&order.Shift)
+		res.Shift = &shiftRes
 	}
 
 	if order.Tax != nil {
