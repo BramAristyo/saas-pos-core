@@ -3,7 +3,7 @@ version: "3.8"
 services:
   postgres:
     image: postgres:16
-    container_name: go-pos-mawish
+    container_name: go-pos-postgres
     restart: unless-stopped
     shm_size: 128mb
     environment:

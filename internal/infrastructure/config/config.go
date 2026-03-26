@@ -13,6 +13,7 @@ type ServerConfig struct {
 	ReadTimeout    time.Duration
 	WriteTimeout   time.Duration
 	MaxHeaderBytes int
+	RunMode        string
 }
 
 type PostgresConfig struct {
@@ -70,6 +71,7 @@ func GetConfig() *Config {
 			ReadTimeout:    viper.GetDuration("SERVER_READ_TIMEOUT"),
 			WriteTimeout:   viper.GetDuration("SERVER_WRITE_TIMEOUT"),
 			MaxHeaderBytes: viper.GetInt("SERVER_MAX_HEADER_BYTES"),
+			RunMode:        viper.GetString("SERVER_MODE"),
 		},
 		Postgres: PostgresConfig{
 			Host:            viper.GetString("DB_HOST"),
