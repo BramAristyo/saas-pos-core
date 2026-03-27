@@ -88,3 +88,5 @@ func (r *DiscountRepository) UpdateStatus(ctx context.Context, id uuid.UUID, sta
 
 	return d, nil
 }
+
+func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error)

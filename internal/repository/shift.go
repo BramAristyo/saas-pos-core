@@ -147,3 +147,5 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 
 	return shift, nil
 }
+
+func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error)

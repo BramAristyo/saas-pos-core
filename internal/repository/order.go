@@ -127,3 +127,52 @@ func (r *OrderRepository) GetLatestOrder(ctx context.Context) (domain.Order, err
 
 	return latest, nil
 }
+
+func (r *OrderRepository) SalesSummary(ctx context.Context, req filter.DynamicFilter) (domain.SalesSummary, error) {
+	var summary domain.SalesSummary
+
+	err := r.DB.WithContext(ctx).
+		Model(&domain.Order{}).
+		Select(`
+			COAlESCE(SUM(subtotal), 0) AS gross_sales,
+			COALESCE(SUM(discount_amount), 0) AS discounts,
+			COALESCE(SUM(subtotal - discount_amount), 0) AS net_sales,
+			COALESCE(SUM(charge_amount), 0) AS gratuity,
+			COALESCE(SUM(tax_amount), 0) AS tax,
+			COALESCE(SUM(total), 0) AS total
+		`).
+		Where("status = ?", domain.OrderCompleted).
+		Scan(&summary).Error
+
+	if err != nil {
+		return domain.SalesSummary{}, nil
+	}
+
+	return summary, nil
+}
+
+func (r *OrderRepository) GrossProfit(ctx context.Context, req filter.DynamicFilter) (domain.GrossProfit, error) {
+	var summary domain.GrossProfit
+
+	err := r.DB.WithContext(ctx).
+		Model(&domain.Order{}).
+		Select(`
+			COAlESCE(SUM(subtotal), 0) AS gross_sales,
+			COALESCE(SUM(discount_amount), 0) AS discounts,
+			COALESCE(SUM(subtotal - discount_amount), 0) AS net_sales,
+			COALESCE(SUM(item_agg.total_cogs), 0) AS cogs
+		`).
+		Joins(`LEFT JOIN(
+			SELECT order_id, SUM(product_cogs * quantity) AS total_cogs
+			FROM order_items
+			GROUP BY order_id
+			) item_agg ON item_agg.order_id = orders.id`).
+		Where("status = ?", domain.OrderCompleted).
+		Scan(&summary).Error
+
+	if err != nil {
+		return domain.GrossProfit{}, nil
+	}
+
+	return summary, nil
+}
