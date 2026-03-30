@@ -148,4 +148,56 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 	return shift, nil
 }
 
-func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error)
+func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error) {
+	var totalRows int64
+	shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
+
+	query := r.DB.WithContext(ctx).
+		Table("shifts").
+		Joins("JOIN users ON shifts.opened_by = users.id")
+
+	if err := query.Count(&totalRows).Error; err != nil {
+		return 0, nil, err
+	}
+
+	if totalRows == 0 {
+		return 0, nil, nil
+	}
+
+	cashPaymentsSub := r.DB.Table("payments").
+		Select("SUM(payments.amount)").
+		Joins("JOIN orders ON orders.id = payments.order_id").
+		Where("orders.shift_id = shifts.id AND payments.method = 'cash' AND orders.status = ?", domain.OrderCompleted)
+
+	cashInSub := r.DB.Table("shift_expenses").
+		Select("SUM(amount)").
+		Where("shift_id = shifts.id AND type = ?", domain.CashIn)
+
+	cashOutSub := r.DB.Table("shift_expenses").
+		Select("SUM(amount)").
+		Where("shift_id = shifts.id AND type = ?", domain.CashOut)
+
+	err := query.
+		Select(`
+			users.name as cashier_name,
+			TO_CHAR(shifts.opened_at, 'YYYY-MM-DD HH24:MI:SS') as start_time,
+			TO_CHAR(shifts.closed_at, 'YYYY-MM-DD HH24:MI:SS') as end_time,
+			(
+				shifts.opening_cash
+				+ COALESCE((?), 0)
+				+ COALESCE((?), 0)
+				- COALESCE((?), 0)
+			) as total_expected,
+			COALESCE(shifts.closing_cash, 0) as total_actual
+		`, cashPaymentsSub, cashInSub, cashOutSub).
+		Order("shifts.opened_at DESC").
+		Offset(req.Offset()).
+		Limit(req.PaginationInput.PageSize).
+		Scan(&shiftRecs).Error
+
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return totalRows, shiftRecs, nil
+}

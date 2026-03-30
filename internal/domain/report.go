@@ -45,3 +45,7 @@ type ShiftReconciliaton struct {
 	TotalActual   decimal.Decimal
 	Difference    decimal.Decimal
 }
+
+func (sr *ShiftReconciliaton) CalculateDiff() {
+	sr.Difference = sr.TotalExpected.Sub(sr.TotalActual)
+}

@@ -176,3 +176,33 @@ func (r *OrderRepository) GrossProfit(ctx context.Context, req filter.DynamicFil
 
 	return summary, nil
 }
+
+func (r *OrderRepository) TransactionReport(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Transaction, error) {
+	var totalRows int64
+	var transactions []domain.Transaction
+
+	query := r.DB.WithContext(ctx).
+		Model(&domain.OrderItem{}).
+		Select("orders.order_number, TO_CHAR(orders.created_at, 'YYYY-MM-DD HH24:MI:SS') as time, order_items.product_name as product, order_items.subtotal as price").
+		Joins("JOIN orders ON order_items.order_id = orders.id").
+		Where("orders.status = ?", domain.OrderCompleted).
+		Order("orders.created_at DESC")
+
+	if err := query.Count(&totalRows).Error; err != nil {
+		return 0, nil, err
+	}
+
+	if totalRows == 0 {
+		return 0, nil, nil
+	}
+
+	err := query.Offset(req.Offset()).
+		Limit(req.PaginationInput.PageSize).
+		Scan(&transactions).Error
+
+	if err != nil {
+		return 0, nil, err
+	}
+
+	return totalRows, transactions, nil
+}
