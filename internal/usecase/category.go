@@ -101,30 +101,53 @@ func (u *CategoryUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 	return dto.ToCategoryResponse(&updated), nil
 }
 
-func (u *CategoryUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.CategoryResponse, error) {
+func (u *CategoryUseCase) Delete(ctx context.Context, id uuid.UUID) error {
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	category, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionDelete,
+		Entity:      domain.EntityCategory,
+		EntityID:    &id,
+		Description: "User deleted category: " + category.Name,
+	})
+
+	return nil
+}
+
+func (u *CategoryUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.CategoryResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {
 		return dto.CategoryResponse{}, err
 	}
 
-	category, err := u.Repo.UpdateStatus(ctx, id, status)
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.CategoryResponse{}, err
+	}
+
+	category, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.CategoryResponse{}, err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated category: " + category.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated category: " + category.Name
-	}
-
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionRestore,
 		Entity:      domain.EntityCategory,
-		EntityID:    &category.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User restored category: " + category.Name,
 	})
 
 	return dto.ToCategoryResponse(&category), nil

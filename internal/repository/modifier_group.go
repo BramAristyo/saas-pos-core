@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -23,11 +24,11 @@ func (r *ModifierGroupRepository) Paginate(ctx context.Context, req filter.Pagin
 	var mg []domain.ModifierGroup
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.ModifierGroup{}).Where("is_active = ?", true).Count(&totalRows).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Model(&domain.ModifierGroup{}).Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&mg).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&mg).Error; err != nil {
 		return 0, nil, err
 	}
 
@@ -38,7 +39,7 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (d
 	var mg domain.ModifierGroup
 
 	err := r.DB.WithContext(ctx).
-		Preload("ModifierOptions", "is_active = ?", true).
+		Preload("ModifierOptions").
 		Preload("ProductModifiers").
 		Where("id = ?", id).
 		First(&mg).
@@ -68,7 +69,6 @@ func (r *ModifierGroupRepository) Update(ctx context.Context, id uuid.UUID, mg *
 	updateData := map[string]any{
 		"name":        mg.Name,
 		"is_required": mg.IsRequired,
-		"is_active":   mg.IsActive,
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
@@ -78,15 +78,22 @@ func (r *ModifierGroupRepository) Update(ctx context.Context, id uuid.UUID, mg *
 	return existing, nil
 }
 
-func (r *ModifierGroupRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.ModifierGroup, error) {
-	var existing domain.ModifierGroup
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return domain.ModifierGroup{}, err
+func (r *ModifierGroupRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.ModifierGroup{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&existing).Update("is_active", status).Error; err != nil {
-		return domain.ModifierGroup{}, err
+func (r *ModifierGroupRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.ModifierGroup{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return existing, nil
+	return result.Error
 }

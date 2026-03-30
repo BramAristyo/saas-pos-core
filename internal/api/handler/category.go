@@ -87,34 +87,33 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update category")
 }
 
-func (h *CategoryHandler) Activate(c *gin.Context) {
+func (h *CategoryHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate category")
+	response.OK(c, nil, "success delete category")
 }
 
-func (h *CategoryHandler) Deactivate(c *gin.Context) {
+func (h *CategoryHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success deactivate category")
+	response.OK(c, res, "success restore category")
 }

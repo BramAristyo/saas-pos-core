@@ -17,7 +17,7 @@ type ProductResponse struct {
 	Price          decimal.Decimal         `json:"price"`
 	Cogs           decimal.Decimal         `json:"cogs"`
 	ImageURL       *string                 `json:"imageUrl"`
-	IsActive       bool                    `json:"isActive"`
+	DeletedAt      *string                 `json:"deletedAt,omitempty"`
 	CreatedAt      string                  `json:"createdAt"`
 	UpdatedAt      string                  `json:"updatedAt"`
 }
@@ -45,7 +45,6 @@ type UpdateProductRequest struct {
 	Price            decimal.Decimal `json:"price" binding:"required"`
 	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
 	ImageURL         *string         `json:"imageUrl"`
-	IsActive         bool            `json:"isActive"`
 }
 
 func ToProductResponse(p *domain.Product) ProductResponse {
@@ -62,7 +61,7 @@ func ToProductResponse(p *domain.Product) ProductResponse {
 		}
 	}
 
-	return ProductResponse{
+	resp := ProductResponse{
 		ID:             p.ID,
 		CategoryID:     p.CategoryID,
 		Category:       category,
@@ -72,10 +71,16 @@ func ToProductResponse(p *domain.Product) ProductResponse {
 		Price:          p.Price,
 		Cogs:           p.Cogs,
 		ImageURL:       p.ImageURL,
-		IsActive:       p.IsActive,
 		CreatedAt:      p.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt:      p.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
+
+	if p.DeletedAt.Valid {
+		t := p.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &t
+	}
+
+	return resp
 }
 
 func ToProductResponsePagination(p []ProductResponse, f filter.PaginationWithInputFilter, totalRows int64) ProductResponsePagination {
@@ -101,7 +106,6 @@ func ToProductModel(req *CreateProductRequest) domain.Product {
 		Price:            req.Price,
 		Cogs:             req.Cogs,
 		ImageURL:         req.ImageURL,
-		IsActive:         true,
 	}
 }
 
@@ -121,6 +125,5 @@ func ToUpdateProductModel(req *UpdateProductRequest) domain.Product {
 		Price:            req.Price,
 		Cogs:             req.Cogs,
 		ImageURL:         req.ImageURL,
-		IsActive:         req.IsActive,
 	}
 }

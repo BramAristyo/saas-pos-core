@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -21,7 +22,7 @@ func (r *SalesTypeRepository) Paginate(ctx context.Context, req filter.Paginatio
 	salesTypes := make([]domain.SalesType, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.SalesType{}).Where("is_active = ?", true).Count(&totalRows).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Model(&domain.SalesType{}).Count(&totalRows).Error; err != nil {
 		return 0, []domain.SalesType{}, err
 	}
 
@@ -30,7 +31,6 @@ func (r *SalesTypeRepository) Paginate(ctx context.Context, req filter.Paginatio
 	}
 
 	if err := r.DB.WithContext(ctx).
-		Where("is_active = ?", true).
 		Offset(req.Offset()).
 		Limit(req.PaginationInput.PageSize).
 		Order("created_at desc").
@@ -45,7 +45,7 @@ func (r *SalesTypeRepository) Paginate(ctx context.Context, req filter.Paginatio
 func (r *SalesTypeRepository) FindById(ctx context.Context, id uuid.UUID) (domain.SalesType, error) {
 	var existing domain.SalesType
 	if err := r.DB.WithContext(ctx).
-		Where("id = ? AND is_active = ?", id, true).
+		Where("id = ?", id).
 		Preload("Charges").
 		First(&existing).
 		Error; err != nil {
@@ -110,7 +110,7 @@ func (r *SalesTypeRepository) SmartUpdate(ctx context.Context, id uuid.UUID, s *
 		}
 
 		if len(toDelete) > 0 {
-			if err := tx.Where("id IN ?", toDelete).Unscoped().Delete(&domain.AdditionalCharge{}).Error; err != nil {
+			if err := tx.Where("id IN ?", toDelete).Delete(&domain.AdditionalCharge{}).Error; err != nil {
 				return err
 			}
 		}
@@ -140,15 +140,22 @@ func (r *SalesTypeRepository) SmartUpdate(ctx context.Context, id uuid.UUID, s *
 	return r.FindById(ctx, id)
 }
 
-func (r *SalesTypeRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.SalesType, error) {
-	var existing domain.SalesType
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return domain.SalesType{}, err
+func (r *SalesTypeRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.SalesType{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&existing).Update("is_active", status).Error; err != nil {
-		return domain.SalesType{}, err
+func (r *SalesTypeRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.SalesType{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return existing, nil
+	return result.Error
 }

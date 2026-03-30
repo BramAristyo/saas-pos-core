@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -63,7 +64,6 @@ func (r *TaxRepository) Update(ctx context.Context, id uuid.UUID, t *domain.Tax)
 	updateData := map[string]any{
 		"name":       t.Name,
 		"percentage": t.Percentage,
-		"is_active":  t.IsActive,
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
@@ -73,43 +73,31 @@ func (r *TaxRepository) Update(ctx context.Context, id uuid.UUID, t *domain.Tax)
 	return existing, nil
 }
 
-func (r *TaxRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.Tax, error) {
-	var t domain.Tax
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&t).Error; err != nil {
-		return domain.Tax{}, err
+func (r *TaxRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.Tax{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	if err := r.DB.WithContext(ctx).Model(&t).Update("is_active", status).Error; err != nil {
-		return domain.Tax{}, err
-	}
-
-	return t, nil
+	return result.Error
 }
 
-func (r *TaxRepository) DeactiveAll(ctx context.Context) error {
-	err := r.DB.Model(domain.Tax{}).Where("is_active = ?", true).Update("is_active", false).Error
+func (r *TaxRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.Tax{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
+	}
+	return result.Error
+}
+
+func (r *TaxRepository) DeleteAll(ctx context.Context) error {
+	err := r.DB.WithContext(ctx).Where("deleted_at IS NULL").Delete(&domain.Tax{}).Error
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func (r *TaxRepository) FindActiveTaxes(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Tax, error) {
-	t := make([]domain.Tax, 0, req.PaginationInput.PageSize)
-	var totalRows int64
-
-	if err := r.DB.WithContext(ctx).Model(&domain.Tax{}).Where("is_active = ?", true).Count(&totalRows).Error; err != nil {
-		return 0, []domain.Tax{}, err
-	}
-
-	if totalRows == 0 {
-		return 0, []domain.Tax{}, nil
-	}
-
-	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&t).Error; err != nil {
-		return 0, []domain.Tax{}, err
-	}
-
-	return totalRows, t, nil
 }

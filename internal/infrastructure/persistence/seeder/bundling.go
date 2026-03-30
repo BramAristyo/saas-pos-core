@@ -20,7 +20,6 @@ func SeedBundlingData(db *gorm.DB) {
 		Description: &description1,
 		Price:       decimal.NewFromInt(35000),
 		Cogs:        decimal.NewFromInt(15000),
-		IsActive:    true,
 	}
 
 	if err := db.Where(domain.BundlingPackage{Name: "Breakfast Bundle"}).FirstOrCreate(&bundlingPackage).Error; err != nil {

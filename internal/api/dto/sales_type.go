@@ -18,7 +18,7 @@ type SalesTypeResponse struct {
 	ID        uuid.UUID                  `json:"id"`
 	Name      string                     `json:"name"`
 	Charges   []AdditionalChargeResponse `json:"charges,omitempty"`
-	IsActive  bool                       `json:"isActive"`
+	DeletedAt *string                    `json:"deletedAt,omitempty"`
 	CreatedAt string                     `json:"createdAt"`
 }
 
@@ -65,13 +65,19 @@ func ToSalesTypeResponse(s *domain.SalesType) SalesTypeResponse {
 		charges = append(charges, ToAdditionalChargeResponse(&c))
 	}
 
-	return SalesTypeResponse{
+	resp := SalesTypeResponse{
 		ID:        s.ID,
 		Name:      s.Name,
 		Charges:   charges,
-		IsActive:  s.IsActive,
 		CreatedAt: s.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
+
+	if s.DeletedAt.Valid {
+		at := s.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
 }
 
 func ToSalesTypeResponsePagination(s []SalesTypeResponse, p filter.PaginationWithInputFilter, totalRows int64) SalesTypeResponsePagination {
@@ -85,17 +91,15 @@ func ToCreateSalesTypeModel(req *CreateSalesTypeRequest) domain.SalesType {
 	charges := make([]domain.AdditionalCharge, 0, len(req.Charges))
 	for _, c := range req.Charges {
 		charges = append(charges, domain.AdditionalCharge{
-			Name:     c.Name,
-			Type:     c.Type,
-			Amount:   c.Amount,
-			IsActive: true,
+			Name:   c.Name,
+			Type:   c.Type,
+			Amount: c.Amount,
 		})
 	}
 
 	return domain.SalesType{
-		Name:     req.Name,
-		Charges:  charges,
-		IsActive: true,
+		Name:    req.Name,
+		Charges: charges,
 	}
 }
 
@@ -112,11 +116,10 @@ func ToUpdateSalesTypeModel(req *UpdateSalesTypeRequest) domain.SalesType {
 		}
 
 		charges = append(charges, domain.AdditionalCharge{
-			ID:       id,
-			Name:     c.Name,
-			Type:     c.Type,
-			Amount:   c.Amount,
-			IsActive: true,
+			ID:     id,
+			Name:   c.Name,
+			Type:   c.Type,
+			Amount: c.Amount,
 		})
 	}
 

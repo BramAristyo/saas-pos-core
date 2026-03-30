@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -23,7 +24,6 @@ func (r *BundlingRepository) Paginate(ctx context.Context, req filter.Pagination
 
 	if err := r.DB.WithContext(ctx).
 		Model(&domain.BundlingPackage{}).
-		Where("is_active = ?", true).
 		Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
@@ -75,7 +75,6 @@ func (r *BundlingRepository) Update(ctx context.Context, id uuid.UUID, bp *domai
 			"price":       bp.Price,
 			"cogs":        bp.Cogs,
 			"image_url":   bp.ImageURL,
-			"is_active":   bp.IsActive,
 		}
 
 		if err := tx.Model(&existing).Updates(updateData).Error; err != nil {
@@ -99,15 +98,22 @@ func (r *BundlingRepository) Update(ctx context.Context, id uuid.UUID, bp *domai
 	return r.FindById(ctx, id)
 }
 
-func (r *BundlingRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.BundlingPackage, error) {
-	var existing domain.BundlingPackage
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return domain.BundlingPackage{}, err
+func (r *BundlingRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.BundlingPackage{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&existing).Update("is_active", status).Error; err != nil {
-		return domain.BundlingPackage{}, err
+func (r *BundlingRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.BundlingPackage{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return existing, nil
+	return result.Error
 }

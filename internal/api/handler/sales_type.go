@@ -87,34 +87,33 @@ func (h *SalesTypeHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update sales type")
 }
 
-func (h *SalesTypeHandler) Activate(c *gin.Context) {
+func (h *SalesTypeHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate sales type")
+	response.OK(c, nil, "success delete sales type")
 }
 
-func (h *SalesTypeHandler) Deactivate(c *gin.Context) {
+func (h *SalesTypeHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success deactivate sales type")
+	response.OK(c, res, "success restore sales type")
 }

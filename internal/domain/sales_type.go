@@ -5,14 +5,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"gorm.io/gorm"
 )
 
 type SalesType struct {
 	ID        uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	Name      string
-	IsActive  bool
-	CreatedAt time.Time `gorm:"autoCreateTime"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+	CreatedAt time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 
 	Charges []AdditionalCharge `gorm:"foreignKey:SalesTypeID"`
 }
@@ -23,15 +24,15 @@ type AdditionalCharge struct {
 	Name        string
 	Type        AdjustmentType
 	Amount      decimal.Decimal
-	IsActive    bool
-	CreatedAt   time.Time `gorm:"autoCreateTime"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
+	CreatedAt   time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt   time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 func (st *SalesType) CalculateTotalCharges(subtotal decimal.Decimal) decimal.Decimal {
 	total := decimal.Zero
 	for _, c := range st.Charges {
-		if !c.IsActive {
+		if c.DeletedAt.Valid {
 			continue
 		}
 

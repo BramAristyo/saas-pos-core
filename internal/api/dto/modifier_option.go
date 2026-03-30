@@ -14,7 +14,7 @@ type ModifierOptionResponse struct {
 	Name            string                 `json:"name"`
 	PriceAdjustment decimal.Decimal        `json:"priceAdjustment"`
 	CogsAdjustment  decimal.Decimal        `json:"cogsAdjustment"`
-	IsActive        bool                   `json:"isActive"`
+	DeletedAt       *string                `json:"deletedAt,omitempty"`
 	CreatedAt       string                 `json:"createdAt"`
 	UpdatedAt       string                 `json:"updatedAt"`
 }
@@ -36,7 +36,6 @@ type UpdateModifierOptionRequest struct {
 	Name            string          `json:"name" binding:"required,min=3,max=100"`
 	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
 	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`
-	IsActive        bool            `json:"isActive"`
 }
 
 func ToModifierOptionResponse(mo *domain.ModifierOption) ModifierOptionResponse {
@@ -46,17 +45,23 @@ func ToModifierOptionResponse(mo *domain.ModifierOption) ModifierOptionResponse 
 		mg = &c
 	}
 
-	return ModifierOptionResponse{
+	resp := ModifierOptionResponse{
 		ID:              mo.ID,
 		ModifierGroupID: mo.ModifierGroupID,
 		ModifierGroup:   mg,
 		Name:            mo.Name,
 		PriceAdjustment: mo.PriceAdjustment,
 		CogsAdjustment:  mo.CogsAdjustment,
-		IsActive:        mo.IsActive,
 		CreatedAt:       mo.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt:       mo.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
+
+	if mo.DeletedAt.Valid {
+		at := mo.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
 }
 
 func ToModifierOptionResponsePagination(mo []ModifierOptionResponse, f filter.PaginationWithInputFilter, totalRows int64) ModifierOptionResponsePagination {
@@ -72,7 +77,6 @@ func ToModifierOptionModel(req *CreateModifierOptionRequest) domain.ModifierOpti
 		Name:            req.Name,
 		PriceAdjustment: req.PriceAdjustment,
 		CogsAdjustment:  req.CogsAdjustment,
-		IsActive:        true,
 	}
 }
 
@@ -82,6 +86,5 @@ func ToUpdateModifierOptionModel(req *UpdateModifierOptionRequest) domain.Modifi
 		Name:            req.Name,
 		PriceAdjustment: req.PriceAdjustment,
 		CogsAdjustment:  req.CogsAdjustment,
-		IsActive:        req.IsActive,
 	}
 }

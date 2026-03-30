@@ -16,7 +16,7 @@ type DiscountResponse struct {
 	Value     decimal.Decimal       `json:"value"`
 	StartDate *string               `json:"startDate"`
 	EndDate   *string               `json:"endDate"`
-	IsActive  bool                  `json:"isActive"`
+	DeletedAt *string               `json:"deletedAt,omitempty"`
 	CreatedAt string                `json:"createdAt"`
 }
 
@@ -39,7 +39,6 @@ type UpdateDiscountRequest struct {
 	Value     decimal.Decimal       `json:"value" binding:"required"`
 	StartDate *string               `json:"startDate"`
 	EndDate   *string               `json:"endDate"`
-	IsActive  bool                  `json:"isActive"`
 }
 
 func ToCreateDiscountModel(req *CreateDiscountRequest) domain.Discount {
@@ -59,7 +58,6 @@ func ToCreateDiscountModel(req *CreateDiscountRequest) domain.Discount {
 		Value:     req.Value,
 		StartDate: startDate,
 		EndDate:   endDate,
-		IsActive:  true,
 	}
 }
 
@@ -80,7 +78,6 @@ func ToUpdateDiscountModel(req *UpdateDiscountRequest) domain.Discount {
 		Value:     req.Value,
 		StartDate: startDate,
 		EndDate:   endDate,
-		IsActive:  true,
 	}
 }
 
@@ -95,16 +92,22 @@ func ToDiscountResponse(d *domain.Discount) DiscountResponse {
 		endDate = &s
 	}
 
-	return DiscountResponse{
+	resp := DiscountResponse{
 		ID:        d.ID,
 		Name:      d.Name,
 		Type:      d.Type,
 		Value:     d.Value,
 		StartDate: startDate,
 		EndDate:   endDate,
-		IsActive:  d.IsActive,
 		CreatedAt: d.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
+
+	if d.DeletedAt.Valid {
+		at := d.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
 }
 
 func ToDiscountResponses(ds []domain.Discount) []DiscountResponse {

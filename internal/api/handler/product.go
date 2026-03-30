@@ -87,34 +87,33 @@ func (h *ProductHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update product")
 }
 
-func (h *ProductHandler) Activate(c *gin.Context) {
+func (h *ProductHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate product")
+	response.OK(c, nil, "success delete product")
 }
 
-func (h *ProductHandler) Deactivate(c *gin.Context) {
+func (h *ProductHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success deactivate product")
+	response.OK(c, res, "success restore product")
 }

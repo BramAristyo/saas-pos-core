@@ -10,8 +10,8 @@ type ModifierGroupResponse struct {
 	ID         uuid.UUID                `json:"id"`
 	Name       string                   `json:"name"`
 	IsRequired bool                     `json:"isRequired"`
-	IsActive   bool                     `json:"isActive"`
 	Options    []ModifierOptionResponse `json:"options,omitempty"`
+	DeletedAt  *string                  `json:"deletedAt,omitempty"`
 	CreatedAt  string                   `json:"createdAt"`
 	UpdatedAt  string                   `json:"updatedAt"`
 }
@@ -29,7 +29,6 @@ type CreateModifierGroupRequest struct {
 type UpdateModifierGroupRequest struct {
 	Name       string `json:"name" binding:"required,min=3,max=100"`
 	IsRequired bool   `json:"isRequired"`
-	IsActive   bool   `json:"isActive"`
 }
 
 func ToModifierGroupResponse(mg *domain.ModifierGroup) ModifierGroupResponse {
@@ -40,15 +39,21 @@ func ToModifierGroupResponse(mg *domain.ModifierGroup) ModifierGroupResponse {
 		}
 	}
 
-	return ModifierGroupResponse{
+	resp := ModifierGroupResponse{
 		ID:         mg.ID,
 		Name:       mg.Name,
 		IsRequired: mg.IsRequired,
-		IsActive:   mg.IsActive,
 		Options:    options,
 		CreatedAt:  mg.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt:  mg.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
+
+	if mg.DeletedAt.Valid {
+		at := mg.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
 }
 
 func ToModifierGroupResponsePagination(mg []ModifierGroupResponse, f filter.PaginationWithInputFilter, totalRows int64) ModifierGroupResponsePagination {
@@ -62,7 +67,6 @@ func ToModifierGroupModel(req *CreateModifierGroupRequest) domain.ModifierGroup 
 	return domain.ModifierGroup{
 		Name:       req.Name,
 		IsRequired: req.IsRequired,
-		IsActive:   true,
 	}
 }
 
@@ -70,6 +74,5 @@ func ToUpdateModifierGroupModel(req *UpdateModifierGroupRequest) domain.Modifier
 	return domain.ModifierGroup{
 		Name:       req.Name,
 		IsRequired: req.IsRequired,
-		IsActive:   req.IsActive,
 	}
 }

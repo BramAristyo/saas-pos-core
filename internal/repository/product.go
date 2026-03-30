@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -20,15 +21,14 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 }
 
 func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Product, error) {
-	p := make([]domain.Product, req.PaginationInput.PageSize)
+	p := make([]domain.Product, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Where("is_active = ?", true).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
 	if err := r.DB.WithContext(ctx).
-		Where("is_active = ?", true).
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {
@@ -73,7 +73,6 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.
 			"price":       p.Price,
 			"cogs":        p.Cogs,
 			"image_url":   p.ImageURL,
-			"is_active":   p.IsActive,
 		}
 
 		if err := tx.Model(&existing).Updates(updateData).Error; err != nil {
@@ -128,29 +127,36 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.
 	return r.FindById(ctx, id)
 }
 
-func (r *ProductRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.Product, error) {
-	var existing domain.Product
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return domain.Product{}, err
+func (r *ProductRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.Product{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&existing).Update("is_active", status).Error; err != nil {
-		return domain.Product{}, err
+func (r *ProductRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.Product{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return existing, nil
+	return result.Error
 }
 
 func (r *ProductRepository) FindByCategoryId(ctx context.Context, categoryId uuid.UUID, req filter.PaginationWithInputFilter) (int64, []domain.Product, error) {
-	p := make([]domain.Product, req.PaginationInput.PageSize)
+	p := make([]domain.Product, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Where("is_active = ? AND category_id = ?", true, categoryId).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Where("category_id = ?", categoryId).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
 	if err := r.DB.WithContext(ctx).
-		Where("is_active = ? AND category_id = ?", true, categoryId).
+		Where("category_id = ?", categoryId).
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {

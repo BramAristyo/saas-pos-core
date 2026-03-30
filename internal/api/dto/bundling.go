@@ -15,7 +15,7 @@ type BundlingItemResponse struct {
 	ProductID         uuid.UUID       `json:"productId"`
 	Product           ProductResponse `json:"product"`
 	Qty               int             `json:"qty"`
-	CreatedAt         time.Time       `json:"createdAt"`
+	CreatedAt         string          `json:"createdAt"`
 }
 
 type BundlingPackageResponse struct {
@@ -25,8 +25,9 @@ type BundlingPackageResponse struct {
 	Price         decimal.Decimal        `json:"price"`
 	Cogs          decimal.Decimal        `json:"cogs"`
 	ImageURL      *string                `json:"imageUrl"`
-	UpdatedAt     time.Time              `json:"updatedAt"`
-	CreatedAt     time.Time              `json:"createdAt"`
+	DeletedAt     *string                `json:"deletedAt,omitempty"`
+	UpdatedAt     string                 `json:"updatedAt"`
+	CreatedAt     string                 `json:"createdAt"`
 	BundlingItems []BundlingItemResponse `json:"bundlingItems,omitempty"`
 }
 
@@ -56,7 +57,6 @@ type UpdateBundlingPackageRequest struct {
 	Price         decimal.Decimal       `json:"price" binding:"required"`
 	Cogs          decimal.Decimal       `json:"cogs" binding:"required"`
 	ImageURL      *string               `json:"imageUrl"`
-	IsActive      bool                  `json:"isActive"`
 	BundlingItems []BundlingItemRequest `json:"bundlingItems" binding:"required"`
 }
 
@@ -69,23 +69,31 @@ func toBundlingItemResponses(bis []domain.BundlingItem) []BundlingItemResponse {
 			ProductID:         bi.ProductID,
 			Product:           ToProductResponse(&bi.Product),
 			Qty:               bi.Qty,
+			CreatedAt:         bi.CreatedAt.Format("2006-01-02 15:04:05"),
 		}
 	}
 	return bisRes
 }
 
 func ToBundlingPackageResponse(bp *domain.BundlingPackage) BundlingPackageResponse {
-	return BundlingPackageResponse{
+	resp := BundlingPackageResponse{
 		ID:            bp.ID,
 		Name:          bp.Name,
 		Description:   bp.Description,
 		Price:         bp.Price,
 		Cogs:          bp.Cogs,
 		ImageURL:      bp.ImageURL,
-		UpdatedAt:     bp.UpdatedAt,
-		CreatedAt:     bp.CreatedAt,
+		UpdatedAt:     bp.UpdatedAt.Format("2006-01-02 15:04:05"),
+		CreatedAt:     bp.CreatedAt.Format("2006-01-02 15:04:05"),
 		BundlingItems: toBundlingItemResponses(bp.BundlingItems),
 	}
+
+	if bp.DeletedAt.Valid {
+		at := bp.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
 }
 
 func toBundlingPackageResponses(bps []domain.BundlingPackage) []BundlingPackageResponse {
@@ -133,7 +141,6 @@ func ToUpdateBundlingPackageModel(req *UpdateBundlingPackageRequest) domain.Bund
 		Price:         req.Price,
 		Cogs:          req.Cogs,
 		ImageURL:      req.ImageURL,
-		IsActive:      req.IsActive,
 		BundlingItems: toBundlingItemModels(req.BundlingItems),
 	}
 }

@@ -89,26 +89,47 @@ func (u *DiscountUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 	return dto.ToDiscountResponse(&updated), nil
 }
 
-func (u *DiscountUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.DiscountResponse, error) {
+func (u *DiscountUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	userId, _ := helper.ExtractUserID(ctx)
-	discount, err := u.Repo.UpdateStatus(ctx, id, status)
+
+	discount, err := u.Repo.FindById(ctx, id)
 	if err != nil {
-		return dto.DiscountResponse{}, err
+		return err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated discount: " + discount.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated discount: " + discount.Name
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionDelete,
 		Entity:      domain.EntityDiscount,
-		EntityID:    &discount.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User deleted discount: " + discount.Name,
+	})
+
+	return nil
+}
+
+func (u *DiscountUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.DiscountResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.DiscountResponse{}, err
+	}
+
+	discount, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.DiscountResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionRestore,
+		Entity:      domain.EntityDiscount,
+		EntityID:    &id,
+		Description: "User restored discount: " + discount.Name,
 	})
 
 	return dto.ToDiscountResponse(&discount), nil

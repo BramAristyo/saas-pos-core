@@ -100,30 +100,53 @@ func (u *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 	return dto.ToProductResponse(&updated), nil
 }
 
-func (u *ProductUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ProductResponse, error) {
+func (u *ProductUseCase) Delete(ctx context.Context, id uuid.UUID) error {
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	product, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionDelete,
+		Entity:      domain.EntityProduct,
+		EntityID:    &id,
+		Description: "User deleted product: " + product.Name,
+	})
+
+	return nil
+}
+
+func (u *ProductUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.ProductResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}
 
-	product, err := u.Repo.UpdateStatus(ctx, id, status)
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.ProductResponse{}, err
+	}
+
+	product, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.ProductResponse{}, err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated product: " + product.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated product: " + product.Name
-	}
-
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionRestore,
 		Entity:      domain.EntityProduct,
-		EntityID:    &product.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User restored product: " + product.Name,
 	})
 
 	return dto.ToProductResponse(&product), nil

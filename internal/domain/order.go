@@ -57,7 +57,7 @@ func (o *Order) CalculateAll() {
 	o.Subtotal = gross
 
 	o.DiscountAmount = decimal.Zero
-	if o.Discount != nil && o.Discount.IsActive {
+	if o.Discount != nil && !o.Discount.DeletedAt.Valid {
 		now := time.Now()
 		startOk := true
 		endOk := true

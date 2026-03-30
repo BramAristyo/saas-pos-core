@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"gorm.io/gorm"
 )
 
 type BundlingPackage struct {
@@ -14,7 +15,7 @@ type BundlingPackage struct {
 	Price       decimal.Decimal
 	Cogs        decimal.Decimal
 	ImageURL    *string
-	IsActive    bool
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`

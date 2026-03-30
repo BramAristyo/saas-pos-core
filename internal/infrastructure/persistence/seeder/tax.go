@@ -12,7 +12,6 @@ func SeedTaxData(db *gorm.DB) {
 		{
 			Name:       "TAX 11%",
 			Percentage: decimal.NewFromFloat(11),
-			IsActive:   true,
 		},
 	}
 

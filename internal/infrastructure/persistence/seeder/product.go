@@ -61,7 +61,6 @@ func SeedProductData(db *gorm.DB) {
 			Price:       productPrices[i],
 			Cogs:        productCogs[i],
 			CategoryID:  category.ID,
-			IsActive:    true,
 		}
 	}
 	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&products)

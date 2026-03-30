@@ -84,26 +84,47 @@ func (u *BundlingUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 	return dto.ToBundlingPackageResponse(&updated), nil
 }
 
-func (u *BundlingUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.BundlingPackageResponse, error) {
+func (u *BundlingUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	userId, _ := helper.ExtractUserID(ctx)
-	bp, err := u.Repo.UpdateStatus(ctx, id, status)
+
+	bp, err := u.Repo.FindById(ctx, id)
 	if err != nil {
-		return dto.BundlingPackageResponse{}, err
+		return err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated bundling package: " + bp.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated bundling package: " + bp.Name
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionDelete,
 		Entity:      domain.EntityBundling,
-		EntityID:    &bp.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User deleted bundling package: " + bp.Name,
+	})
+
+	return nil
+}
+
+func (u *BundlingUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.BundlingPackageResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.BundlingPackageResponse{}, err
+	}
+
+	bp, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.BundlingPackageResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionRestore,
+		Entity:      domain.EntityBundling,
+		EntityID:    &id,
+		Description: "User restored bundling package: " + bp.Name,
 	})
 
 	return dto.ToBundlingPackageResponse(&bp), nil

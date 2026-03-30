@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -66,7 +67,6 @@ func (r *DiscountRepository) Update(ctx context.Context, id uuid.UUID, d *domain
 		"value":      d.Value,
 		"start_date": d.StartDate,
 		"end_date":   d.EndDate,
-		"is_active":  d.IsActive,
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
@@ -76,17 +76,24 @@ func (r *DiscountRepository) Update(ctx context.Context, id uuid.UUID, d *domain
 	return existing, nil
 }
 
-func (r *DiscountRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.Discount, error) {
-	var d domain.Discount
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&d).Error; err != nil {
-		return domain.Discount{}, err
+func (r *DiscountRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.Discount{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&d).Update("is_active", status).Error; err != nil {
-		return domain.Discount{}, err
+func (r *DiscountRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.Discount{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return d, nil
+	return result.Error
 }
 
 func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error)

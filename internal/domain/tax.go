@@ -5,15 +5,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"gorm.io/gorm"
 )
 
 type Tax struct {
 	ID         uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	Name       string
 	Percentage decimal.Decimal
-	IsActive   bool
-	CreatedAt  time.Time `gorm:"autoCreateTime"`
-	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
+	CreatedAt  time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt  time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 }
 
 func (Tax) TableName() string {
@@ -21,7 +22,7 @@ func (Tax) TableName() string {
 }
 
 func (t *Tax) CalculateTaxAmount(base decimal.Decimal) decimal.Decimal {
-	if !t.IsActive {
+	if t.DeletedAt.Valid {
 		return decimal.Zero
 	}
 

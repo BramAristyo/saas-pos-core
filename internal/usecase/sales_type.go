@@ -93,27 +93,48 @@ func (u *SalesTypeUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upd
 	return dto.ToSalesTypeResponse(&updated), nil
 }
 
-func (u *SalesTypeUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.SalesTypeResponse, error) {
+func (u *SalesTypeUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	userId, _ := helper.ExtractUserID(ctx)
-	updated, err := u.Repo.UpdateStatus(ctx, id, status)
+
+	salesType, err := u.Repo.FindById(ctx, id)
 	if err != nil {
-		return dto.SalesTypeResponse{}, err
+		return err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated sales type: " + updated.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated sales type: " + updated.Name
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionDelete,
 		Entity:      domain.EntitySalesType,
-		EntityID:    &updated.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User deleted sales type: " + salesType.Name,
 	})
 
-	return dto.ToSalesTypeResponse(&updated), nil
+	return nil
+}
+
+func (u *SalesTypeUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.SalesTypeResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.SalesTypeResponse{}, err
+	}
+
+	salesType, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.SalesTypeResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionRestore,
+		Entity:      domain.EntitySalesType,
+		EntityID:    &id,
+		Description: "User restored sales type: " + salesType.Name,
+	})
+
+	return dto.ToSalesTypeResponse(&salesType), nil
 }

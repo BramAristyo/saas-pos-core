@@ -84,27 +84,48 @@ func (u *ModifierOptionUseCase) Update(ctx context.Context, id uuid.UUID, req dt
 	return dto.ToModifierOptionResponse(&updated), nil
 }
 
-func (u *ModifierOptionUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierOptionResponse, error) {
+func (u *ModifierOptionUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	userId, _ := helper.ExtractUserID(ctx)
-	updated, err := u.Repo.UpdateStatus(ctx, id, status)
+
+	mo, err := u.Repo.FindById(ctx, id)
 	if err != nil {
-		return dto.ModifierOptionResponse{}, err
+		return err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated modifier option: " + updated.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated modifier option: " + updated.Name
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionDelete,
 		Entity:      domain.EntityModifierOption,
-		EntityID:    &updated.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User deleted modifier option: " + mo.Name,
 	})
 
-	return dto.ToModifierOptionResponse(&updated), nil
+	return nil
+}
+
+func (u *ModifierOptionUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.ModifierOptionResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.ModifierOptionResponse{}, err
+	}
+
+	mo, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.ModifierOptionResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionRestore,
+		Entity:      domain.EntityModifierOption,
+		EntityID:    &id,
+		Description: "User restored modifier option: " + mo.Name,
+	})
+
+	return dto.ToModifierOptionResponse(&mo), nil
 }

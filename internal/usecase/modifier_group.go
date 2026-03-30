@@ -92,31 +92,54 @@ func (u *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto
 	return dto.ToModifierGroupResponse(&updated), nil
 }
 
-func (u *ModifierGroupUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.ModifierGroupResponse, error) {
+func (u *ModifierGroupUseCase) Delete(ctx context.Context, id uuid.UUID) error {
+	userId, err := helper.ExtractUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	mg, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionDelete,
+		Entity:      domain.EntityModifierGroup,
+		EntityID:    &id,
+		Description: "User deleted modifier group: " + mg.Name,
+	})
+
+	return nil
+}
+
+func (u *ModifierGroupUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.ModifierGroupResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {
 		return dto.ModifierGroupResponse{}, err
 	}
 
-	updated, err := u.Repo.UpdateStatus(ctx, id, status)
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.ModifierGroupResponse{}, err
+	}
+
+	mg, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return dto.ModifierGroupResponse{}, err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated modifier group: " + updated.Name
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated modifier group: " + updated.Name
-	}
-
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionRestore,
 		Entity:      domain.EntityModifierGroup,
-		EntityID:    &updated.ID,
-		Description: desc,
+		EntityID:    &id,
+		Description: "User restored modifier group: " + mg.Name,
 	})
 
-	return dto.ToModifierGroupResponse(&updated), nil
+	return dto.ToModifierGroupResponse(&mg), nil
 }

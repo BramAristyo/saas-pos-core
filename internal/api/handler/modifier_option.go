@@ -87,34 +87,33 @@ func (h *ModifierOptionHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update modifier option")
 }
 
-func (h *ModifierOptionHandler) Activate(c *gin.Context) {
+func (h *ModifierOptionHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate modifier option")
+	response.OK(c, nil, "success delete modifier option")
 }
 
-func (h *ModifierOptionHandler) Deactivate(c *gin.Context) {
+func (h *ModifierOptionHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success deactivate modifier option")
+	response.OK(c, res, "success restore modifier option")
 }

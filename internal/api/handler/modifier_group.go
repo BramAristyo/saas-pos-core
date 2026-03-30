@@ -89,34 +89,33 @@ func (h *ModifierGroupHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update modifer group")
 }
 
-func (h *ModifierGroupHandler) Activate(c *gin.Context) {
+func (h *ModifierGroupHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate modifier group")
+	response.OK(c, nil, "success delete modifier group")
 }
 
-func (h *ModifierGroupHandler) Deactivate(c *gin.Context) {
+func (h *ModifierGroupHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success deactivate modifier group")
+	response.OK(c, res, "success restore modifier group")
 }

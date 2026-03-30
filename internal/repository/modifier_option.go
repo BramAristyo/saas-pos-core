@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -61,7 +62,6 @@ func (r *ModifierOptionRepository) Update(ctx context.Context, id uuid.UUID, mo 
 		"name":              mo.Name,
 		"price_adjustment":  mo.PriceAdjustment,
 		"cogs_adjustment":   mo.CogsAdjustment,
-		"is_active":         mo.IsActive,
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
@@ -71,15 +71,22 @@ func (r *ModifierOptionRepository) Update(ctx context.Context, id uuid.UUID, mo 
 	return existing, nil
 }
 
-func (r *ModifierOptionRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.ModifierOption, error) {
-	var mo domain.ModifierOption
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&mo).Error; err != nil {
-		return domain.ModifierOption{}, err
+func (r *ModifierOptionRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.ModifierOption{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&mo).Update("is_active", status).Error; err != nil {
-		return domain.ModifierOption{}, err
+func (r *ModifierOptionRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.ModifierOption{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return mo, nil
+	return result.Error
 }

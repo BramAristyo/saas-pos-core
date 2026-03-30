@@ -90,30 +90,52 @@ func (u *TaxUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateTax
 	return dto.ToTaxResponse(&updated), nil
 }
 
-func (u *TaxUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.TaxResponse, error) {
+func (u *TaxUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	userId, _ := helper.ExtractUserID(ctx)
-	if status {
-		if err := u.Repo.DeactiveAll(ctx); err != nil {
-			return dto.TaxResponse{}, err
-		}
-	}
 
-	tax, err := u.Repo.UpdateStatus(ctx, id, status)
+	tax, err := u.Repo.FindById(ctx, id)
 	if err != nil {
-		return dto.TaxResponse{}, err
+		return err
 	}
 
-	action := domain.ActionDeactivate
-	if status {
-		action = domain.ActionActivate
+	if err := u.Repo.Delete(ctx, id); err != nil {
+		return err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
-		Action:      action,
+		Action:      domain.ActionDelete,
+		Entity:      domain.EntityTax,
+		EntityID:    &id,
+		Description: fmt.Sprintf("Deleted tax %s", tax.Name),
+	})
+
+	return nil
+}
+
+func (u *TaxUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	// Ensure only one tax is active (not deleted)
+	if err := u.Repo.DeleteAll(ctx); err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	if err := u.Repo.Restore(ctx, id); err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	tax, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionRestore,
 		Entity:      domain.EntityTax,
 		EntityID:    &tax.ID,
-		Description: fmt.Sprintf("Updated status for tax %s to %v", tax.Name, status),
+		Description: fmt.Sprintf("Restored tax %s and set as active", tax.Name),
 	})
 
 	return dto.ToTaxResponse(&tax), nil

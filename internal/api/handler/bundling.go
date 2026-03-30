@@ -90,34 +90,33 @@ func (h *BundlingHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update bundling package")
 }
 
-func (h *BundlingHandler) Activate(c *gin.Context) {
+func (h *BundlingHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "message activate bundling package")
+	response.OK(c, nil, "success delete bundling package")
 }
 
-func (h *BundlingHandler) Deactivate(c *gin.Context) {
+func (h *BundlingHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "message deactivate bundling package")
+	response.OK(c, res, "success restore bundling package")
 }

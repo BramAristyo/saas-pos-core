@@ -87,34 +87,33 @@ func (h *DiscountHandler) Update(c *gin.Context) {
 	response.OK(c, res, "success update discount")
 }
 
-func (h *DiscountHandler) Activate(c *gin.Context) {
+func (h *DiscountHandler) Delete(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
-	if err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate discount")
+	response.OK(c, nil, "success delete discount")
 }
 
-func (h *DiscountHandler) Deactivate(c *gin.Context) {
+func (h *DiscountHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success deactivate discount")
+	response.OK(c, res, "success restore discount")
 }

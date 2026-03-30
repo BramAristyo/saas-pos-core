@@ -5,6 +5,7 @@ import (
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -59,7 +60,6 @@ func (r *CategoryRepository) Update(ctx context.Context, id uuid.UUID, c *domain
 	updateData := map[string]any{
 		"name":        c.Name,
 		"description": c.Description,
-		"is_active":   c.IsActive,
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
@@ -69,15 +69,22 @@ func (r *CategoryRepository) Update(ctx context.Context, id uuid.UUID, c *domain
 	return existing, nil
 }
 
-func (r *CategoryRepository) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (domain.Category, error) {
-	var c domain.Category
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&c).Error; err != nil {
-		return domain.Category{}, err
+func (r *CategoryRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.Category{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
+	return result.Error
+}
 
-	if err := r.DB.WithContext(ctx).Model(&c).Update("is_active", status).Error; err != nil {
-		return domain.Category{}, err
+func (r *CategoryRepository) Restore(ctx context.Context, id uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Model(&domain.Category{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	return c, nil
+	return result.Error
 }

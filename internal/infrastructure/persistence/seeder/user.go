@@ -14,35 +14,30 @@ func SeedUserData(db *gorm.DB) {
 			Email:    "alice.admin@example.com",
 			Password: "password1",
 			Role:     domain.RoleAdmin,
-			IsActive: true,
 		},
 		{
 			Name:     "Bob Cashier",
 			Email:    "bob.cashier@example.com",
 			Password: "password2",
 			Role:     domain.RoleCashier,
-			IsActive: true,
 		},
 		{
 			Name:     "Charlie Cashier",
 			Email:    "charlie.cashier@example.com",
 			Password: "password3",
 			Role:     domain.RoleCashier,
-			IsActive: true,
 		},
 		{
 			Name:     "Diana Admin",
 			Email:    "diana.admin@example.com",
 			Password: "password4",
 			Role:     domain.RoleAdmin,
-			IsActive: true,
 		},
 		{
 			Name:     "Eve Cashier",
 			Email:    "eve.cashier@example.com",
 			Password: "password5",
 			Role:     domain.RoleCashier,
-			IsActive: true,
 		},
 	}
 

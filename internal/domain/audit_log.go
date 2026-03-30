@@ -13,6 +13,7 @@ const (
 	ActionCreate     AuditAction = "CREATE"
 	ActionUpdate     AuditAction = "UPDATE"
 	ActionDelete     AuditAction = "DELETE"
+	ActionRestore    AuditAction = "RESTORE"
 	ActionActivate   AuditAction = "ACTIVATE"
 	ActionDeactivate AuditAction = "DEACTIVATE"
 	ActionLogin      AuditAction = "LOGIN"
