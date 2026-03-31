@@ -12,9 +12,7 @@ http:
     data: |-
       {
         "name": "Updated Tax",
-        "percentage": 12,
-        "isActive": true
-      }
+        "percentage": 12}
 
 examples:
   - name: success update tax
@@ -26,9 +24,7 @@ examples:
         data: |-
           {
             "name": "Updated Tax",
-            "percentage": 12,
-            "isActive": true
-          }
+            "percentage": 12}
     response:
       status: 200
       statusText: OK

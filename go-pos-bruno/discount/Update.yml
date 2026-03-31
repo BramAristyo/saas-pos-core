@@ -15,9 +15,7 @@ http:
         "type": "fixed",
         "value": 10,
         "startDate": "2026-07-01",
-        "endDate": "2026-07-31",
-        "isActive": true
-      }
+        "endDate": "2026-07-31"}
 
 examples:
   - name: success update discount
@@ -32,8 +30,6 @@ examples:
             "type": "fixed",
             "value": 10,
             "startDate": "2026-07-01",
-            "endDate": "2026-07-31",
-            "isActive": true
-          }
+            "endDate": "2026-07-31"}
     response:
       status: 200

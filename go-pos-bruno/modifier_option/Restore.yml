@@ -1,12 +1,16 @@
 info:
-  name: Activate
+  name: Restore
   type: http
   seq: 5
 
 http:
   method: PATCH
-  url: "{{url}}/sales-types/783f6e1a-e5c6-4b0d-b8af-9257fa1e356f/activate"
+  url: "{{url}}/modifier-options/:id/restore"
   auth: inherit
+
+params:
+  path:
+    id: 00000000-0000-0000-0000-000000000000
 
 settings:
   encodeUrl: true

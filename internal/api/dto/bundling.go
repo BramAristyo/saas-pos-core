@@ -1,8 +1,6 @@
 package dto
 
 import (
-	"time"
-
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/google/uuid"

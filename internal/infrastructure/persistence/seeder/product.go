@@ -11,7 +11,7 @@ import (
 
 func SeedProductData(db *gorm.DB) {
 	var categories []domain.Category
-	db.Where("is_active = ?", true).Find(&categories)
+	db.Find(&categories)
 
 	if len(categories) == 0 {
 		return

@@ -15,7 +15,6 @@ http:
         "description": "Coffee and Muffin",
         "price": 30000,
         "cogs": 12000,
-        "isActive": true,
         "bundlingItems": [
           {
             "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f1",
@@ -41,7 +40,6 @@ examples:
             "description": "Coffee and Muffin",
             "price": 30000,
             "cogs": 12000,
-            "isActive": true,
             "bundlingItems": [
               {
                 "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f1",

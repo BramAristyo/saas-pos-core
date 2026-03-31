@@ -41,7 +41,7 @@ examples:
                 "name": "Alice Admin",
                 "role": "admin",
                 "email": "alice.admin@example.com",
-                "isActive": true,
+                "deletedAt": null,
                 "createdAt": "2026-03-17 14:41:45"
               },
               {
@@ -49,7 +49,7 @@ examples:
                 "name": "Bob Cashier",
                 "role": "cashier",
                 "email": "bob.cashier@example.com",
-                "isActive": true,
+                "deletedAt": null,
                 "createdAt": "2026-03-17 14:41:45"
               },
               {
@@ -57,7 +57,7 @@ examples:
                 "name": "Charlie Cashier",
                 "role": "cashier",
                 "email": "charlie.cashier@example.com",
-                "isActive": true,
+                "deletedAt": null,
                 "createdAt": "2026-03-17 14:41:45"
               },
               {
@@ -65,7 +65,7 @@ examples:
                 "name": "Diana Admin",
                 "role": "admin",
                 "email": "diana.admin@example.com",
-                "isActive": true,
+                "deletedAt": null,
                 "createdAt": "2026-03-17 14:41:45"
               },
               {
@@ -73,7 +73,7 @@ examples:
                 "name": "Eve Cashier",
                 "role": "cashier",
                 "email": "eve.cashier@example.com",
-                "isActive": true,
+                "deletedAt": null,
                 "createdAt": "2026-03-17 14:41:45"
               }
             ]

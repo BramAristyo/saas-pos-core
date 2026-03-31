@@ -12,9 +12,7 @@ http:
     data: |-
       {
         "name": "Updated Modifier Group",
-        "is_required": false,
-        "is_active": true
-      }
+        "is_required": false}
 
 params:
   path:

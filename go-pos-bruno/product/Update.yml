@@ -16,9 +16,7 @@ http:
         "description": "Updated description",
         "price": "4.00",
         "cogs": "0.60",
-        "image_url": "https://example.com/espresso_updated.jpg",
-        "is_active": true
-      }
+        "image_url": "https://example.com/espresso_updated.jpg"}
   auth: inherit
 
 settings:
@@ -41,9 +39,7 @@ examples:
             "description": "Updated description",
             "price": "4.00",
             "cogs": "0.60",
-            "image_url": "https://example.com/espresso_updated.jpg",
-            "is_active": true
-          }
+            "image_url": "https://example.com/espresso_updated.jpg"}
     response:
       status: 200
       statusText: OK
@@ -64,7 +60,7 @@ examples:
               "price": "4",
               "cogs": "0.6",
               "image_url": "https://example.com/espresso_updated.jpg",
-              "is_active": true,
+              "deleted_at": null,
               "created_at": "2026-03-18 10:00:00",
               "updated_at": "2026-03-18 10:15:00"
             }

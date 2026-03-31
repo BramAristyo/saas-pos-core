@@ -1,16 +1,12 @@
 info:
-  name: Deactivate
+  name: Restore
   type: http
-  seq: 6
+  seq: 5
 
 http:
   method: PATCH
-  url: "{{url}}/modifier-groups/:id/deactivate"
+  url: "{{url}}/sales-types/783f6e1a-e5c6-4b0d-b8af-9257fa1e356f/restore"
   auth: inherit
-
-params:
-  path:
-    id: 12345678-1234-1234-1234-123456789012
 
 settings:
   encodeUrl: true

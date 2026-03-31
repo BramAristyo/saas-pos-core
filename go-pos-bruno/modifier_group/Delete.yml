@@ -1,16 +1,16 @@
 info:
-  name: Deactivate
+  name: Delete
   type: http
   seq: 6
 
 http:
-  method: PATCH
-  url: "{{url}}/modifier-options/:id/deactivate"
+  method: DELETE
+  url: "{{url}}/modifier-groups/:id"
   auth: inherit
 
 params:
   path:
-    id: 00000000-0000-0000-0000-000000000000
+    id: 12345678-1234-1234-1234-123456789012
 
 settings:
   encodeUrl: true

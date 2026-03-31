@@ -13,7 +13,7 @@ http:
       {
         "name": "Updated Category",
         "description": "Updated description",
-        "isActive": true
+        "deletedAt": null
       }
 
 examples:
@@ -27,7 +27,7 @@ examples:
           {
             "name": "Updated Category",
             "description": "Updated description",
-            "isActive": true
+            "deletedAt": null
           }
     response:
       status: 200
@@ -45,7 +45,7 @@ examples:
               "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
               "name": "Updated Category",
               "description": "Updated description",
-              "is_active": true,
+              "deleted_at": null,
               "created_at": "2026-03-18 10:30:00"
             }
           }

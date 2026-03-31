@@ -46,7 +46,7 @@ examples:
               "name": "New User",
               "role": "user",
               "email": "newuser@example.com",
-              "isActive": true,
+              "deletedAt": null,
               "createdAt": "2026-03-18 10:40:00"
             }
           }

@@ -62,7 +62,7 @@ examples:
               "price": "3.5",
               "cogs": "0.5",
               "image_url": "https://example.com/espresso.jpg",
-              "is_active": true,
+              "deleted_at": null,
               "created_at": "2026-03-18 10:00:00",
               "updated_at": "2026-03-18 10:00:00"
             }

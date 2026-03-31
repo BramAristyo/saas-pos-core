@@ -1,0 +1,9 @@
+info:
+  name: Delete
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{url}}/sales-types/:id"
+  auth: inherit

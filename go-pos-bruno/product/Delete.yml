@@ -1,11 +1,11 @@
 info:
-  name: Activate
+  name: Delete
   type: http
-  seq: 5
+  seq: 6
 
 http:
-  method: PATCH
-  url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1/activate"
+  method: DELETE
+  url: "{{url}}/products/b8022c1d-a2fa-4331-987e-ea049f6c46a7"
   auth: inherit
 
 settings:
@@ -15,10 +15,10 @@ settings:
   maxRedirects: 5
 
 examples:
-  - name: success activate
+  - name: success delete
     request:
-      url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1/activate"
-      method: PATCH
+      url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1"
+      method: DELETE
     response:
       status: 200
       statusText: OK
@@ -30,7 +30,7 @@ examples:
         data: |-
           {
             "success": true,
-            "message": "success activate product",
+            "message": "success deactivate product",
             "data": {
               "id": "e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1",
               "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
@@ -39,7 +39,7 @@ examples:
               "price": "3.5",
               "cogs": "0.5",
               "image_url": "https://example.com/espresso.jpg",
-              "is_active": true,
+              "deleted_at": "2026-03-10 10:00:00",
               "created_at": "2026-03-18 10:00:00",
               "updated_at": "2026-03-18 10:20:00"
             }

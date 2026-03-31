@@ -1,20 +1,20 @@
 info:
-  name: Activate
+  name: Delete
   type: http
-  seq: 5
+  seq: 6
 
 http:
-  method: PATCH
-  url: "{{url}}/categories/:id/activate"
+  method: DELETE
+  url: "{{url}}/categories/:id"
   auth: inherit
   body:
     type: none
 
 examples:
-  - name: success activate
+  - name: success delete
     request:
-      url: "{{url}}/categories/d98569cc-27d1-42fb-8ad2-98aab03e9401/activate"
-      method: PATCH
+      url: "{{url}}/categories/d98569cc-27d1-42fb-8ad2-98aab03e9401"
+      method: DELETE
       body:
         type: none
     response:
@@ -28,12 +28,12 @@ examples:
         data: |-
           {
             "success": true,
-            "message": "success activate category",
+            "message": "success delete category",
             "data": {
               "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
               "name": "Coffee",
               "description": "All coffee based drinks",
-              "is_active": true,
+              "deleted_at": "2026-03-10 10:00:00",
               "created_at": "2026-03-10 10:00:00"
             }
           }
