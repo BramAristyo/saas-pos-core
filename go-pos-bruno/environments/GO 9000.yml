@@ -4,3 +4,5 @@ variables:
     value: http://localhost:9000/api/v1
   - name: token
     value: ""
+  - name: naked_url
+    value: http://localhost:9000

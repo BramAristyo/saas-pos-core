@@ -1,6 +1,9 @@
 package router
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/BramAristyo/go-pos-mawish/internal/api/middleware"
 	"github.com/BramAristyo/go-pos-mawish/internal/dependency"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
@@ -8,6 +11,14 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
+	r.GET("/slow", func(c *gin.Context) {
+		for i := range 5 {
+			fmt.Println(i)
+			time.Sleep(1 * time.Second)
+		}
+		c.JSON(200, gin.H{"message": "done"})
+	})
+
 	api := r.Group("/api")
 	v1 := api.Group("/v1")
 	{
