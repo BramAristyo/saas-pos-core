@@ -30,7 +30,7 @@ func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 		return dto.LoginResponse{}, err
 	}
 
-	if !user.IsActive {
+	if user.DeletedAt.Valid {
 		return dto.LoginResponse{}, usecase_errors.UserNotActive
 	}
 

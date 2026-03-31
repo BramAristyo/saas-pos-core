@@ -117,36 +117,15 @@ func (u *UserUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateUs
 	return dto.ToUserResponse(&updatedUser), nil
 }
 
-func (u *UserUseCase) UpdateStatus(ctx context.Context, id uuid.UUID, status bool) (dto.UserResponse, error) {
+func (u *UserUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	userId, _ := helper.ExtractUserID(ctx)
 
-	user, err := u.Repo.UpdateStatus(id, status)
+	user, err := u.Repo.FindById(id)
 	if err != nil {
-		return dto.UserResponse{}, err
+		return err
 	}
 
-	action := domain.ActionActivate
-	desc := "User activated user account: " + user.Email
-	if !status {
-		action = domain.ActionDeactivate
-		desc = "User deactivated user account: " + user.Email
-	}
-
-	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
-		UserID:      userId,
-		Action:      action,
-		Entity:      domain.EntityUser,
-		EntityID:    &user.ID,
-		Description: desc,
-	})
-
-	return dto.ToUserResponse(&user), nil
-}
-
-func (u *UserUseCase) Destroy(ctx context.Context, id uuid.UUID) error {
-	userId, _ := helper.ExtractUserID(ctx)
-
-	err := u.Repo.Destroy(id)
+	err = u.Repo.Delete(id)
 	if err != nil {
 		return err
 	}
@@ -156,8 +135,31 @@ func (u *UserUseCase) Destroy(ctx context.Context, id uuid.UUID) error {
 		Action:      domain.ActionDelete,
 		Entity:      domain.EntityUser,
 		EntityID:    &id,
-		Description: fmt.Sprintf("User deleted user account with ID: %s", id.String()),
+		Description: fmt.Sprintf("User deleted user account: %s", user.Email),
 	})
 
 	return nil
+}
+
+func (u *UserUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.UserResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Restore(id); err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	user, err := u.Repo.FindById(id)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionRestore,
+		Entity:      domain.EntityUser,
+		EntityID:    &id,
+		Description: fmt.Sprintf("User restored user account: %s", user.Email),
+	})
+
+	return dto.ToUserResponse(&user), nil
 }

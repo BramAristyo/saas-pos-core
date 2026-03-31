@@ -12,29 +12,34 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	Name     string `json:"name" binding:"required,min=2,max=100"`
-	Email    string `json:"email" binding:"required,min=6"`
-	IsActive bool   `json:"isActive"`
+	Name  string `json:"name" binding:"required,min=2,max=100"`
+	Email string `json:"email" binding:"required,min=6"`
 }
 
 type UserResponse struct {
-	ID        uuid.UUID  `json:"id"`
-	Name      string     `json:"name"`
+	ID        uuid.UUID   `json:"id"`
+	Name      string      `json:"name"`
 	Role      domain.Role `json:"role"`
-	Email     string     `json:"email"`
-	IsActive  bool       `json:"isActive"`
-	CreatedAt string     `json:"createdAt"`
+	Email     string      `json:"email"`
+	DeletedAt *string     `json:"deletedAt,omitempty"`
+	CreatedAt string      `json:"createdAt"`
 }
 
 func ToUserResponse(u *domain.User) UserResponse {
-	return UserResponse{
+	resp := UserResponse{
 		ID:        u.ID,
 		Name:      u.Name,
 		Role:      u.Role,
 		Email:     u.Email,
-		IsActive:  u.IsActive,
 		CreatedAt: u.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
+
+	if u.DeletedAt.Valid {
+		at := u.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
 }
 
 func ToCreateUserModel(req *CreateUserRequest) domain.User {
@@ -42,14 +47,12 @@ func ToCreateUserModel(req *CreateUserRequest) domain.User {
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: req.Password,
-		IsActive: true,
 	}
 }
 
 func ToUpdateUserModel(req *UpdateUserRequest) domain.User {
 	return domain.User{
-		Name:     req.Name,
-		Email:    req.Email,
-		IsActive: req.IsActive,
+		Name:  req.Name,
+		Email: req.Email,
 	}
 }

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -60,10 +61,9 @@ func (r *UserRepository) Update(id uuid.UUID, u *domain.User) (domain.User, erro
 	}
 
 	updateData := map[string]any{
-		"name":      u.Name,
-		"email":     u.Email,
-		"role":      u.Role,
-		"is_active": u.IsActive,
+		"name":  u.Name,
+		"email": u.Email,
+		"role":  u.Role,
 	}
 
 	if err := r.DB.Model(&existing).Updates(updateData).Error; err != nil {
@@ -73,30 +73,24 @@ func (r *UserRepository) Update(id uuid.UUID, u *domain.User) (domain.User, erro
 	return existing, nil
 }
 
-func (r *UserRepository) UpdateStatus(id uuid.UUID, status bool) (domain.User, error) {
-	var u domain.User
-	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
-		return domain.User{}, err
+func (r *UserRepository) Delete(id uuid.UUID) error {
+	result := r.DB.Delete(&domain.User{}, "id = ?", id)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	if err := r.DB.Model(&u).Update("is_active", status).Error; err != nil {
-		return domain.User{}, err
-	}
-
-	return u, nil
+	return result.Error
 }
 
-func (r *UserRepository) Destroy(id uuid.UUID) error {
-	var u domain.User
-	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
-		return err
+func (r *UserRepository) Restore(id uuid.UUID) error {
+	result := r.DB.
+		Model(&domain.User{}).
+		Unscoped().
+		Where("id = ?", id).
+		Update("deleted_at", nil)
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
 	}
-
-	if err := r.DB.Delete(&u).Error; err != nil {
-		return err
-	}
-
-	return nil
+	return result.Error
 }
 
 func (r *UserRepository) IsEmailExist(email string) (bool, error) {

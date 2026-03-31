@@ -35,8 +35,8 @@ func (oi *OrderItem) CalculateSubTotal() {
 	gross := price.Mul(qty)
 	discount := decimal.Zero
 
-	// Apply discount only if present, active, and within its validity period (if provided).
-	if oi.Discount != nil && oi.Discount.IsActive {
+	// Apply discount only if present, not deleted, and within its validity period (if provided).
+	if oi.Discount != nil && !oi.Discount.DeletedAt.Valid {
 		now := time.Now()
 		startOk := true
 		endOk := true

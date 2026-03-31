@@ -89,7 +89,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-	if err := h.UseCase.Destroy(c.Request.Context(), id); err != nil {
+	if err := h.UseCase.Delete(c.Request.Context(), id); err != nil {
 		c.Error(err)
 		return
 	}
@@ -97,32 +97,17 @@ func (h *UserHandler) Delete(c *gin.Context) {
 	response.OK(c, nil, "success delete user")
 }
 
-func (h *UserHandler) Activate(c *gin.Context) {
+func (h *UserHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {
 		c.Error(err)
 		return
 	}
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, true)
+	res, err := h.UseCase.Restore(c.Request.Context(), id)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	response.OK(c, res, "success activate user")
-}
-
-func (h *UserHandler) Deactivate(c *gin.Context) {
-	id, err := helper.ParseUUID(c)
-	if err != nil {
-		c.Error(err)
-		return
-	}
-	res, err := h.UseCase.UpdateStatus(c.Request.Context(), id, false)
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	response.OK(c, res, "success deactivate user")
+	response.OK(c, res, "success restore user")
 }
