@@ -18,6 +18,8 @@ import (
 )
 
 func main() {
+	// TODO: RateLimiter, CORS, CustomRecovery, Implement Logger
+	// TODO: Implement Dashboard API One API for All use Goroutines! (Business)
 	cfg := config.GetConfig()
 
 	err := database.InitDb(cfg)
