@@ -14,6 +14,9 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/dependency"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
+	"github.com/BramAristyo/go-pos-mawish/pkg/logger"
+	"github.com/gin-contrib/cors"
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,8 +34,23 @@ func main() {
 
 	db := database.GetDb()
 
-	r := gin.Default()
+	r := gin.New()
+	log := logger.NewZapLogger(cfg)
+
+	r.Use(cors.New(cors.Config{
+		// AllowOrigins:     []string{"https://example.com"},
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	r.Use(middleware.ErrorHandler())
+
+	r.Use(ginzap.Ginzap(log.GetLogger(), time.RFC3339, true))
+	r.Use(ginzap.RecoveryWithZap(log.GetLogger(), true))
 
 	handlers := dependency.Bootstrap(db, cfg)
 	router.RegisterRoutes(r, handlers, cfg)
@@ -46,7 +64,7 @@ func main() {
 
 	go func() {
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+			log.Fatal("listen: %s\n", err)
 		}
 	}()
 
@@ -58,12 +76,12 @@ func main() {
 	// kill -9 is syscall.SIGKILL but can't be caught, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutdown Server ...")
+	log.Info("Shutdown Server ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := s.Shutdown(ctx); err != nil {
-		log.Println("Server Shutdown:", err)
+		log.Fatal("Server Shutdown:", err)
 	}
-	log.Println("Server exiting")
+	log.Info("Server existing")
 }
