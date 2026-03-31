@@ -150,7 +150,6 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 
 func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error) {
 	var totalRows int64
-	shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
 
 	query := r.DB.WithContext(ctx).
 		Table("shifts").
@@ -177,6 +176,7 @@ func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.Paginat
 		Select("SUM(amount)").
 		Where("shift_id = shifts.id AND type = ?", domain.CashOut)
 
+	shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
 	err := query.
 		Select(`
 			users.name as cashier_name,

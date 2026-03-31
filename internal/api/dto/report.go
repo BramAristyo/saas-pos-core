@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/shopspring/decimal"
 )
@@ -14,12 +15,33 @@ type SalesReportResponse struct {
 	Total      decimal.Decimal `json:"total"`
 }
 
+func ToSalesReportResponse(s domain.SalesSummary) SalesReportResponse {
+	return SalesReportResponse{
+		GrossSales: s.GrossSales,
+		Discounts:  s.Discounts,
+		NetSales:   s.NetSales,
+		Gratuity:   s.Gratuity,
+		Tax:        s.Tax,
+		Total:      s.Total,
+	}
+}
+
 type GrossProfitReportResponse struct {
 	GrossSales  decimal.Decimal `json:"grossSales"`
 	Discounts   decimal.Decimal `json:"discounts"`
 	NetSales    decimal.Decimal `json:"netSales"`
 	Cogs        decimal.Decimal `json:"cogs"`
 	GrossProfit decimal.Decimal `json:"grossProfit"`
+}
+
+func ToGrossProfitReportResponse(gp domain.GrossProfit) GrossProfitReportResponse {
+	return GrossProfitReportResponse{
+		GrossSales:  gp.GrossSales,
+		Discounts:   gp.Discounts,
+		NetSales:    gp.NetSales,
+		Cogs:        gp.Cogs,
+		GrossProfit: gp.Cogs,
+	}
 }
 
 type DiscountReportResponse struct {

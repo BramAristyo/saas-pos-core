@@ -179,7 +179,6 @@ func (r *OrderRepository) GrossProfit(ctx context.Context, req filter.DynamicFil
 
 func (r *OrderRepository) TransactionReport(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Transaction, error) {
 	var totalRows int64
-	var transactions []domain.Transaction
 
 	query := r.DB.WithContext(ctx).
 		Model(&domain.OrderItem{}).
@@ -196,6 +195,7 @@ func (r *OrderRepository) TransactionReport(ctx context.Context, req filter.Pagi
 		return 0, nil, nil
 	}
 
+	transactions := make([]domain.Transaction, 0, req.PaginationInput.PageSize)
 	err := query.Offset(req.Offset()).
 		Limit(req.PaginationInput.PageSize).
 		Scan(&transactions).Error

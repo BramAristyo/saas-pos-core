@@ -96,4 +96,8 @@ func (r *DiscountRepository) Restore(ctx context.Context, id uuid.UUID) error {
 	return result.Error
 }
 
-// func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error)
+// func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error) {
+// 	var totalRows int64
+
+// 	query := r.DB.WithContext(ctx)
+// }
