@@ -364,21 +364,3 @@ type ProductRepository interface {
     Restore(ctx context.Context, id uuid.UUID) error   // was Activate
 }
 ```
-
----
-
-### 8.8 Refactor Checklist
-
-Apply the following checklist to **every entity** in the project:
-
-```
-[ ] domain/         — remove IsActive, add DeletedAt gorm.DeletedAt `gorm:"index"`
-[ ] repository/     — remove Activate/Deactivate, add Delete/Restore
-[ ] usecase/        — remove Activate/Deactivate, add Delete/Restore
-[ ] dto/            — remove isActive field, add deletedAt *string with omitempty
-[ ] handler/        — swap PATCH activate/deactivate → DELETE + PATCH restore
-[ ] routes/         — update route registration
-[ ] interfaces/     — update repository interface contract
-[ ] migration/      — ADD COLUMN deleted_at, DROP COLUMN is_active, ADD INDEX
-[ ] seeder/         — remove any IsActive: true seeding (GORM default is NULL = active)
-```

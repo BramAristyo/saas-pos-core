@@ -38,6 +38,6 @@ type Filter struct {
 
 type DynamicFilter struct {
 	Sort   []Sort            `json:"sort"`
-	Search string            `json:"search" form:"search"`
+	Search string            `json:"search"`
 	Filter map[string]Filter `json:"filter"`
 }
