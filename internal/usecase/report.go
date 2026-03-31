@@ -9,17 +9,20 @@ import (
 )
 
 type ReportUseCase struct {
-	OrderRepo *repository.OrderRepository
-	ShiftRepo *repository.ShiftRepository
+	OrderRepo    *repository.OrderRepository
+	ShiftRepo    *repository.ShiftRepository
+	DiscountRepo *repository.DiscountRepository
 }
 
 func NewReportUseCase(
 	orderRepo *repository.OrderRepository,
 	shiftRepo *repository.ShiftRepository,
+	discountRepo *repository.DiscountRepository,
 ) *ReportUseCase {
 	return &ReportUseCase{
-		OrderRepo: orderRepo,
-		ShiftRepo: shiftRepo,
+		OrderRepo:    orderRepo,
+		ShiftRepo:    shiftRepo,
+		DiscountRepo: discountRepo,
 	}
 }
 
@@ -34,12 +37,12 @@ func (u *ReportUseCase) SalesSummary(ctx context.Context, req filter.DynamicFilt
 
 func (u *ReportUseCase) GrossProfit(ctx context.Context, req filter.DynamicFilter) (dto.GrossProfitReportResponse, error) {
 	grossProfit, err := u.OrderRepo.GrossProfit(ctx, req)
-
-	grossProfit.CalculateGrossProfit()
-
 	if err != nil {
 		return dto.GrossProfitReportResponse{}, err
 	}
+
+	grossProfit.CalculateGrossProfit()
+
 	return dto.ToGrossProfitReportResponse(grossProfit), nil
 }
 
@@ -49,18 +52,56 @@ func (u *ReportUseCase) Transactions(ctx context.Context, req filter.PaginationW
 		return dto.TransactionReportResponsePagination{}, err
 	}
 
-	transactionResponses := make([]dto.TransactionReportResponse, 0, req.PaginationInput.PageSize)
-	for i, t := range ts {
-		transactionResponses[i] = dto.TransactionReportResponse{
+	transactionResponses := make([]dto.TransactionReportResponse, 0, len(ts))
+	for _, t := range ts {
+		transactionResponses = append(transactionResponses, dto.TransactionReportResponse{
 			OrderNumber: t.OrderNumber,
 			Time:        t.Time,
 			Product:     t.Product,
 			Price:       t.Price,
-		}
+		})
 	}
 
 	return dto.TransactionReportResponsePagination{Data: transactionResponses, Meta: req.ToMeta(totalRows)}, nil
 }
 
-// func (u *ReportUseCase) DiscountUsage(ctx context.Context, req filter.PaginationWithInputFilter) (dto.DiscountReportResponsePagination, error)
-// func (u *ReportUseCase) ShiftReconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ShiftReconciliationtResponsePagination, error)
+func (u *ReportUseCase) DiscountUsage(ctx context.Context, req filter.PaginationWithInputFilter) (dto.DiscountReportResponsePagination, error) {
+	totalRows, drs, err := u.DiscountRepo.Usage(ctx, req)
+	if err != nil {
+		return dto.DiscountReportResponsePagination{}, err
+	}
+
+	discountResponses := make([]dto.DiscountReportResponse, 0, len(drs))
+	for _, dr := range drs {
+		discountResponses = append(discountResponses, dto.DiscountReportResponse{
+			Name:          dr.Name,
+			Count:         dr.Count,
+			GrossDiscount: dr.GrossDiscount,
+			Discount:      dr.Discount,
+		})
+	}
+
+	return dto.DiscountReportResponsePagination{Data: discountResponses, Meta: req.ToMeta(totalRows)}, nil
+}
+
+func (u *ReportUseCase) ShiftReconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ShiftReconciliationtResponsePagination, error) {
+	totalRows, srs, err := u.ShiftRepo.Reconciliation(ctx, req)
+	if err != nil {
+		return dto.ShiftReconciliationtResponsePagination{}, err
+	}
+
+	shiftResponses := make([]dto.ShiftReconciliationResponse, 0, len(srs))
+	for _, sr := range srs {
+		sr.CalculateDiff()
+		shiftResponses = append(shiftResponses, dto.ShiftReconciliationResponse{
+			CashierName:   sr.CashierName,
+			StartTime:     sr.StartTime,
+			EndTime:       sr.EndTime,
+			TotalExpected: sr.TotalExpected,
+			TotalActual:   sr.TotalActual,
+			Difference:    sr.Difference,
+		})
+	}
+
+	return dto.ShiftReconciliationtResponsePagination{Data: shiftResponses, Meta: req.ToMeta(totalRows)}, nil
+}

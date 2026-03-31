@@ -40,7 +40,7 @@ func ToGrossProfitReportResponse(gp domain.GrossProfit) GrossProfitReportRespons
 		Discounts:   gp.Discounts,
 		NetSales:    gp.NetSales,
 		Cogs:        gp.Cogs,
-		GrossProfit: gp.Cogs,
+		GrossProfit: gp.GrossProfit,
 	}
 }
 

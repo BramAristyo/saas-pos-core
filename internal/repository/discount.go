@@ -96,8 +96,26 @@ func (r *DiscountRepository) Restore(ctx context.Context, id uuid.UUID) error {
 	return result.Error
 }
 
-// func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error) {
-// 	var totalRows int64
+func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error) {
+	var totalRows int64
 
-// 	query := r.DB.WithContext(ctx)
-// }
+	query := r.DB.WithContext(ctx).Table("discounts d").
+		Select("d.name, COUNT(o.id) as count, COALESCE(SUM(o.subtotal), 0) as gross_discount, COALESCE(SUM(o.discount_amount), 0) as discount").
+		Joins("LEFT JOIN orders o ON o.discount_id = d.id AND o.status = ?", domain.OrderCompleted).
+		Group("d.name")
+
+	if err := query.Count(&totalRows).Error; err != nil {
+		return 0, nil, err
+	}
+
+	if totalRows == 0 {
+		return 0, nil, nil
+	}
+
+	var results []domain.DiscountReport
+	if err := query.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Scan(&results).Error; err != nil {
+		return 0, nil, err
+	}
+
+	return totalRows, results, nil
+}
