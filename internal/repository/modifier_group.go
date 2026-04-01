@@ -54,6 +54,9 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (d
 		Error
 
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.ModifierGroup{}, usecase_errors.NotFound
+		}
 		return domain.ModifierGroup{}, err
 	}
 
@@ -62,6 +65,9 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (d
 
 func (r *ModifierGroupRepository) Store(ctx context.Context, mg *domain.ModifierGroup) (domain.ModifierGroup, error) {
 	if err := r.DB.WithContext(ctx).Create(mg).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.ModifierGroup{}, usecase_errors.DuplicateEntry
+		}
 		return domain.ModifierGroup{}, err
 	}
 
@@ -71,6 +77,9 @@ func (r *ModifierGroupRepository) Store(ctx context.Context, mg *domain.Modifier
 func (r *ModifierGroupRepository) Update(ctx context.Context, id uuid.UUID, mg *domain.ModifierGroup) (domain.ModifierGroup, error) {
 	var existing domain.ModifierGroup
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.ModifierGroup{}, usecase_errors.NotFound
+		}
 		return domain.ModifierGroup{}, err
 	}
 

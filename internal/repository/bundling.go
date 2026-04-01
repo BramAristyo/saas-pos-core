@@ -51,6 +51,9 @@ func (r *BundlingRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 		Preload("BundlingItems.Product.Category").
 		Where("id = ?", id).
 		First(&bp).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.BundlingPackage{}, usecase_errors.NotFound
+		}
 		return domain.BundlingPackage{}, err
 	}
 
@@ -59,6 +62,9 @@ func (r *BundlingRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 
 func (r *BundlingRepository) Store(ctx context.Context, bp *domain.BundlingPackage) (domain.BundlingPackage, error) {
 	if err := r.DB.WithContext(ctx).Create(bp).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.BundlingPackage{}, usecase_errors.DuplicateEntry
+		}
 		return domain.BundlingPackage{}, err
 	}
 
@@ -69,6 +75,9 @@ func (r *BundlingRepository) Update(ctx context.Context, id uuid.UUID, bp *domai
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var existing domain.BundlingPackage
 		if err := tx.Where("id = ?", id).Preload("BundlingItems").First(&existing).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return usecase_errors.NotFound
+			}
 			return err
 		}
 

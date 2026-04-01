@@ -29,6 +29,9 @@ func (r *UserRepository) GetAll() ([]domain.User, error) {
 
 func (r *UserRepository) Store(u *domain.User) (domain.User, error) {
 	if err := r.DB.Create(u).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.User{}, usecase_errors.EmailExist
+		}
 		return domain.User{}, err
 	}
 
@@ -39,6 +42,9 @@ func (r *UserRepository) FindById(id uuid.UUID) (domain.User, error) {
 	var u domain.User
 
 	if err := r.DB.Where("id = ?", id).First(&u).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.User{}, usecase_errors.NotFound
+		}
 		return domain.User{}, err
 	}
 
@@ -49,6 +55,9 @@ func (r *UserRepository) FindByEmail(email string) (domain.User, error) {
 	var u domain.User
 
 	if err := r.DB.Where("email = ?", email).First(&u).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.User{}, usecase_errors.NotFound
+		}
 		return domain.User{}, err
 	}
 	return u, nil
@@ -57,6 +66,9 @@ func (r *UserRepository) FindByEmail(email string) (domain.User, error) {
 func (r *UserRepository) Update(id uuid.UUID, u *domain.User) (domain.User, error) {
 	var existing domain.User
 	if err := r.DB.Where("id = ?", id).First(&existing).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.User{}, usecase_errors.NotFound
+		}
 		return domain.User{}, err
 	}
 
@@ -67,6 +79,9 @@ func (r *UserRepository) Update(id uuid.UUID, u *domain.User) (domain.User, erro
 	}
 
 	if err := r.DB.Model(&existing).Updates(updateData).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.User{}, usecase_errors.EmailExist
+		}
 		return domain.User{}, err
 	}
 

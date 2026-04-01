@@ -56,6 +56,9 @@ func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (domain.
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Where("id = ?", id).First(&p).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Product{}, usecase_errors.NotFound
+		}
 		return domain.Product{}, err
 	}
 
@@ -64,6 +67,9 @@ func (r *ProductRepository) FindById(ctx context.Context, id uuid.UUID) (domain.
 
 func (r *ProductRepository) Store(ctx context.Context, p *domain.Product) (domain.Product, error) {
 	if err := r.DB.WithContext(ctx).Create(p).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.Product{}, usecase_errors.DuplicateEntry
+		}
 		return domain.Product{}, err
 	}
 
@@ -74,6 +80,9 @@ func (r *ProductRepository) Update(ctx context.Context, id uuid.UUID, p *domain.
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var existing domain.Product
 		if err := tx.Where("id = ?", id).First(&existing).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return usecase_errors.NotFound
+			}
 			return err
 		}
 

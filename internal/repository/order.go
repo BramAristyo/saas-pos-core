@@ -6,6 +6,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -68,6 +69,9 @@ func (r *OrderRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Or
 		Preload("Payments").
 		First(&existing).
 		Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Order{}, usecase_errors.NotFound
+		}
 		return domain.Order{}, err
 	}
 
@@ -77,6 +81,9 @@ func (r *OrderRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Or
 func (r *OrderRepository) Store(ctx context.Context, order *domain.Order) (domain.Order, error) {
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(order).Error; err != nil {
+			if usecase_errors.IsUniqueViolation(err) {
+				return usecase_errors.DuplicateEntry
+			}
 			return err
 		}
 		return nil
@@ -90,15 +97,19 @@ func (r *OrderRepository) Store(ctx context.Context, order *domain.Order) (domai
 }
 
 func (r *OrderRepository) Void(ctx context.Context, order *domain.Order) (domain.Order, error) {
-	err := r.DB.WithContext(ctx).Model(order).Updates(map[string]any{
+	result := r.DB.WithContext(ctx).Model(order).Updates(map[string]any{
 		"status":      domain.OrderVoided,
 		"void_reason": order.VoidReason,
 		"voided_by":   order.VoidedBy,
 		"voided_at":   order.VoidedAt,
-	}).Error
+	})
 
-	if err != nil {
-		return domain.Order{}, err
+	if result.Error != nil {
+		return domain.Order{}, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return domain.Order{}, usecase_errors.NotFound
 	}
 
 	return r.FindById(ctx, order.ID)
@@ -120,6 +131,9 @@ func (r *OrderRepository) FindByOrderNumber(ctx context.Context, orderNumber str
 		Preload("Payments").
 		First(&existing).
 		Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Order{}, usecase_errors.NotFound
+		}
 		return domain.Order{}, err
 	}
 
@@ -132,6 +146,9 @@ func (r *OrderRepository) GetLatestOrder(ctx context.Context) (domain.Order, err
 		Order("created_at desc").
 		First(&latest).
 		Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Order{}, usecase_errors.NotFound
+		}
 		return domain.Order{}, err
 	}
 

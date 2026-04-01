@@ -49,6 +49,9 @@ func (r *DiscountRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 	var d domain.Discount
 
 	if err := r.DB.WithContext(ctx).First(&d, "id = ?", id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Discount{}, usecase_errors.NotFound
+		}
 		return domain.Discount{}, err
 	}
 
@@ -57,6 +60,9 @@ func (r *DiscountRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 
 func (r *DiscountRepository) Store(ctx context.Context, d *domain.Discount) (domain.Discount, error) {
 	if err := r.DB.WithContext(ctx).Create(d).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.Discount{}, usecase_errors.DuplicateEntry
+		}
 		return domain.Discount{}, err
 	}
 
@@ -66,6 +72,9 @@ func (r *DiscountRepository) Store(ctx context.Context, d *domain.Discount) (dom
 func (r *DiscountRepository) Update(ctx context.Context, id uuid.UUID, d *domain.Discount) (domain.Discount, error) {
 	var existing domain.Discount
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Discount{}, usecase_errors.NotFound
+		}
 		return domain.Discount{}, err
 	}
 

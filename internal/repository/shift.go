@@ -6,6 +6,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
+	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -59,6 +60,9 @@ func (r *ShiftRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Sh
 		Where("id = ?", id).
 		First(&shift).
 		Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Shift{}, usecase_errors.NotFound
+		}
 		return domain.Shift{}, err
 	}
 
@@ -68,6 +72,9 @@ func (r *ShiftRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Sh
 // Opening Shift
 func (r *ShiftRepository) Store(ctx context.Context, s *domain.Shift) (domain.Shift, error) {
 	if err := r.DB.WithContext(ctx).Create(s).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.Shift{}, usecase_errors.DuplicateEntry
+		}
 		return domain.Shift{}, err
 	}
 
@@ -78,6 +85,9 @@ func (r *ShiftRepository) Update(ctx context.Context, id uuid.UUID, s *domain.Sh
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var existing domain.Shift
 		if err := tx.Where("id = ?", id).Preload("ShiftExpenses").First(&existing).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return usecase_errors.NotFound
+			}
 			return err
 		}
 
@@ -122,7 +132,10 @@ func (r *ShiftRepository) Update(ctx context.Context, id uuid.UUID, s *domain.Sh
 func (r *ShiftRepository) CloseShift(ctx context.Context, id uuid.UUID, s *domain.Shift) (domain.Shift, error) {
 	var existing domain.Shift
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		return domain.Shift{}, nil
+		if err == gorm.ErrRecordNotFound {
+			return domain.Shift{}, usecase_errors.NotFound
+		}
+		return domain.Shift{}, err
 	}
 
 	updateData := map[string]any{
@@ -133,7 +146,7 @@ func (r *ShiftRepository) CloseShift(ctx context.Context, id uuid.UUID, s *domai
 	}
 
 	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
-		return domain.Shift{}, nil
+		return domain.Shift{}, err
 	}
 
 	return existing, nil
@@ -147,6 +160,9 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 		Preload("OpenedByUser").
 		Preload("ShiftExpenses").
 		First(&shift).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Shift{}, usecase_errors.NoOpenShift
+		}
 		return domain.Shift{}, err
 	}
 

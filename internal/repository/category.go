@@ -45,6 +45,9 @@ func (r *CategoryRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 	var c domain.Category
 
 	if err := r.DB.WithContext(ctx).First(&c, "id = ?", id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Category{}, usecase_errors.NotFound
+		}
 		return domain.Category{}, err
 	}
 
@@ -53,6 +56,9 @@ func (r *CategoryRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 
 func (r *CategoryRepository) Store(ctx context.Context, c *domain.Category) (domain.Category, error) {
 	if err := r.DB.WithContext(ctx).Create(c).Error; err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return domain.Category{}, usecase_errors.DuplicateEntry
+		}
 		return domain.Category{}, err
 	}
 
@@ -62,6 +68,9 @@ func (r *CategoryRepository) Store(ctx context.Context, c *domain.Category) (dom
 func (r *CategoryRepository) Update(ctx context.Context, id uuid.UUID, c *domain.Category) (domain.Category, error) {
 	var existing domain.Category
 	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Category{}, usecase_errors.NotFound
+		}
 		return domain.Category{}, err
 	}
 
