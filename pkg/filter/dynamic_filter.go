@@ -44,15 +44,14 @@ type DynamicFilter struct {
 	Filter map[string]Filter `json:"filter" form:"filter"`
 }
 
-func (df *DynamicFilter) WithDefaultSort() *DynamicFilter {
+func (df *DynamicFilter) WithDefaultSort() {
 	if len(df.Sort) == 0 {
 		df.Sort = []Sort{{"created_at", "desc"}}
 	}
 
-	return df
 }
 
-func (df *DynamicFilter) WithDefaultDateRange() *DynamicFilter {
+func (df *DynamicFilter) WithDefaultDateRange() {
 	now := time.Now()
 
 	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
@@ -73,6 +72,4 @@ func (df *DynamicFilter) WithDefaultDateRange() *DynamicFilter {
 			FilterType: DataTypeDate,
 		}
 	}
-
-	return df
 }
