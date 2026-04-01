@@ -1,5 +1,7 @@
 package filter
 
+import "time"
+
 type FilterOperator string
 
 const (
@@ -25,19 +27,52 @@ const (
 )
 
 type Sort struct {
-	Column string `json:"column"`
-	Order  string `json:"orderBy"`
+	Column string `json:"column" form:"column"`
+	Order  string `json:"orderBy" form:"orderBy"`
 }
 
 type Filter struct {
-	Type       FilterOperator `json:"type"`
-	From       string         `json:"from"`
-	To         string         `json:"to"`
-	FilterType FilterDataType `json:"filterType"`
+	Type       FilterOperator `json:"type" form:"type"`
+	From       string         `json:"from" form:"from"`
+	To         string         `json:"to" form:"to"`
+	FilterType FilterDataType `json:"filterType" form:"filterType"`
 }
 
 type DynamicFilter struct {
-	Sort   []Sort            `json:"sort"`
-	Search string            `json:"search"`
-	Filter map[string]Filter `json:"filter"`
+	Sort   []Sort            `json:"sort" form:"sort"`
+	Search string            `json:"search" form:"search"`
+	Filter map[string]Filter `json:"filter" form:"filter"`
+}
+
+func (df *DynamicFilter) WithDefaultSort() *DynamicFilter {
+	if len(df.Sort) == 0 {
+		df.Sort = []Sort{{"created_at", "desc"}}
+	}
+
+	return df
+}
+
+func (df *DynamicFilter) WithDefaultDateRange() *DynamicFilter {
+	now := time.Now()
+
+	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+
+	from := startOfMonth.Format("2006-01-02")
+	to := now.Format("2006-01-02")
+
+	if df.Filter == nil {
+		df.Filter = make(map[string]Filter)
+	}
+
+	if _, exists := df.Filter["created_at"]; !exists {
+
+		df.Filter["created_at"] = Filter{
+			Type:       OpInRange,
+			From:       from,
+			To:         to,
+			FilterType: DataTypeDate,
+		}
+	}
+
+	return df
 }

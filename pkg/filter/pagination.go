@@ -3,7 +3,7 @@ package filter
 import "math"
 
 type PaginationInput struct {
-	PageSize   int `json:"pageSize" form:"pageSize,default=10"`
+	PageSize   int `json:"pageSize" form:"pageSize,default=25"`
 	PageNumber int `json:"pageNumber" form:"pageNumber,default=1"`
 }
 

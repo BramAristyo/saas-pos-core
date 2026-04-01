@@ -22,7 +22,7 @@ func BuildQuery(
 	db = applySort(db, req.Sort, allowedFields)
 	db = applyFilter(db, req.Filter, allowedFields)
 
-	return db
+	return db.Debug()
 }
 
 func applySearch(

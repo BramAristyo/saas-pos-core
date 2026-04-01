@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
@@ -22,11 +23,18 @@ func (r *CategoryRepository) Paginate(ctx context.Context, req filter.Pagination
 	var c []domain.Category
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.Category{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":       "name",
+		"created_at": "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.Model(&domain.Category{}), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, []domain.Category{}, err
 	}
 
-	if err := r.DB.WithContext(ctx).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&c).Error; err != nil {
+	if err := q.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&c).Error; err != nil {
 		return 0, []domain.Category{}, err
 	}
 

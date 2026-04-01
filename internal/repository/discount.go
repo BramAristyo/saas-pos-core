@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
@@ -22,7 +23,14 @@ func (r *DiscountRepository) Paginate(ctx context.Context, req filter.Pagination
 	d := make([]domain.Discount, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.Discount{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":       "name",
+		"created_at": "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Discount{}), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, []domain.Discount{}, err
 	}
 
@@ -30,7 +38,7 @@ func (r *DiscountRepository) Paginate(ctx context.Context, req filter.Pagination
 		return 0, []domain.Discount{}, nil
 	}
 
-	if err := r.DB.WithContext(ctx).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&d).Error; err != nil {
+	if err := q.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&d).Error; err != nil {
 		return 0, []domain.Discount{}, err
 	}
 

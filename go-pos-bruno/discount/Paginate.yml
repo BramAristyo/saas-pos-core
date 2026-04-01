@@ -5,16 +5,85 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/discounts"
+  url: "{{url}}/discounts?pageNumber=1&pageSize=10&search=promo&sort[0].column=name&sort[0].orderBy=asc&filter[created_at].type=inRange&filter[created_at].from=2026-04-01&filter[created_at].to=2026-04-30&filter[created_at].filterType=date"
+  params:
+    - name: pageNumber
+      value: "1"
+      type: query
+    - name: pageSize
+      value: "10"
+      type: query
+    - name: search
+      value: promo
+      type: query
+    - name: sort[0].column
+      value: name
+      type: query
+    - name: sort[0].orderBy
+      value: asc
+      type: query
+    - name: filter[created_at].type
+      value: inRange
+      type: query
+    - name: filter[created_at].from
+      value: 2026-04-01
+      type: query
+    - name: filter[created_at].to
+      value: 2026-04-30
+      type: query
+    - name: filter[created_at].filterType
+      value: date
+      type: query
   auth: inherit
-  query:
-    page: 1
-    pageSize: 10
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
 
 examples:
   - name: success paginate discount
     request:
-      url: "{{url}}/discounts?page=1&pageSize=10"
+      url: "{{url}}/discounts?pageNumber=1&pageSize=10&search=promo&sort[0].column=name&sort[0].orderBy=asc&filter[created_at].type=inRange&filter[created_at].from=2026-04-01&filter[created_at].to=2026-04-30&filter[created_at].filterType=date"
       method: GET
     response:
       status: 200
+  - name: example
+    request:
+      url: "{{url}}/discounts?pageNumber=1&pageSize=10&search=promo&sort[0].column=name&sort[0].orderBy=asc&filter[created_at].type=inRange&filter[created_at].from=2026-04-01&filter[created_at].to=2026-04-30&filter[created_at].filterType=date"
+      method: GET
+      params:
+        - name: pageNumber
+          value: "1"
+          type: query
+        - name: pageSize
+          value: "10"
+          type: query
+        - name: search
+          value: promo
+          type: query
+        - name: sort[0].column
+          value: name
+          type: query
+        - name: sort[0].orderBy
+          value: asc
+          type: query
+        - name: filter[created_at].type
+          value: inRange
+          type: query
+        - name: filter[created_at].from
+          value: 2026-04-01
+          type: query
+        - name: filter[created_at].to
+          value: 2026-04-30
+          type: query
+        - name: filter[created_at].filterType
+          value: date
+          type: query
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: text
+        data: ""
