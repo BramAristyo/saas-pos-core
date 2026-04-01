@@ -22,12 +22,12 @@ type TaxResponsePagination struct {
 
 type CreateTaxRequest struct {
 	Name       string          `json:"name" binding:"required,min=3,max=100"`
-	Percentage decimal.Decimal `json:"percentage" binding:"required"`
+	Percentage decimal.Decimal `json:"percentage" binding:"required,gt=0,lte=100"`
 }
 
 type UpdateTaxRequest struct {
 	Name       string          `json:"name" binding:"required,min=3,max=100"`
-	Percentage decimal.Decimal `json:"percentage" binding:"required"`
+	Percentage decimal.Decimal `json:"percentage" binding:"required,gt=0,lte=100"`
 }
 
 func ToCreateTaxModel(req *CreateTaxRequest) domain.Tax {

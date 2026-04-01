@@ -28,26 +28,26 @@ type SalesTypeResponsePagination struct {
 }
 
 type CreateAdditionalChargeRequest struct {
-	Name   string                `json:"name" binding:"required"`
+	Name   string                `json:"name" binding:"required,min=3,max=100"`
 	Type   domain.AdjustmentType `json:"type" binding:"required,oneof=percentage fixed"`
-	Amount decimal.Decimal       `json:"amount" binding:"required"`
+	Amount decimal.Decimal       `json:"amount" binding:"required,gt=0"`
 }
 
 type CreateSalesTypeRequest struct {
-	Name    string                          `json:"name" binding:"required"`
-	Charges []CreateAdditionalChargeRequest `json:"charges"`
+	Name    string                          `json:"name" binding:"required,min=3,max=100"`
+	Charges []CreateAdditionalChargeRequest `json:"charges" binding:"omitempty,dive"`
 }
 
 type UpdateAdditionalChargeRequest struct {
-	ID     *string               `json:"id"`
-	Name   string                `json:"name" binding:"required"`
+	ID     *string               `json:"id" binding:"omitempty,uuid"`
+	Name   string                `json:"name" binding:"required,min=3,max=100"`
 	Type   domain.AdjustmentType `json:"type" binding:"required,oneof=percentage fixed"`
-	Amount decimal.Decimal       `json:"amount" binding:"required"`
+	Amount decimal.Decimal       `json:"amount" binding:"required,gt=0"`
 }
 
 type UpdateSalesTypeRequest struct {
-	Name    string                          `json:"name" binding:"required"`
-	Charges []UpdateAdditionalChargeRequest `json:"charges"`
+	Name    string                          `json:"name" binding:"required,min=3,max=100"`
+	Charges []UpdateAdditionalChargeRequest `json:"charges" binding:"omitempty,dive"`
 }
 
 func ToAdditionalChargeResponse(c *domain.AdditionalCharge) AdditionalChargeResponse {

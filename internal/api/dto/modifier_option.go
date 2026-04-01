@@ -25,14 +25,14 @@ type ModifierOptionResponsePagination struct {
 }
 
 type CreateModifierOptionRequest struct {
-	ModifierGroupID uuid.UUID       `json:"modifierGroupId" binding:"required"`
+	ModifierGroupID uuid.UUID       `json:"modifierGroupId" binding:"required,uuid"`
 	Name            string          `json:"name" binding:"required,min=3,max=100"`
 	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
 	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`
 }
 
 type UpdateModifierOptionRequest struct {
-	ModifierGroupID uuid.UUID       `json:"modifierGroupId" binding:"required"`
+	ModifierGroupID uuid.UUID       `json:"modifierGroupId" binding:"required,uuid"`
 	Name            string          `json:"name" binding:"required,min=3,max=100"`
 	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
 	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`

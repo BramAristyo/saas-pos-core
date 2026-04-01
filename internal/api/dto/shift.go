@@ -37,24 +37,24 @@ type ShiftResponsePagination struct {
 }
 
 type OpenShiftRequest struct {
-	OpeningCash decimal.Decimal `json:"openingCash" binding:"required"`
-	Notes       *string         `json:"notes"`
+	OpeningCash decimal.Decimal `json:"openingCash" binding:"required,gt=0"`
+	Notes       *string         `json:"notes" binding:"omitempty,max=255"`
 }
 
 type CloseShiftRequest struct {
-	ClosingCash decimal.Decimal `json:"closingCash" binding:"required"`
-	Notes       *string         `json:"notes"`
+	ClosingCash decimal.Decimal `json:"closingCash" binding:"required,gt=0"`
+	Notes       *string         `json:"notes" binding:"omitempty,max=255"`
 }
 
 type ShiftExpenseRequest struct {
-	ID          *string                  `json:"id"`
+	ID          *string                  `json:"id" binding:"omitempty,uuid"`
 	Type        domain.ShiftExpensesType `json:"type" binding:"required,oneof=in out"`
-	Amount      decimal.Decimal          `json:"amount" binding:"required"`
-	Description *string                  `json:"description"`
+	Amount      decimal.Decimal          `json:"amount" binding:"required,gt=0"`
+	Description *string                  `json:"description" binding:"omitempty,max=255"`
 }
 
 type UpsertShiftExpensesRequest struct {
-	Expenses []ShiftExpenseRequest `json:"expenses" binding:"required,dive"`
+	Expenses []ShiftExpenseRequest `json:"expenses" binding:"required,min=1,dive"`
 }
 
 func ToShiftExpenseResponse(se *domain.ShiftExpenses) ShiftExpenseResponse {

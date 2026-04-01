@@ -28,23 +28,23 @@ type ProductResponsePagination struct {
 }
 
 type CreateProductRequest struct {
-	CategoryID       uuid.UUID       `json:"categoryId" binding:"required"`
-	ModifierGroupIDs []uuid.UUID     `json:"modifierGroupIds"`
+	CategoryID       uuid.UUID       `json:"categoryId" binding:"required,uuid"`
+	ModifierGroupIDs []uuid.UUID     `json:"modifierGroupIds" binding:"omitempty,dive,uuid"`
 	Name             string          `json:"name" binding:"required,min=3,max=100"`
-	Description      *string         `json:"description"`
-	Price            decimal.Decimal `json:"price" binding:"required"`
-	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
-	ImageURL         *string         `json:"imageUrl"`
+	Description      *string         `json:"description" binding:"omitempty,max=255"`
+	Price            decimal.Decimal `json:"price" binding:"required,gt=0"`
+	Cogs             decimal.Decimal `json:"cogs" binding:"required,gt=0"`
+	ImageURL         *string         `json:"imageUrl" binding:"omitempty,url"`
 }
 
 type UpdateProductRequest struct {
-	CategoryID       uuid.UUID       `json:"categoryId" binding:"required"`
-	ModifierGroupIDs []uuid.UUID     `json:"modifierGroupIds"`
+	CategoryID       uuid.UUID       `json:"categoryId" binding:"required,uuid"`
+	ModifierGroupIDs []uuid.UUID     `json:"modifierGroupIds" binding:"omitempty,dive,uuid"`
 	Name             string          `json:"name" binding:"required,min=3,max=100"`
-	Description      *string         `json:"description"`
-	Price            decimal.Decimal `json:"price" binding:"required"`
-	Cogs             decimal.Decimal `json:"cogs" binding:"required"`
-	ImageURL         *string         `json:"imageUrl"`
+	Description      *string         `json:"description" binding:"omitempty,max=255"`
+	Price            decimal.Decimal `json:"price" binding:"required,gt=0"`
+	Cogs             decimal.Decimal `json:"cogs" binding:"required,gt=0"`
+	ImageURL         *string         `json:"imageUrl" binding:"omitempty,url"`
 }
 
 func ToProductResponse(p *domain.Product) ProductResponse {

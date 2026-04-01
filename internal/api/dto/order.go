@@ -76,15 +76,15 @@ type OrderResponsePagination struct {
 }
 
 type CreateOrderItemRequest struct {
-	ProductID  *string `json:"productId" binding:"required_without=BundlingID"`
-	BundlingID *string `json:"bundlingId" binding:"required_without=ProductID"`
-	DiscountID *string `json:"discountId"`
+	ProductID  *string `json:"productId" binding:"required_without=BundlingID,omitempty,uuid"`
+	BundlingID *string `json:"bundlingId" binding:"required_without=ProductID,omitempty,uuid"`
+	DiscountID *string `json:"discountId" binding:"omitempty,uuid"`
 	Quantity   int     `json:"quantity" binding:"required,min=1"`
 }
 
 type CreateOrderPaymentRequest struct {
-	Method domain.PaymentMethod `json:"method" binding:"required"`
-	Amount decimal.Decimal      `json:"amount" binding:"required"`
+	Method domain.PaymentMethod `json:"method" binding:"required,oneof=cash qris card"`
+	Amount decimal.Decimal      `json:"amount" binding:"required,gt=0"`
 }
 
 type CreateOrderRequest struct {

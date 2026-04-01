@@ -28,17 +28,17 @@ type DiscountResponsePagination struct {
 type CreateDiscountRequest struct {
 	Name      string                `json:"name" binding:"required,min=3,max=100"`
 	Type      domain.AdjustmentType `json:"type" binding:"required,oneof=percentage fixed"`
-	Value     decimal.Decimal       `json:"value" binding:"required"`
-	StartDate *string               `json:"startDate"`
-	EndDate   *string               `json:"endDate"`
+	Value     decimal.Decimal       `json:"value" binding:"required,gt=0"`
+	StartDate *string               `json:"startDate" binding:"omitempty,datetime=2006-01-02"`
+	EndDate   *string               `json:"endDate" binding:"omitempty,datetime=2006-01-02"`
 }
 
 type UpdateDiscountRequest struct {
 	Name      string                `json:"name" binding:"required,min=3,max=100"`
 	Type      domain.AdjustmentType `json:"type" binding:"required,oneof=percentage fixed"`
-	Value     decimal.Decimal       `json:"value" binding:"required"`
-	StartDate *string               `json:"startDate"`
-	EndDate   *string               `json:"endDate"`
+	Value     decimal.Decimal       `json:"value" binding:"required,gt=0"`
+	StartDate *string               `json:"startDate" binding:"omitempty,datetime=2006-01-02"`
+	EndDate   *string               `json:"endDate" binding:"omitempty,datetime=2006-01-02"`
 }
 
 func ToCreateDiscountModel(req *CreateDiscountRequest) domain.Discount {

@@ -35,27 +35,27 @@ type BundlingPackagePaginationResponse struct {
 }
 
 type BundlingItemRequest struct {
-	BundlingPackageID *uuid.UUID `json:"bundlingPackageId"`
-	ProductID         uuid.UUID  `json:"productId" binding:"required"`
+	BundlingPackageID *uuid.UUID `json:"bundlingPackageId" binding:"omitempty,uuid"`
+	ProductID         uuid.UUID  `json:"productId" binding:"required,uuid"`
 	Qty               int        `json:"qty" binding:"required,min=1"`
 }
 
 type CreateBundlingPackageRequest struct {
-	Name          string                `json:"name" binding:"required"`
-	Description   *string               `json:"description"`
-	Price         decimal.Decimal       `json:"price" binding:"required"`
-	Cogs          decimal.Decimal       `json:"cogs" binding:"required"`
-	ImageURL      *string               `json:"imageUrl"`
-	BundlingItems []BundlingItemRequest `json:"bundlingItems" binding:"required"`
+	Name          string                `json:"name" binding:"required,min=3,max=100"`
+	Description   *string               `json:"description" binding:"omitempty,max=255"`
+	Price         decimal.Decimal       `json:"price" binding:"required,gt=0"`
+	Cogs          decimal.Decimal       `json:"cogs" binding:"required,gt=0"`
+	ImageURL      *string               `json:"imageUrl" binding:"omitempty,url"`
+	BundlingItems []BundlingItemRequest `json:"bundlingItems" binding:"required,min=1,dive"`
 }
 
 type UpdateBundlingPackageRequest struct {
-	Name          string                `json:"name" binding:"required"`
-	Description   *string               `json:"description"`
-	Price         decimal.Decimal       `json:"price" binding:"required"`
-	Cogs          decimal.Decimal       `json:"cogs" binding:"required"`
-	ImageURL      *string               `json:"imageUrl"`
-	BundlingItems []BundlingItemRequest `json:"bundlingItems" binding:"required"`
+	Name          string                `json:"name" binding:"required,min=3,max=100"`
+	Description   *string               `json:"description" binding:"omitempty,max=255"`
+	Price         decimal.Decimal       `json:"price" binding:"required,gt=0"`
+	Cogs          decimal.Decimal       `json:"cogs" binding:"required,gt=0"`
+	ImageURL      *string               `json:"imageUrl" binding:"omitempty,url"`
+	BundlingItems []BundlingItemRequest `json:"bundlingItems" binding:"required,min=1,dive"`
 }
 
 func toBundlingItemResponses(bis []domain.BundlingItem) []BundlingItemResponse {

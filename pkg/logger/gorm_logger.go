@@ -24,15 +24,15 @@ func (l *GormZapLogger) LogMode(level logger.LogLevel) logger.Interface {
 	return l
 }
 
-func (l *GormZapLogger) Info(ctx context.Context, msg string, data ...interface{}) {
+func (l *GormZapLogger) Info(ctx context.Context, msg string, data ...any) {
 	l.ZapLogger.Sugar().Infof(msg, data...)
 }
 
-func (l *GormZapLogger) Warn(ctx context.Context, msg string, data ...interface{}) {
+func (l *GormZapLogger) Warn(ctx context.Context, msg string, data ...any) {
 	l.ZapLogger.Sugar().Warnf(msg, data...)
 }
 
-func (l *GormZapLogger) Error(ctx context.Context, msg string, data ...interface{}) {
+func (l *GormZapLogger) Error(ctx context.Context, msg string, data ...any) {
 	l.ZapLogger.Sugar().Errorf(msg, data...)
 }
 

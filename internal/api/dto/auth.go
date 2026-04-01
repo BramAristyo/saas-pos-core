@@ -7,9 +7,9 @@ type LoginRequest struct {
 
 type RegisterRequest struct {
 	Name                 string `json:"name" binding:"required,min=2,max=100"`
-	Email                string `json:"email" binding:"required,min=6"`
+	Email                string `json:"email" binding:"required,email"`
 	Password             string `json:"password" binding:"required,min=8"`
-	PasswordConfirmation string `json:"passwordConfirmation" binding:"required,min=8"`
+	PasswordConfirmation string `json:"passwordConfirmation" binding:"required,eqfield=Password"`
 }
 
 type LoginResponse struct {
