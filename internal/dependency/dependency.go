@@ -29,7 +29,7 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	auditLogRepository := repository.NewAuditLogRepository(db)
 
 	auditLogUseCase := usecase.NewAuditLogUseCase(auditLogRepository)
-	authUseCase := usecase.NewAuthUseCase(userRepository, cfg)
+	authUseCase := usecase.NewAuthUseCase(userRepository, cfg, auditLogUseCase)
 	userUseCase := usecase.NewUserUseCase(userRepository, auditLogUseCase)
 
 	categoryRepository := repository.NewCategoryRepository(db)

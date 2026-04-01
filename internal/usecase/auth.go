@@ -1,10 +1,11 @@
 package usecase
 
 import (
-	"fmt"
+	"context"
 	"time"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
@@ -13,14 +14,16 @@ import (
 )
 
 type AuthUseCase struct {
-	Repo *repository.UserRepository
-	Cfg  *config.Config
+	Repo       *repository.UserRepository
+	Cfg        *config.Config
+	LogUseCase *AuditLogUseCase
 }
 
-func NewAuthUseCase(repo *repository.UserRepository, cfg *config.Config) *AuthUseCase {
+func NewAuthUseCase(repo *repository.UserRepository, cfg *config.Config, log *AuditLogUseCase) *AuthUseCase {
 	return &AuthUseCase{
-		Repo: repo,
-		Cfg:  cfg,
+		Repo:       repo,
+		Cfg:        cfg,
+		LogUseCase: log,
 	}
 }
 
@@ -36,7 +39,6 @@ func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
-		fmt.Println(user.Password, req.Password)
 		return dto.LoginResponse{}, usecase_errors.InvalidPassword
 	}
 
@@ -52,6 +54,14 @@ func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
+
+	u.LogUseCase.Log(context.TODO(), domain.AuditLog{
+		UserID:      user.ID,
+		Action:      domain.ActionLogin,
+		Entity:      domain.EntityUser,
+		EntityID:    &user.ID,
+		Description: "User logged in successfully",
+	})
 
 	return dto.LoginResponse{
 		Token: token,
