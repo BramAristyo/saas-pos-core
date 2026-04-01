@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -20,7 +21,16 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 func (r *OrderRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Order, error) {
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.Order{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"order_number": "order_number",
+		"status":       "status",
+		"total":        "total",
+		"created_at":   "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Order{}), req.DynamicFilter, []string{"order_number"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
@@ -29,7 +39,7 @@ func (r *OrderRepository) Paginate(ctx context.Context, req filter.PaginationWit
 	}
 
 	orders := make([]domain.Order, 0, req.PaginationInput.PageSize)
-	if err := r.DB.WithContext(ctx).
+	if err := q.
 		Preload("Cashier").
 		Preload("SalesType").
 		Offset(req.Offset()).
@@ -131,8 +141,13 @@ func (r *OrderRepository) GetLatestOrder(ctx context.Context) (domain.Order, err
 func (r *OrderRepository) SalesSummary(ctx context.Context, req filter.DynamicFilter) (domain.SalesSummary, error) {
 	var summary domain.SalesSummary
 
-	err := r.DB.WithContext(ctx).
-		Model(&domain.Order{}).
+	allowedFields := map[string]string{
+		"created_at": "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Order{}), req, nil, allowedFields)
+
+	err := q.
 		Select(`
 			COAlESCE(SUM(subtotal), 0) AS gross_sales,
 			COALESCE(SUM(discount_amount), 0) AS discounts,
@@ -145,7 +160,7 @@ func (r *OrderRepository) SalesSummary(ctx context.Context, req filter.DynamicFi
 		Scan(&summary).Error
 
 	if err != nil {
-		return domain.SalesSummary{}, nil
+		return domain.SalesSummary{}, err
 	}
 
 	return summary, nil
@@ -154,8 +169,13 @@ func (r *OrderRepository) SalesSummary(ctx context.Context, req filter.DynamicFi
 func (r *OrderRepository) GrossProfit(ctx context.Context, req filter.DynamicFilter) (domain.GrossProfit, error) {
 	var summary domain.GrossProfit
 
-	err := r.DB.WithContext(ctx).
-		Model(&domain.Order{}).
+	allowedFields := map[string]string{
+		"created_at": "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Order{}), req, nil, allowedFields)
+
+	err := q.
 		Select(`
 			COAlESCE(SUM(subtotal), 0) AS gross_sales,
 			COALESCE(SUM(discount_amount), 0) AS discounts,
@@ -171,7 +191,7 @@ func (r *OrderRepository) GrossProfit(ctx context.Context, req filter.DynamicFil
 		Scan(&summary).Error
 
 	if err != nil {
-		return domain.GrossProfit{}, nil
+		return domain.GrossProfit{}, err
 	}
 
 	return summary, nil
@@ -180,14 +200,19 @@ func (r *OrderRepository) GrossProfit(ctx context.Context, req filter.DynamicFil
 func (r *OrderRepository) TransactionReport(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Transaction, error) {
 	var totalRows int64
 
-	query := r.DB.WithContext(ctx).
-		Model(&domain.OrderItem{}).
+	allowedFields := map[string]string{
+		"created_at":   "orders.created_at",
+		"order_number": "orders.order_number",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.OrderItem{}), req.DynamicFilter, []string{"orders.order_number"}, allowedFields)
+
+	q = q.
 		Select("orders.order_number, TO_CHAR(orders.created_at, 'YYYY-MM-DD HH24:MI:SS') as time, order_items.product_name as product, order_items.subtotal as price").
 		Joins("JOIN orders ON order_items.order_id = orders.id").
-		Where("orders.status = ?", domain.OrderCompleted).
-		Order("orders.created_at DESC")
+		Where("orders.status = ?", domain.OrderCompleted)
 
-	if err := query.Count(&totalRows).Error; err != nil {
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
@@ -196,7 +221,7 @@ func (r *OrderRepository) TransactionReport(ctx context.Context, req filter.Pagi
 	}
 
 	transactions := make([]domain.Transaction, 0, req.PaginationInput.PageSize)
-	err := query.Offset(req.Offset()).
+	err := q.Offset(req.Offset()).
 		Limit(req.PaginationInput.PageSize).
 		Scan(&transactions).Error
 

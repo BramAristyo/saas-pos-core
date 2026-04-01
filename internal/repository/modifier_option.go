@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
@@ -22,11 +23,20 @@ func (r *ModifierOptionRepository) Paginate(ctx context.Context, req filter.Pagi
 	var mo []domain.ModifierOption
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.ModifierOption{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":            "name",
+		"price_adjustment": "price_adjustment",
+		"cogs_adjustment":  "cogs_adjustment",
+		"created_at":      "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.ModifierOption{}), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, []domain.ModifierOption{}, err
 	}
 
-	if err := r.DB.WithContext(ctx).Preload("ModifierGroup").Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&mo).Error; err != nil {
+	if err := q.Preload("ModifierGroup").Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&mo).Error; err != nil {
 		return 0, []domain.ModifierOption{}, err
 	}
 

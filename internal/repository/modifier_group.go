@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
@@ -24,11 +25,18 @@ func (r *ModifierGroupRepository) Paginate(ctx context.Context, req filter.Pagin
 	var mg []domain.ModifierGroup
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.ModifierGroup{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":       "name",
+		"created_at": "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.ModifierGroup{}), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&mg).Error; err != nil {
+	if err := q.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&mg).Error; err != nil {
 		return 0, nil, err
 	}
 

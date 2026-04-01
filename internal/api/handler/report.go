@@ -22,6 +22,8 @@ func (h *ReportHandler) SalesSummary(c *gin.Context) {
 		return
 	}
 
+	req.WithDefaultDateRange()
+
 	res, err := h.usecase.SalesSummary(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
@@ -37,6 +39,8 @@ func (h *ReportHandler) GrossProfit(c *gin.Context) {
 		c.Error(err)
 		return
 	}
+
+	req.WithDefaultDateRange()
 
 	res, err := h.usecase.GrossProfit(c.Request.Context(), req)
 	if err != nil {
@@ -54,6 +58,9 @@ func (h *ReportHandler) Transactions(c *gin.Context) {
 		return
 	}
 
+	req.DynamicFilter.WithDefaultSort()
+	req.DynamicFilter.WithDefaultDateRange()
+
 	res, err := h.usecase.Transactions(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
@@ -70,6 +77,9 @@ func (h *ReportHandler) DiscountUsage(c *gin.Context) {
 		return
 	}
 
+	req.DynamicFilter.WithDefaultSort()
+	req.DynamicFilter.WithDefaultDateRange()
+
 	res, err := h.usecase.DiscountUsage(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
@@ -85,6 +95,9 @@ func (h *ReportHandler) ShiftReconciliation(c *gin.Context) {
 		c.Error(err)
 		return
 	}
+
+	req.DynamicFilter.WithDefaultSort()
+	req.DynamicFilter.WithDefaultDateRange()
 
 	res, err := h.usecase.ShiftReconciliation(c.Request.Context(), req)
 	if err != nil {

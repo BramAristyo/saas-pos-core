@@ -8,6 +8,15 @@ http:
   url: "{{url}}/products"
   auth: inherit
 
+query:
+  ~search: Espresso
+  ~sort[0][column]: name
+  ~sort[0][orderBy]: desc
+  ~filter[created_at][type]: inRange
+  ~filter[created_at][from]: 2026-03-01
+  ~filter[created_at][to]: 2026-04-01
+  ~filter[created_at][filterType]: date
+
 settings:
   encodeUrl: true
   timeout: 0

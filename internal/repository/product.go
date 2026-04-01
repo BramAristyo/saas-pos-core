@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
@@ -24,11 +25,21 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 	p := make([]domain.Product, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":        "name",
+		"category_id": "category_id",
+		"price":       "price",
+		"cogs":        "cogs",
+		"created_at":  "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Product{}), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).
+	if err := q.
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {
@@ -151,12 +162,20 @@ func (r *ProductRepository) FindByCategoryId(ctx context.Context, categoryId uui
 	p := make([]domain.Product, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Where("category_id = ?", categoryId).Model(&domain.Product{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":        "name",
+		"price":       "price",
+		"cogs":        "cogs",
+		"created_at":  "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Product{}).Where("category_id = ?", categoryId), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
-	if err := r.DB.WithContext(ctx).
-		Where("category_id = ?", categoryId).
+	if err := q.
 		Preload("Category").
 		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {

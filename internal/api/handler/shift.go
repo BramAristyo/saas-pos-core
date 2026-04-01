@@ -26,6 +26,8 @@ func (h *ShiftHandler) Paginate(c *gin.Context) {
 		return
 	}
 
+	req.DynamicFilter.WithDefaultSort()
+
 	res, err := h.UseCase.Paginate(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)

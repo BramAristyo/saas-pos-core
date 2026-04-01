@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
@@ -22,7 +23,14 @@ func (r *SalesTypeRepository) Paginate(ctx context.Context, req filter.Paginatio
 	salesTypes := make([]domain.SalesType, 0, req.PaginationInput.PageSize)
 	var totalRows int64
 
-	if err := r.DB.WithContext(ctx).Model(&domain.SalesType{}).Count(&totalRows).Error; err != nil {
+	allowedFields := map[string]string{
+		"name":       "name",
+		"created_at": "created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.SalesType{}), req.DynamicFilter, []string{"name"}, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, []domain.SalesType{}, err
 	}
 
@@ -30,10 +38,9 @@ func (r *SalesTypeRepository) Paginate(ctx context.Context, req filter.Paginatio
 		return 0, []domain.SalesType{}, nil
 	}
 
-	if err := r.DB.WithContext(ctx).
+	if err := q.
 		Offset(req.Offset()).
 		Limit(req.PaginationInput.PageSize).
-		Order("created_at desc").
 		Find(&salesTypes).
 		Error; err != nil {
 		return 0, []domain.SalesType{}, err

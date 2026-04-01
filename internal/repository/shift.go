@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
+	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -19,12 +20,16 @@ func NewShiftRepository(db *gorm.DB) *ShiftRepository {
 
 func (r *ShiftRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Shift, error) {
 	var totalRows int64
-	if err := r.DB.WithContext(ctx).
-		Preload("OpenedByUser").
-		Preload("ClosedByUser").
-		Model(domain.Shift{}).
-		Count(&totalRows).
-		Error; err != nil {
+
+	allowedFields := map[string]string{
+		"created_at": "created_at",
+		"opened_at":  "opened_at",
+		"closed_at":  "closed_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Model(&domain.Shift{}), req.DynamicFilter, nil, allowedFields)
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, []domain.Shift{}, err
 	}
 
@@ -33,7 +38,7 @@ func (r *ShiftRepository) Paginate(ctx context.Context, req filter.PaginationWit
 	}
 
 	shifts := make([]domain.Shift, 0, req.PaginationInput.PageSize)
-	if err := r.DB.WithContext(ctx).
+	if err := q.
 		Preload("OpenedByUser").
 		Preload("ClosedByUser").
 		Offset(req.Offset()).
@@ -151,11 +156,15 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error) {
 	var totalRows int64
 
-	query := r.DB.WithContext(ctx).
-		Table("shifts").
-		Joins("JOIN users ON shifts.opened_by = users.id")
+	allowedFields := map[string]string{
+		"opened_at": "shifts.opened_at",
+	}
 
-	if err := query.Count(&totalRows).Error; err != nil {
+	q := database.BuildQuery(r.DB.WithContext(ctx).Table("shifts"), req.DynamicFilter, nil, allowedFields)
+
+	q = q.Joins("JOIN users ON shifts.opened_by = users.id")
+
+	if err := q.Count(&totalRows).Error; err != nil {
 		return 0, nil, err
 	}
 
@@ -177,7 +186,7 @@ func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.Paginat
 		Where("shift_id = shifts.id AND type = ?", domain.CashOut)
 
 	shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
-	err := query.
+	err := q.
 		Select(`
 			users.name as cashier_name,
 			TO_CHAR(shifts.opened_at, 'YYYY-MM-DD HH24:MI:SS') as start_time,
@@ -190,7 +199,6 @@ func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.Paginat
 			) as total_expected,
 			COALESCE(shifts.closing_cash, 0) as total_actual
 		`, cashPaymentsSub, cashInSub, cashOutSub).
-		Order("shifts.opened_at DESC").
 		Offset(req.Offset()).
 		Limit(req.PaginationInput.PageSize).
 		Scan(&shiftRecs).Error
