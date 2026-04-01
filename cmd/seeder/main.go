@@ -1,18 +1,19 @@
 package main
 
 import (
-	"log"
-
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/seeder"
+	"github.com/BramAristyo/go-pos-mawish/pkg/logger"
 )
 
 func main() {
 	cfg := config.GetConfig()
-	err := database.InitDb(cfg)
+	zapLogger := logger.NewZapLogger(cfg)
+
+	err := database.InitDb(cfg, zapLogger)
 	if err != nil {
-		log.Fatal(err.Error())
+		zapLogger.Fatal(err.Error())
 	}
 
 	defer database.CloseDb()

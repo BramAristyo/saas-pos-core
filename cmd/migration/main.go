@@ -9,6 +9,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/seeder"
+	"github.com/BramAristyo/go-pos-mawish/pkg/logger"
 	"github.com/pressly/goose/v3"
 )
 
@@ -16,7 +17,9 @@ import (
 
 func main() {
 	cfg := config.GetConfig()
-	err := database.InitDb(cfg)
+	zapLogger := logger.NewZapLogger(cfg)
+
+	err := database.InitDb(cfg, zapLogger)
 	if err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

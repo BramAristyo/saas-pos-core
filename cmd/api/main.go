@@ -23,18 +23,18 @@ import (
 func main() {
 	// TODO: Implement Dashboard API One API for All use Goroutines! (Business)
 	cfg := config.GetConfig()
+	zapLogger := logger.NewZapLogger(cfg)
 
-	err := database.InitDb(cfg)
+	err := database.InitDb(cfg, zapLogger)
 	defer database.CloseDb()
 
 	if err != nil {
-		log.Fatal(err.Error())
+		zapLogger.Fatal(err.Error())
 	}
 
 	db := database.GetDb()
 
 	r := gin.New()
-	log := logger.NewZapLogger(cfg)
 
 	r.Use(cors.New(cors.Config{
 		// AllowOrigins:     []string{"https://example.com"},
@@ -46,10 +46,10 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.Use(middleware.ErrorHandler())
+	r.Use(middleware.ErrorHandler(zapLogger))
 
-	r.Use(ginzap.Ginzap(log.GetLogger(), time.RFC3339, true))
-	r.Use(ginzap.RecoveryWithZap(log.GetLogger(), true))
+	r.Use(ginzap.Ginzap(zapLogger.GetLogger(), time.RFC3339, true))
+	r.Use(ginzap.RecoveryWithZap(zapLogger.GetLogger(), true))
 
 	handlers := dependency.Bootstrap(db, cfg)
 	router.RegisterRoutes(r, handlers, cfg)
@@ -63,7 +63,7 @@ func main() {
 
 	go func() {
 		if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("listen: %s\n", err)
+			log.Fatalf("listen: %s\n", err)
 		}
 	}()
 
@@ -75,12 +75,12 @@ func main() {
 	// kill -9 is syscall.SIGKILL but can't be caught, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Info("Shutdown Server ...")
+	zapLogger.Info("Shutdown Server ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := s.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
 	}
-	log.Info("Server existing")
+	zapLogger.Info("Server existing")
 }

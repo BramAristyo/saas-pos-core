@@ -4,7 +4,10 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"runtime/debug"
+	"time"
 
+	"github.com/BramAristyo/go-pos-mawish/pkg/logger"
 	"github.com/BramAristyo/go-pos-mawish/pkg/response"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/gin-gonic/gin"
@@ -12,41 +15,75 @@ import (
 	"gorm.io/gorm"
 )
 
-func ErrorHandler() gin.HandlerFunc {
+func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		start := time.Now()
 		c.Next()
+		duration := time.Since(start)
+
+		if duration > 200*time.Millisecond {
+			log.Warn("Slow Request Detected",
+				"path", c.Request.URL.Path,
+				"method", c.Request.Method,
+				"duration", duration.String(),
+				"status", c.Writer.Status(),
+			)
+		}
 
 		if len(c.Errors) > 0 {
 			err := c.Errors.Last().Err
 
 			if errors.Is(err, io.EOF) {
+				log.Warn("Request Body Empty", "path", c.Request.URL.Path, "error", err.Error())
 				response.Error(c, http.StatusBadRequest, "request body is empty", err)
 				return
 			}
 
 			var ve validator.ValidationErrors
 			if errors.As(err, &ve) {
+				log.Warn("Validation Failed", "path", c.Request.URL.Path, "fields", ve.Error())
 				response.ValidationError(c, err)
 				return
 			}
 
 			var ue *usecase_errors.UseCaseError
 			if errors.As(err, &ue) {
+				if ue.Code >= 400 && ue.Code < 500 {
+					log.Warn("Business Rule Violation",
+						"path", c.Request.URL.Path,
+						"code", ue.Code,
+						"message", ue.Message,
+					)
+				} else {
+					log.Error("Business Logic Error",
+						"path", c.Request.URL.Path,
+						"code", ue.Code,
+						"error", err.Error(),
+					)
+				}
 				response.Error(c, ue.Code, ue.Message, err)
 				return
 			}
 
 			if errors.Is(err, gorm.ErrRecordNotFound) {
+				log.Warn("Resource Not Found", "path", c.Request.URL.Path, "error", err.Error())
 				response.Error(c, http.StatusNotFound, "resource not found", err)
 				return
 			}
 
 			if usecase_errors.IsUniqueViolation(err) {
+				log.Warn("Duplicate Key Violation", "path", c.Request.URL.Path, "error", err.Error())
 				response.Error(c, http.StatusConflict, "data already exists", err)
 				return
 			}
 
-			response.Error(c, http.StatusInternalServerError, err.Error(), err)
+			log.Error("Critical System Error",
+				"path", c.Request.URL.Path,
+				"method", c.Request.Method,
+				"error", err.Error(),
+				"stack", string(debug.Stack()),
+			)
+			response.Error(c, http.StatusInternalServerError, "an unexpected error occurred", err)
 		}
 	}
 }
