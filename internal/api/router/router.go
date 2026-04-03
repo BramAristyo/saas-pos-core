@@ -34,6 +34,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		salesTypes := v1.Group("/sales-types", middleware.Authentication(cfg))
 		orders := v1.Group("/orders", middleware.Authentication(cfg))
 		reports := v1.Group("/reports", middleware.Authentication(cfg))
+		dashboard := v1.Group("/dashboard", middleware.Authentication(cfg))
 
 		v1.POST("", h.Auth.Login)
 
@@ -49,5 +50,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		SalesTypeRoutes(salesTypes, h.SalesType)
 		OrderRoutes(orders, h.Order)
 		ReportRoutes(reports, h.Report)
+		DashboardRoutes(dashboard, h.Dashboard)
 	}
 }

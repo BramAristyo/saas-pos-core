@@ -19,14 +19,15 @@ import (
 )
 
 type OrderUseCase struct {
-	Repo         *repository.OrderRepository
-	ShiftRepo    *repository.ShiftRepository
-	SalesType    *repository.SalesTypeRepository
-	TaxRepo      *repository.TaxRepository
-	DiscountRepo *repository.DiscountRepository
-	ProductRepo  *repository.ProductRepository
-	BundlingRepo *repository.BundlingRepository
-	LogUseCase   *AuditLogUseCase
+	Repo               *repository.OrderRepository
+	ShiftRepo          *repository.ShiftRepository
+	SalesType          *repository.SalesTypeRepository
+	TaxRepo            *repository.TaxRepository
+	DiscountRepo       *repository.DiscountRepository
+	ProductRepo        *repository.ProductRepository
+	BundlingRepo       *repository.BundlingRepository
+	ModifierOptionRepo *repository.ModifierOptionRepository
+	LogUseCase         *AuditLogUseCase
 }
 
 func NewOrderUseCase(
@@ -37,17 +38,19 @@ func NewOrderUseCase(
 	discount *repository.DiscountRepository,
 	product *repository.ProductRepository,
 	bundling *repository.BundlingRepository,
+	modifierOption *repository.ModifierOptionRepository,
 	log *AuditLogUseCase,
 ) *OrderUseCase {
 	return &OrderUseCase{
-		Repo:         r,
-		ShiftRepo:    shift,
-		SalesType:    salesType,
-		TaxRepo:      tax,
-		DiscountRepo: discount,
-		ProductRepo:  product,
-		BundlingRepo: bundling,
-		LogUseCase:   log,
+		Repo:               r,
+		ShiftRepo:          shift,
+		SalesType:          salesType,
+		TaxRepo:            tax,
+		DiscountRepo:       discount,
+		ProductRepo:        product,
+		BundlingRepo:       bundling,
+		ModifierOptionRepo: modifierOption,
+		LogUseCase:         log,
 	}
 }
 
@@ -247,6 +250,29 @@ func (u *OrderUseCase) buildOrder(ctx context.Context, req dto.CreateOrderReques
 			}
 
 			items[i].Discount = &discountItem
+		}
+
+		if len(oi.ModifierOptionIDs) > 0 {
+			modifiers := make([]domain.OrderItemModifier, 0, len(oi.ModifierOptionIDs))
+			for _, mid := range oi.ModifierOptionIDs {
+				modUUID, err := uuid.Parse(mid)
+				if err != nil {
+					return nil, usecase_errors.InvalidID
+				}
+
+				option, err := u.ModifierOptionRepo.FindById(ctx, modUUID)
+				if err != nil {
+					return nil, err
+				}
+
+				modifiers = append(modifiers, domain.OrderItemModifier{
+					ModifierOptionID: &option.ID,
+					ModifierName:     option.Name,
+					PriceAdjustment:  option.PriceAdjustment,
+					CogsAdjustment:   option.CogsAdjustment,
+				})
+			}
+			items[i].Modifiers = modifiers
 		}
 	}
 

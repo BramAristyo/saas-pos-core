@@ -8,6 +8,7 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/pkg/filter"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/google/uuid"
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
@@ -66,6 +67,7 @@ func (r *OrderRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Or
 		Preload("Items.Product").
 		Preload("Items.Bundling").
 		Preload("Items.Discount").
+		Preload("Items.Modifiers").
 		Preload("Payments").
 		First(&existing).
 		Error; err != nil {
@@ -128,6 +130,7 @@ func (r *OrderRepository) FindByOrderNumber(ctx context.Context, orderNumber str
 		Preload("Items.Product").
 		Preload("Items.Bundling").
 		Preload("Items.Discount").
+		Preload("Items.Modifiers").
 		Preload("Payments").
 		First(&existing).
 		Error; err != nil {
@@ -247,4 +250,48 @@ func (r *OrderRepository) TransactionReport(ctx context.Context, req filter.Pagi
 	}
 
 	return totalRows, transactions, nil
+}
+
+func (r *OrderRepository) SalesSummaryDashboard(ctx context.Context, req filter.DynamicFilter) (domain.SalesSummaryDashboard, error) {
+	var summary struct {
+		GrossSales       decimal.Decimal
+		NetSales         decimal.Decimal
+		TransactionCount int64
+		Cogs             decimal.Decimal
+	}
+
+	allowedFields := map[string]string{
+		"created_at": "orders.created_at",
+	}
+
+	q := database.BuildQuery(r.DB.WithContext(ctx).Table("orders"), req, nil, allowedFields)
+
+	err := q.
+		Select(`
+			COALESCE(SUM(orders.subtotal), 0) AS gross_sales,
+			COALESCE(SUM(orders.subtotal - orders.discount_amount), 0) AS net_sales,
+			COUNT(orders.id) AS transaction_count,
+			COALESCE(SUM(item_agg.total_cogs), 0) AS cogs
+		`).
+		Joins(`LEFT JOIN (
+			SELECT order_id, SUM(product_cogs * quantity) AS total_cogs
+			FROM order_items
+			GROUP BY order_id
+		) item_agg ON item_agg.order_id = orders.id`).
+		Where("status = ?", domain.OrderCompleted).
+		Scan(&summary).Error
+
+	if err != nil {
+		return domain.SalesSummaryDashboard{}, err
+	}
+
+	result := domain.SalesSummaryDashboard{
+		GrossSales:       summary.GrossSales,
+		NetSales:         summary.NetSales,
+		GrossProfit:      summary.NetSales.Sub(summary.Cogs),
+		TransactionCount: summary.TransactionCount,
+	}
+	result.Calculate()
+
+	return result, nil
 }

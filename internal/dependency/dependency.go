@@ -22,6 +22,7 @@ type Handlers struct {
 	SalesType      *handler.SalesTypeHandler
 	Order          *handler.OrderHandler
 	Report         *handler.ReportHandler
+	Dashboard      *handler.DashboardHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -68,10 +69,12 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		discountRepository,
 		productRepository,
 		bundlingRepository,
+		modifierOptionRepository,
 		auditLogUseCase,
 	)
 
 	reportUseCase := usecase.NewReportUseCase(orderRepository, shiftRepository, discountRepository)
+	dashboardUseCase := usecase.NewDashboardUseCase(orderRepository)
 
 	return &Handlers{
 		Auth:           handler.NewAuthHandler(authUseCase),
@@ -87,5 +90,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		SalesType:      handler.NewSalesTypeHandler(salesTypeUseCase),
 		Order:          handler.NewOrderHandler(orderUseCase),
 		Report:         handler.NewReportHandler(reportUseCase),
+		Dashboard:      handler.NewDashboardHandler(dashboardUseCase),
 	}
 }

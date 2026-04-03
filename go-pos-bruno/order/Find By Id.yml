@@ -8,6 +8,11 @@ http:
   url: "{{url}}/orders/{{orderId}}"
   auth: inherit
 
+runtime:
+  variables:
+    - name: orderId
+      value: 8037810d-bad5-4a55-b62c-7c233f3350bd
+
 settings:
   encodeUrl: true
   timeout: 0

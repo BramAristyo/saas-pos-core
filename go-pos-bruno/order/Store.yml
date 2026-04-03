@@ -17,6 +17,7 @@ http:
         "items": [
           {
             "productId": "uuid",
+            "modifierOptionIds": ["uuid"],
             "quantity": 1
           }
         ],

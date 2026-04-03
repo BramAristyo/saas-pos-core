@@ -24,9 +24,18 @@ type OrderItemResponse struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 
-	Product  *ProductResponse         `json:"product,omitempty"`
-	Bundling *BundlingPackageResponse `json:"bundling,omitempty"`
-	Discount *DiscountResponse        `json:"discount,omitempty"`
+	Product   *ProductResponse          `json:"product,omitempty"`
+	Bundling  *BundlingPackageResponse  `json:"bundling,omitempty"`
+	Discount  *DiscountResponse         `json:"discount,omitempty"`
+	Modifiers []OrderItemModifierResponse `json:"modifiers,omitempty"`
+}
+
+type OrderItemModifierResponse struct {
+	ID               uuid.UUID       `json:"id"`
+	ModifierOptionID *uuid.UUID      `json:"modifierOptionId"`
+	ModifierName     string          `json:"modifierName"`
+	PriceAdjustment  decimal.Decimal `json:"priceAdjustment"`
+	CogsAdjustment   decimal.Decimal `json:"cogsAdjustment"`
 }
 
 type PaymentMethodResponse struct {
@@ -76,10 +85,11 @@ type OrderResponsePagination struct {
 }
 
 type CreateOrderItemRequest struct {
-	ProductID  *string `json:"productId" binding:"required_without=BundlingID,omitempty,uuid"`
-	BundlingID *string `json:"bundlingId" binding:"required_without=ProductID,omitempty,uuid"`
-	DiscountID *string `json:"discountId" binding:"omitempty,uuid"`
-	Quantity   int     `json:"quantity" binding:"required,min=1"`
+	ProductID         *string  `json:"productId" binding:"required_without=BundlingID,omitempty,uuid"`
+	BundlingID        *string  `json:"bundlingId" binding:"required_without=ProductID,omitempty,uuid"`
+	DiscountID        *string  `json:"discountId" binding:"omitempty,uuid"`
+	ModifierOptionIDs []string `json:"modifierOptionIds" binding:"omitempty,dive,uuid"`
+	Quantity          int      `json:"quantity" binding:"required,min=1"`
 }
 
 type CreateOrderPaymentRequest struct {
@@ -128,6 +138,20 @@ func ToOrderItemResponse(item domain.OrderItem) OrderItemResponse {
 	if item.Discount != nil {
 		d := ToDiscountResponse(item.Discount)
 		res.Discount = &d
+	}
+
+	if len(item.Modifiers) > 0 {
+		mods := make([]OrderItemModifierResponse, 0, len(item.Modifiers))
+		for _, m := range item.Modifiers {
+			mods = append(mods, OrderItemModifierResponse{
+				ID:               m.ID,
+				ModifierOptionID: m.ModifierOptionID,
+				ModifierName:     m.ModifierName,
+				PriceAdjustment:  m.PriceAdjustment,
+				CogsAdjustment:   m.CogsAdjustment,
+			})
+		}
+		res.Modifiers = mods
 	}
 
 	return res

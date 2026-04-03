@@ -27,11 +27,25 @@ type OrderItem struct {
 	Product  *Product         `gorm:"foreignKey:ProductID"`
 	Bundling *BundlingPackage `gorm:"foreignKey:BundlingID"`
 	Discount *Discount        `gorm:"foreignKey:DiscountID"`
+
+	Modifiers []OrderItemModifier `gorm:"foreignKey:OrderItemID"`
 }
 
 func (oi *OrderItem) CalculateSubTotal() {
 	qty := decimal.NewFromInt(int64(oi.Quantity))
+
+	// Base Price + Modifier Adjustments
 	price := oi.ProductPrice
+	cogs := oi.ProductCogs
+	for _, mod := range oi.Modifiers {
+		price = price.Add(mod.PriceAdjustment)
+		cogs = cogs.Add(mod.CogsAdjustment)
+	}
+
+	// Update the stored prices (important for reporting/audit)
+	oi.ProductPrice = price
+	oi.ProductCogs = cogs
+
 	gross := price.Mul(qty)
 	discount := decimal.Zero
 
