@@ -30,3 +30,5 @@ uploads/
 
 .env
 TODO.MD
+
+dist/

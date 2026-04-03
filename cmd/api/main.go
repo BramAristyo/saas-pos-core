@@ -84,6 +84,7 @@ func main() {
 	isReady.Store(true)
 
 	r.StaticFile("/health", "./static/health.html")
+	r.StaticFile("/", "./static/dist")
 
 	router.RegisterRoutes(r, handlers, cfg)
 
