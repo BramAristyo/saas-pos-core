@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -19,6 +20,8 @@ import (
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 )
+
+var isReady atomic.Bool
 
 func main() {
 	// TODO: Implement Dashboard API One API for All use Goroutines! (Business)
@@ -53,6 +56,35 @@ func main() {
 	r.Use(ginzap.RecoveryWithZap(zapLogger.GetLogger(), true))
 
 	handlers := dependency.Bootstrap(db, cfg)
+
+	r.GET("/healthz", func(c *gin.Context) {
+		if !isReady.Load() {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "not ready"})
+			return
+		}
+
+		dbSql, err := db.DB()
+		if err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{
+				"status": "not ready",
+				"reason": "database unreachable",
+			})
+		}
+
+		if err := dbSql.Ping(); err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{
+				"status": "not ready",
+				"reason": "database unreachable",
+			})
+			return
+		}
+		c.JSON(200, gin.H{"status": "ok"})
+	})
+
+	isReady.Store(true)
+
+	r.StaticFile("/health", "./static/health.html")
+
 	router.RegisterRoutes(r, handlers, cfg)
 
 	s := &http.Server{

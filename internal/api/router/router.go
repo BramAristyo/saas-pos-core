@@ -11,6 +11,7 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
+
 	r.GET("/slow", func(c *gin.Context) {
 		for i := range 5 {
 			fmt.Println(i)
