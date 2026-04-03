@@ -55,7 +55,7 @@ func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 		return dto.LoginResponse{}, err
 	}
 
-	u.LogUseCase.Log(context.TODO(), domain.AuditLog{
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      user.ID,
 		Action:      domain.ActionLogin,
 		Entity:      domain.EntityUser,
