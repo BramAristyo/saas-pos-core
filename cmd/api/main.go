@@ -84,7 +84,12 @@ func main() {
 	isReady.Store(true)
 
 	r.StaticFile("/health", "./static/health.html")
-	r.StaticFile("/", "./static/dist")
+
+	r.Static("/assets", "./static/dist/assets")
+	r.StaticFile("/favicon.ico", "./static/dist/favicon.ico")
+	r.NoRoute(func(c *gin.Context) {
+		c.File("./static/dist/index.html")
+	})
 
 	router.RegisterRoutes(r, handlers, cfg)
 
