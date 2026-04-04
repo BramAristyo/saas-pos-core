@@ -19,6 +19,16 @@ func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
 	return &CategoryRepository{DB: db}
 }
 
+func (r *CategoryRepository) GetAll(ctx context.Context) ([]domain.Category, error) {
+	var categories []domain.Category
+
+	if err := r.DB.WithContext(ctx).Find(&categories).Order("created_at DESC").Error; err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}
+
 func (r *CategoryRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Category, error) {
 	var c []domain.Category
 	var totalRows int64

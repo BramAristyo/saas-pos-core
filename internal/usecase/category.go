@@ -24,6 +24,20 @@ func NewCategoryUseCase(repo *repository.CategoryRepository, log *AuditLogUseCas
 	}
 }
 
+func (u *CategoryUseCase) GetAll(ctx context.Context) ([]dto.CategoryResponse, error) {
+	categories, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.CategoryResponse{}, nil
+	}
+
+	res := make([]dto.CategoryResponse, 0, len(categories))
+	for i := range categories {
+		res = append(res, dto.ToCategoryResponse(&categories[i]))
+	}
+
+	return res, nil
+}
+
 func (u *CategoryUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.CategoryResponsePagination, error) {
 	totalRows, categories, err := u.Repo.Paginate(ctx, req)
 	if err != nil {

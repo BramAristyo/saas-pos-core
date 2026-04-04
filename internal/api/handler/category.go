@@ -19,6 +19,16 @@ func NewCategoryHandler(u *usecase.CategoryUseCase) *CategoryHandler {
 	}
 }
 
+func (h *CategoryHandler) GetAll(c *gin.Context) {
+	res, err := h.UseCase.GetAll(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "successfully get all category")
+}
+
 func (h *CategoryHandler) Paginate(c *gin.Context) {
 	var req filter.PaginationWithInputFilter
 	if err := c.ShouldBindQuery(&req); err != nil {
