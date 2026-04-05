@@ -16,7 +16,6 @@ import (
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/go-pos-mawish/pkg/logger"
-	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 )
@@ -38,15 +37,10 @@ func main() {
 	db := database.GetDb()
 
 	r := gin.New()
+	r.RedirectTrailingSlash = false
+	r.RedirectFixedPath = false
 
-	r.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Accept"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: false,
-		MaxAge:           12 * time.Hour,
-	}))
+	r.Use(middleware.CORS())
 
 	r.Use(middleware.RateLimiter(zapLogger))
 
