@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
@@ -14,6 +15,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.stores'
+import { watch } from 'vue'
+import { toast } from 'vue-sonner'
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
@@ -25,11 +28,20 @@ const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 
+// Clear error when user starts typing
+watch([email, password], () => {
+  if (authStore.error) authStore.error = null
+})
+
 async function handleSubmit() {
   try {
     await authStore.login({ email: email.value, password: password.value })
+    toast.success('Login successful!')
     router.push('/dashboard')
-  } catch {}
+  } catch (err: any) {
+    console.error('Login failed:', err)
+    toast.error(authStore.error || 'Login failed!')
+  }
 }
 </script>
 
@@ -47,23 +59,35 @@ async function handleSubmit() {
           <h1 class="text-xl font-bold">Welcome to Mawish POS</h1>
           <!-- <FieldDescription> Have a nice shift </FieldDescription> -->
         </div>
-        <p v-if="authStore.error" class="text-sm text-destructive text-center">
-          {{ authStore.error }}
-        </p>
+
         <Field>
-          <FieldLabel for="email">Email</FieldLabel>
+          <FieldLabel for="email" :class="cn(authStore.error && 'text-destructive')"
+            >Email</FieldLabel
+          >
           <Input
             id="email"
             v-model="email"
             type="email"
             placeholder="cameliawhite@gmail.com"
             required
+            :disabled="authStore.loading"
+            :aria-invalid="!!authStore.error"
           />
         </Field>
 
         <Field>
-          <FieldLabel for="password">Password</FieldLabel>
-          <Input id="password" v-model="password" type="password" placeholder="••••••••" required />
+          <FieldLabel for="password" :class="cn(authStore.error && 'text-destructive')"
+            >Password</FieldLabel
+          >
+          <Input
+            id="password"
+            v-model="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            :disabled="authStore.loading"
+            :aria-invalid="!!authStore.error"
+          />
         </Field>
 
         <Field>

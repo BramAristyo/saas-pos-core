@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth.store'
 import LoginForm from '@/components/new-york-v4/blocks/login-05/components/LoginForm.vue'
 </script>
 
