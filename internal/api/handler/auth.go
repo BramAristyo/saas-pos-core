@@ -24,11 +24,21 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	res, err := h.UseCase.Login(req)
+	res, err := h.UseCase.Login(c.Request.Context(), req)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
 	response.OK(c, res, "login successfully")
+}
+
+func (h *AuthHandler) Me(c *gin.Context) {
+	res, err := h.UseCase.Me(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "get current user successfully")
 }

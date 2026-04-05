@@ -5,11 +5,13 @@ import (
 	"time"
 
 	"github.com/BramAristyo/go-pos-mawish/internal/api/dto"
+	"github.com/BramAristyo/go-pos-mawish/internal/constant"
 	"github.com/BramAristyo/go-pos-mawish/internal/domain"
 	"github.com/BramAristyo/go-pos-mawish/internal/infrastructure/config"
 	"github.com/BramAristyo/go-pos-mawish/internal/repository"
 	"github.com/BramAristyo/go-pos-mawish/pkg/usecase_errors"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -27,7 +29,7 @@ func NewAuthUseCase(repo *repository.UserRepository, cfg *config.Config, log *Au
 	}
 }
 
-func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
+func (u *AuthUseCase) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginResponse, error) {
 	user, err := u.Repo.FindByEmail(req.Email)
 	if err != nil {
 		return dto.LoginResponse{}, err
@@ -67,4 +69,23 @@ func (u *AuthUseCase) Login(req dto.LoginRequest) (dto.LoginResponse, error) {
 		Token: token,
 		User:  dto.ToUserResponse(&user),
 	}, nil
+}
+
+func (u *AuthUseCase) Me(ctx context.Context) (dto.UserResponse, error) {
+	userIDStr, ok := ctx.Value(constant.CtxUserID).(string)
+	if !ok {
+		return dto.UserResponse{}, usecase_errors.TokenRequired
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		return dto.UserResponse{}, usecase_errors.TokenInvalid
+	}
+
+	user, err := u.Repo.FindById(userID)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	return dto.ToUserResponse(&user), nil
 }

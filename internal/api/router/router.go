@@ -38,6 +38,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		dashboard := v1.Group("/dashboard", middleware.Authentication(cfg))
 
 		v1.POST("", h.Auth.Login)
+		v1.GET("/me", middleware.Authentication(cfg), h.Auth.Me)
 
 		UserRoutes(users, h.User)
 		CategoryRoutes(categories, h.Category)
