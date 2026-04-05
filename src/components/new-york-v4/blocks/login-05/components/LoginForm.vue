@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue"
-
-import { GalleryVerticalEnd } from "lucide-vue-next"
-import { cn } from "@/lib/utils"
+import type { HTMLAttributes } from 'vue'
+import { ref } from 'vue'
+import { GalleryVerticalEnd } from 'lucide-vue-next'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -12,53 +12,66 @@ import {
   FieldSeparator,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.stores'
 
 const props = defineProps<{
-  class?: HTMLAttributes["class"]
+  class?: HTMLAttributes['class']
 }>()
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const email = ref('')
+const password = ref('')
+
+async function handleSubmit() {
+  try {
+    await authStore.login({ email: email.value, password: password.value })
+    router.push('/dashboard')
+  } catch {}
+}
 </script>
 
 <template>
   <div :class="cn('flex flex-col gap-6', props.class)">
-    <form>
+    <form @submit.prevent="handleSubmit">
       <FieldGroup>
         <div class="flex flex-col items-center gap-2 text-center">
-          <a
-            href="#"
-            class="flex flex-col items-center gap-2 font-medium"
-          >
+          <a href="#" class="flex flex-col items-center gap-2 font-medium">
             <div class="flex size-8 items-center justify-center rounded-md">
               <GalleryVerticalEnd class="size-6" />
             </div>
-            <span class="sr-only">Acme Inc.</span>
+            <span class="sr-only">Mawish POS by Camelia White</span>
           </a>
-          <h1 class="text-xl font-bold">
-            Welcome to Acme Inc.
-          </h1>
-          <FieldDescription>
-            Don't have an account?
-            <a href="#">
-              Sign up
-            </a>
-          </FieldDescription>
+          <h1 class="text-xl font-bold">Welcome to Mawish POS</h1>
+          <!-- <FieldDescription> Have a nice shift </FieldDescription> -->
         </div>
+        <p v-if="authStore.error" class="text-sm text-destructive text-center">
+          {{ authStore.error }}
+        </p>
         <Field>
-          <FieldLabel for="email">
-            Email
-          </FieldLabel>
+          <FieldLabel for="email">Email</FieldLabel>
           <Input
             id="email"
+            v-model="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="cameliawhite@gmail.com"
             required
           />
         </Field>
+
         <Field>
-          <Button type="submit">
-            Login
+          <FieldLabel for="password">Password</FieldLabel>
+          <Input id="password" v-model="password" type="password" placeholder="••••••••" required />
+        </Field>
+
+        <Field>
+          <Button type="submit" class="w-full" :disabled="authStore.loading">
+            {{ authStore.loading ? 'Loading...' : 'Login' }}
           </Button>
         </Field>
-        <FieldSeparator>Or</FieldSeparator>
+        <!-- <FieldSeparator>Or</FieldSeparator>
         <Field class="grid gap-4 sm:grid-cols-2">
           <Button variant="outline" type="button">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -78,12 +91,12 @@ const props = defineProps<{
             </svg>
             Continue with Google
           </Button>
-        </Field>
+        </Field> -->
       </FieldGroup>
     </form>
     <FieldDescription class="px-6 text-center">
-      By clicking continue, you agree to our <a href="#">Terms of Service</a>
-      and <a href="#">Privacy Policy</a>.
+      By clicking continue, you agree to our <a href="#">Terms of Service</a> and
+      <a href="#">Privacy Policy</a>.
     </FieldDescription>
   </div>
 </template>
