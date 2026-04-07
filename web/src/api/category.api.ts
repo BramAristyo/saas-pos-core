@@ -8,6 +8,6 @@ export const categoryApi = {
   create: (payload: CreateCategoryRequest) =>
     http.post<any, BaseResponse<Category>>('/categories', payload),
   update: (id: string, payload: UpdateCategoryRequest) =>
-    http.put<any, BaseResponse<Category>>(`/categories/${id}`),
+    http.put<any, BaseResponse<Category>>(`/categories/${id}`, payload),
   delete: (id: string) => http.delete<any, BaseResponse<null>>(`categories/${id}`),
 }

@@ -22,12 +22,6 @@ export const useCategoryStore = defineStore('category', () => {
     }
   }
 
-  async function ensureDataLoaded() {
-    if (categories.value.length === 0) {
-      await fetchAll()
-    }
-  }
-
   async function fetchById(id: string) {
     loading.value = true
     error.value = null
