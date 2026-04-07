@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Health Check</title>
+</head>
+<body>
+    <pre id="status">Checking...</pre>
+    <button onclick="check()">Refresh Health</button>
+
+    <script>
+        async function check() {
+            const el = document.getElementById('status');
+            el.innerText = 'Checking...';
+            try {
+                const res = await fetch('/healthz');
+                const data = await res.json();
+                el.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                el.innerText = 'Error: ' + err.message;
+            }
+        }
+        check();
+    </script>
+</body>
+</html>

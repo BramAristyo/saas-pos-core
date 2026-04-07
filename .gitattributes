@@ -1,0 +1,3 @@
+web/**/*.vue linguist-detectable=true
+web/**/*.ts linguist-detectable=true
+web/**/*.js linguist-detectable=true
