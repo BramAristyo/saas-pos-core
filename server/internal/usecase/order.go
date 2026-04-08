@@ -105,7 +105,11 @@ func (u *OrderUseCase) Store(ctx context.Context, req dto.CreateOrderRequest) (d
 		created, err = u.Repo.Store(ctx, order)
 		if err != nil {
 			if usecase_errors.IsUniqueViolation(err) {
-				order.OrderNumber, _ = u.generateOrderNumber(ctx)
+				newNum, genErr := u.generateOrderNumber(ctx)
+				if genErr != nil {
+					return dto.OrderResponse{}, genErr
+				}
+				order.OrderNumber = newNum
 				continue
 			}
 
@@ -116,6 +120,16 @@ func (u *OrderUseCase) Store(ctx context.Context, req dto.CreateOrderRequest) (d
 	}
 
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.OrderResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "OrderNumber",
+					Tag:      "unique",
+					Value:    order.OrderNumber,
+					Message:  "This order number already exists.",
+				},
+			}
+		}
 		return dto.OrderResponse{}, err
 	}
 

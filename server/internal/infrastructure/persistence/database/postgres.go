@@ -8,6 +8,7 @@ import (
 	"github.com/BramAristyo/saas-pos-core/server/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 )
 
 var dbClient *gorm.DB
@@ -23,8 +24,14 @@ func InitDb(cfg *config.Config, zapLogger *logger.ZapLogger) error {
 		cfg.Postgres.SSLMode,
 	)
 
+	logLevel := gormlogger.Silent
+
+	if cfg.Server.RunMode == "development" {
+		logLevel = gormlogger.Info
+	}
+
 	gormConfig := &gorm.Config{
-		Logger: logger.NewGormZapLogger(zapLogger.GetLogger(), 200*time.Millisecond),
+		Logger: logger.NewGormZapLogger(zapLogger.GetLogger(), 200*time.Millisecond).LogMode(logLevel),
 	}
 
 	var err error

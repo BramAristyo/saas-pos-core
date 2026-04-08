@@ -58,9 +58,6 @@ func (r *ModifierOptionRepository) FindById(ctx context.Context, id uuid.UUID) (
 
 func (r *ModifierOptionRepository) Store(ctx context.Context, mo *domain.ModifierOption) (domain.ModifierOption, error) {
 	if err := r.DB.WithContext(ctx).Create(mo).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.ModifierOption{}, usecase_errors.DuplicateEntry
-		}
 		return domain.ModifierOption{}, err
 	}
 

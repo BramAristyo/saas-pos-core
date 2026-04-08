@@ -66,9 +66,6 @@ func (r *CategoryRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 
 func (r *CategoryRepository) Store(ctx context.Context, c *domain.Category) (domain.Category, error) {
 	if err := r.DB.WithContext(ctx).Create(c).Error; err != nil {
-		// if usecase_errors.IsUniqueViolation(err) {
-		// 	return domain.Category{}, usecase_errors.DuplicateEntry
-		// }
 		return domain.Category{}, err
 	}
 

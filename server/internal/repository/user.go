@@ -29,9 +29,6 @@ func (r *UserRepository) GetAll() ([]domain.User, error) {
 
 func (r *UserRepository) Store(u *domain.User) (domain.User, error) {
 	if err := r.DB.Create(u).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.User{}, usecase_errors.EmailExist
-		}
 		return domain.User{}, err
 	}
 
@@ -79,9 +76,6 @@ func (r *UserRepository) Update(id uuid.UUID, u *domain.User) (domain.User, erro
 	}
 
 	if err := r.DB.Model(&existing).Updates(updateData).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.User{}, usecase_errors.EmailExist
-		}
 		return domain.User{}, err
 	}
 

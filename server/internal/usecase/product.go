@@ -58,7 +58,14 @@ func (u *ProductUseCase) Store(ctx context.Context, req dto.CreateProductRequest
 	stored, err := u.Repo.Store(ctx, &product)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
+			return dto.ProductResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This product name already exists.",
+				},
+			}
 		}
 		return dto.ProductResponse{}, err
 	}
@@ -84,7 +91,14 @@ func (u *ProductUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 	updated, err := u.Repo.Update(ctx, id, &product)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.ProductResponse{}, usecase_errors.DuplicateEntry
+			return dto.ProductResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This product name already exists.",
+				},
+			}
 		}
 		return dto.ProductResponse{}, err
 	}

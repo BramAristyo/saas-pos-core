@@ -51,10 +51,17 @@ func (u *SalesTypeUseCase) Store(ctx context.Context, req dto.CreateSalesTypeReq
 	userId, _ := helper.ExtractUserID(ctx)
 	salesType := dto.ToCreateSalesTypeModel(&req)
 
-	created, err := u.Repo.Store(ctx, &salesType)
+	stored, err := u.Repo.Store(ctx, &salesType)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.SalesTypeResponse{}, usecase_errors.DuplicateEntry
+			return dto.SalesTypeResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This sales type name already exists.",
+				},
+			}
 		}
 		return dto.SalesTypeResponse{}, err
 	}
@@ -63,11 +70,11 @@ func (u *SalesTypeUseCase) Store(ctx context.Context, req dto.CreateSalesTypeReq
 		UserID:      userId,
 		Action:      domain.ActionCreate,
 		Entity:      domain.EntitySalesType,
-		EntityID:    &created.ID,
-		Description: "User created a new sales type: " + created.Name,
+		EntityID:    &stored.ID,
+		Description: "User created a new sales type: " + stored.Name,
 	})
 
-	return dto.ToSalesTypeResponse(&created), nil
+	return dto.ToSalesTypeResponse(&stored), nil
 }
 
 func (u *SalesTypeUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateSalesTypeRequest) (dto.SalesTypeResponse, error) {
@@ -77,7 +84,14 @@ func (u *SalesTypeUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upd
 	updated, err := u.Repo.SmartUpdate(ctx, id, &salesType)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.SalesTypeResponse{}, usecase_errors.DuplicateEntry
+			return dto.SalesTypeResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This sales type name already exists.",
+				},
+			}
 		}
 		return dto.SalesTypeResponse{}, err
 	}

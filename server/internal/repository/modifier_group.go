@@ -65,9 +65,6 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (d
 
 func (r *ModifierGroupRepository) Store(ctx context.Context, mg *domain.ModifierGroup) (domain.ModifierGroup, error) {
 	if err := r.DB.WithContext(ctx).Create(mg).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.ModifierGroup{}, usecase_errors.DuplicateEntry
-		}
 		return domain.ModifierGroup{}, err
 	}
 

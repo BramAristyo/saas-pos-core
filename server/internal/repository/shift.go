@@ -72,9 +72,6 @@ func (r *ShiftRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Sh
 // Opening Shift
 func (r *ShiftRepository) Store(ctx context.Context, s *domain.Shift) (domain.Shift, error) {
 	if err := r.DB.WithContext(ctx).Create(s).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.Shift{}, usecase_errors.DuplicateEntry
-		}
 		return domain.Shift{}, err
 	}
 

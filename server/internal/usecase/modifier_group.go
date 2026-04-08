@@ -8,6 +8,7 @@ import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/repository"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/helper"
+	"github.com/BramAristyo/saas-pos-core/server/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
@@ -55,6 +56,16 @@ func (u *ModifierGroupUseCase) Store(ctx context.Context, req dto.CreateModifier
 	mg := dto.ToModifierGroupModel(&req)
 	stored, err := u.Repo.Store(ctx, &mg)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.ModifierGroupResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This modifier group name already exists.",
+				},
+			}
+		}
 		return dto.ModifierGroupResponse{}, err
 	}
 
@@ -78,6 +89,16 @@ func (u *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto
 	mg := dto.ToUpdateModifierGroupModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &mg)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.ModifierGroupResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This modifier group name already exists.",
+				},
+			}
+		}
 		return dto.ModifierGroupResponse{}, err
 	}
 

@@ -51,15 +51,6 @@ func (u *UserUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.UserRespo
 func (u *UserUseCase) Store(ctx context.Context, req dto.CreateUserRequest) (dto.UserResponse, error) {
 	userId, _ := helper.ExtractUserID(ctx)
 
-	exist, err := u.Repo.IsEmailExist(req.Email)
-	if err != nil {
-		return dto.UserResponse{}, err
-	}
-
-	if exist {
-		return dto.UserResponse{}, usecase_errors.EmailExist
-	}
-
 	hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
 	if err != nil {
 		return dto.UserResponse{}, err
@@ -71,6 +62,16 @@ func (u *UserUseCase) Store(ctx context.Context, req dto.CreateUserRequest) (dto
 
 	stored, err := u.Repo.Store(&user)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.UserResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Email",
+					Tag:      "unique",
+					Value:    req.Email,
+					Message:  "This email already exists.",
+				},
+			}
+		}
 		return dto.UserResponse{}, err
 	}
 
@@ -90,19 +91,18 @@ func (u *UserUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateUs
 
 	user := dto.ToUpdateUserModel(&req)
 
-	fmt.Println(id, req.Email)
-	exist, err := u.Repo.IsEmailTaken(id, req.Email)
-
-	if err != nil {
-		return dto.UserResponse{}, err
-	}
-
-	if exist {
-		return dto.UserResponse{}, usecase_errors.EmailExist
-	}
-
 	updatedUser, err := u.Repo.Update(id, &user)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.UserResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Email",
+					Tag:      "unique",
+					Value:    req.Email,
+					Message:  "This email already exists.",
+				},
+			}
+		}
 		return dto.UserResponse{}, err
 	}
 

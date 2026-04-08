@@ -49,7 +49,14 @@ func (u *BundlingUseCase) Store(ctx context.Context, req dto.CreateBundlingPacka
 	stored, err := u.Repo.Store(ctx, &bp)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.BundlingPackageResponse{}, usecase_errors.DuplicateEntry
+			return dto.BundlingPackageResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This bundling package name already exists.",
+				},
+			}
 		}
 		return dto.BundlingPackageResponse{}, err
 	}
@@ -70,6 +77,16 @@ func (u *BundlingUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 	bp := dto.ToUpdateBundlingPackageModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &bp)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.BundlingPackageResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This bundling package name already exists.",
+				},
+			}
+		}
 		return dto.BundlingPackageResponse{}, err
 	}
 

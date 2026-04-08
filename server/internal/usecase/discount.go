@@ -51,7 +51,14 @@ func (u *DiscountUseCase) Store(ctx context.Context, req dto.CreateDiscountReque
 	stored, err := u.Repo.Store(ctx, &discount)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.DiscountResponse{}, usecase_errors.DuplicateEntry
+			return dto.DiscountResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This discount name already exists.",
+				},
+			}
 		}
 		return dto.DiscountResponse{}, err
 	}
@@ -73,7 +80,14 @@ func (u *DiscountUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 	updated, err := u.Repo.Update(ctx, id, &discount)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.DiscountResponse{}, usecase_errors.DuplicateEntry
+			return dto.DiscountResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This discount name already exists.",
+				},
+			}
 		}
 		return dto.DiscountResponse{}, err
 	}
