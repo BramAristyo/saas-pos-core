@@ -1,0 +1,33 @@
+import type { ValidationError } from '@/types/common.types'
+import { ref } from 'vue'
+
+export function useFormErrors() {
+  const errors = ref<ValidationError[]>([])
+
+  const setErrors = (newErrors: ValidationError[]) => {
+    errors.value = newErrors
+  }
+
+  const clearErrors = () => {
+    errors.value = []
+  }
+
+  const getErrorMessage = (property: string) => {
+    const error = errors.value.find((e) => e.property.toLowerCase() === property.toLowerCase())
+
+    if (!error) return ''
+    return error.message || `${error.property} failed on ${error.tag}`
+  }
+
+  const hasError = (property: string) => {
+    return errors.value.some((e) => e.property.toLowerCase() === property.toLowerCase())
+  }
+
+  return {
+    errors,
+    setErrors,
+    clearErrors,
+    getErrorMessage,
+    hasError,
+  }
+}

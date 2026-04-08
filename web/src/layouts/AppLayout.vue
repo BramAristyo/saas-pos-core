@@ -64,7 +64,7 @@ const breadcrumbs = computed(() => {
         </Breadcrumb>
       </header>
       <main class="flex flex-1 flex-col overflow-y-auto">
-        <div class="mx-auto w-full max-w-7xl p-4 lg:p-6">
+        <div class="container max-w-7xl mx-auto p-4 lg:p-6">
           <slot />
         </div>
       </main>
