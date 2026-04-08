@@ -83,9 +83,6 @@ func (r *OrderRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Or
 func (r *OrderRepository) Store(ctx context.Context, order *domain.Order) (domain.Order, error) {
 	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(order).Error; err != nil {
-			if usecase_errors.IsUniqueViolation(err) {
-				return usecase_errors.DuplicateEntry
-			}
 			return err
 		}
 		return nil

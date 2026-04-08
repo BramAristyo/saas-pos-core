@@ -13,6 +13,9 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       outDir: env.VITE_OUT_DIR || 'dist',
     },
+    server: {
+      port: 3000,
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

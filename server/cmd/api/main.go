@@ -40,14 +40,13 @@ func main() {
 	r.RedirectTrailingSlash = false
 	r.RedirectFixedPath = false
 
-	r.Use(middleware.CORS())
+	r.Use(ginzap.Ginzap(zapLogger.GetLogger(), time.RFC3339, true))
+	r.Use(ginzap.RecoveryWithZap(zapLogger.GetLogger(), true))
 
+	r.Use(middleware.CORS())
 	r.Use(middleware.RateLimiter(zapLogger))
 
 	r.Use(middleware.ErrorHandler(zapLogger))
-
-	r.Use(ginzap.Ginzap(zapLogger.GetLogger(), time.RFC3339, true))
-	r.Use(ginzap.RecoveryWithZap(zapLogger.GetLogger(), true))
 
 	handlers := dependency.Bootstrap(db, cfg)
 

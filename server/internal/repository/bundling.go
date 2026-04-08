@@ -62,9 +62,6 @@ func (r *BundlingRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 
 func (r *BundlingRepository) Store(ctx context.Context, bp *domain.BundlingPackage) (domain.BundlingPackage, error) {
 	if err := r.DB.WithContext(ctx).Create(bp).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.BundlingPackage{}, usecase_errors.DuplicateEntry
-		}
 		return domain.BundlingPackage{}, err
 	}
 

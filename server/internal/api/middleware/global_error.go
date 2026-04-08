@@ -43,6 +43,15 @@ func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 			if errors.As(err, &ve) {
 				log.Warn("Validation Failed", "path", c.Request.URL.Path, "fields", ve.Error())
 				response.ValidationError(c, err)
+				c.Errors = c.Errors[:0]
+				return
+			}
+
+			var customFieldErrs *usecase_errors.CustomFieldErrors
+			if errors.As(err, &customFieldErrs) {
+				log.Warn("Unique/Custom Field Violation", "path", c.Request.URL.Path)
+				response.CustomValidationError(c, err)
+				c.Errors = c.Errors[:0]
 				return
 			}
 
@@ -62,6 +71,7 @@ func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 					)
 				}
 				response.Error(c, ue.Code, ue.Message, err)
+				c.Errors = c.Errors[:0]
 				return
 			}
 

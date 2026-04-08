@@ -52,7 +52,14 @@ func (u *TaxUseCase) Store(ctx context.Context, req dto.CreateTaxRequest) (dto.T
 	stored, err := u.Repo.Store(ctx, &tax)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.TaxResponse{}, usecase_errors.DuplicateEntry
+			return dto.TaxResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This tax name already exists.",
+				},
+			}
 		}
 		return dto.TaxResponse{}, err
 	}
@@ -74,7 +81,14 @@ func (u *TaxUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateTax
 	updated, err := u.Repo.Update(ctx, id, &tax)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.TaxResponse{}, usecase_errors.DuplicateEntry
+			return dto.TaxResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This tax name already exists.",
+				},
+			}
 		}
 		return dto.TaxResponse{}, err
 	}

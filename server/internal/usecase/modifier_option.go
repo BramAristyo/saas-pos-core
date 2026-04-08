@@ -8,6 +8,7 @@ import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/repository"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/helper"
+	"github.com/BramAristyo/saas-pos-core/server/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
@@ -51,6 +52,16 @@ func (u *ModifierOptionUseCase) Store(ctx context.Context, req dto.CreateModifie
 	mo := dto.ToModifierOptionModel(&req)
 	stored, err := u.Repo.Store(ctx, &mo)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.ModifierOptionResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This modifier option name already exists.",
+				},
+			}
+		}
 		return dto.ModifierOptionResponse{}, err
 	}
 
@@ -70,6 +81,16 @@ func (u *ModifierOptionUseCase) Update(ctx context.Context, id uuid.UUID, req dt
 	mo := dto.ToUpdateModifierOptionModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &mo)
 	if err != nil {
+		if usecase_errors.IsUniqueViolation(err) {
+			return dto.ModifierOptionResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This modifier option name already exists.",
+				},
+			}
+		}
 		return dto.ModifierOptionResponse{}, err
 	}
 
