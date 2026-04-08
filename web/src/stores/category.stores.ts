@@ -40,7 +40,7 @@ export const useCategoryStore = defineStore('category', () => {
     error.value = null
     try {
       const res = await categoryApi.create(payload)
-      categories.value.push(res.data)
+      categories.value = [res.data, ...categories.value]
     } catch (err: any) {
       error.value = err?.message || 'Unsuccessfully create category'
       throw err
