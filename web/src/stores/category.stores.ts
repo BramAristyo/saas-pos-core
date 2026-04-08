@@ -18,7 +18,7 @@ export const useCategoryStore = defineStore('category', () => {
     } catch (err: any) {
       error.value = err?.message || 'Unsuccessfully get categories'
     } finally {
-      loading.value = true
+      loading.value = false
     }
   }
 

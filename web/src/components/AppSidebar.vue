@@ -43,6 +43,16 @@ const data = {
         },
       ],
     },
+    {
+      title: 'Master Data',
+      url: '#',
+      items: [
+        {
+          title: 'Category',
+          url: '/categories',
+        },
+      ],
+    },
   ],
 }
 </script>
