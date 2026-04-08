@@ -22,7 +22,7 @@ func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
 func (r *CategoryRepository) GetAll(ctx context.Context) ([]domain.Category, error) {
 	var categories []domain.Category
 
-	if err := r.DB.WithContext(ctx).Find(&categories).Order("created_at DESC").Error; err != nil {
+	if err := r.DB.WithContext(ctx).Order("updated_at DESC").Find(&categories).Error; err != nil {
 		return nil, err
 	}
 
@@ -66,9 +66,9 @@ func (r *CategoryRepository) FindById(ctx context.Context, id uuid.UUID) (domain
 
 func (r *CategoryRepository) Store(ctx context.Context, c *domain.Category) (domain.Category, error) {
 	if err := r.DB.WithContext(ctx).Create(c).Error; err != nil {
-		if usecase_errors.IsUniqueViolation(err) {
-			return domain.Category{}, usecase_errors.DuplicateEntry
-		}
+		// if usecase_errors.IsUniqueViolation(err) {
+		// 	return domain.Category{}, usecase_errors.DuplicateEntry
+		// }
 		return domain.Category{}, err
 	}
 

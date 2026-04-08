@@ -47,6 +47,14 @@ func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 				return
 			}
 
+			var customFieldErrs *usecase_errors.CustomFieldErrors
+			if errors.As(err, &customFieldErrs) {
+				log.Warn("Unique/Custom Field Violation", "path", c.Request.URL.Path)
+				response.CustomValidationError(c, err)
+				c.Errors = c.Errors[:0]
+				return
+			}
+
 			var ue *usecase_errors.UseCaseError
 			if errors.As(err, &ue) {
 				if ue.Code >= 400 && ue.Code < 500 {

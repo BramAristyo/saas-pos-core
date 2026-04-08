@@ -73,7 +73,14 @@ func (u *CategoryUseCase) Store(ctx context.Context, req dto.CreateCategoryReque
 	stored, err := u.Repo.Store(ctx, &category)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.CategoryResponse{}, usecase_errors.DuplicateEntry
+			return dto.CategoryResponse{}, &usecase_errors.CustomFieldErrors{
+				{
+					Property: "Name",
+					Tag:      "unique",
+					Value:    req.Name,
+					Message:  "This category name already exists.",
+				},
+			}
 		}
 		return dto.CategoryResponse{}, err
 	}

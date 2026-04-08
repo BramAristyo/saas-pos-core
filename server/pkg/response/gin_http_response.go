@@ -53,3 +53,13 @@ func ValidationError(c *gin.Context, err error) {
 		Error:   validation.GetValidationErrors(err),
 	})
 }
+
+func CustomValidationError(c *gin.Context, err error) {
+	c.JSON(http.StatusBadRequest, gin.H{
+		"success": false,
+		"message": "Validation Failed",
+		"error":   err,
+	})
+
+	c.Errors = c.Errors[:0]
+}

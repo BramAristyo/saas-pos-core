@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/BramAristyo/saas-pos-core/server/internal/api/validation"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
@@ -19,6 +20,12 @@ func (e *UseCaseError) Error() string {
 func IsUniqueViolation(err error) bool {
 	var pgErr *pgconn.PgError
 	return errors.As(err, &pgErr) && pgErr.Code == "23505"
+}
+
+type CustomFieldErrors []validation.ValidationError
+
+func (e *CustomFieldErrors) Error() string {
+	return "custom field validation failed"
 }
 
 var (
