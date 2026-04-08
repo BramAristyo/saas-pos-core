@@ -58,11 +58,17 @@ function handleDelete(category: Category) {
       </Button>
     </div>
 
-    <div v-if="categoryStore.loading && categoryStore.categories.length === 0" class="flex justify-center py-8">
+    <div
+      v-if="categoryStore.loading && categoryStore.categories.length === 0"
+      class="flex justify-center py-8"
+    >
       <p>Loading...</p>
     </div>
 
-    <div v-else-if="categoryStore.categories.length === 0" class="flex flex-col items-center justify-center py-12 border rounded-lg bg-muted/20">
+    <div
+      v-else-if="categoryStore.categories.length === 0"
+      class="flex flex-col items-center justify-center py-12 border rounded-lg bg-muted/20"
+    >
       <p class="text-muted-foreground mb-4">No categories found</p>
       <Button variant="outline" @click="handleAdd">Create your first category</Button>
     </div>
@@ -72,6 +78,7 @@ function handleDelete(category: Category) {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Description</TableHead>
+          <TableHead>Created At</TableHead>
           <TableHead class="w-12.5"></TableHead>
         </TableRow>
       </TableHeader>
@@ -79,6 +86,7 @@ function handleDelete(category: Category) {
         <TableRow v-for="category in categoryStore.categories" :key="category.id">
           <TableCell class="font-medium">{{ category.name }}</TableCell>
           <TableCell>{{ category.description }}</TableCell>
+          <TableCell>{{ category.createdAt }}</TableCell>
           <TableCell>
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
@@ -87,9 +95,7 @@ function handleDelete(category: Category) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem @click="handleEdit(category)">
-                  Edit
-                </DropdownMenuItem>
+                <DropdownMenuItem @click="handleEdit(category)"> Edit </DropdownMenuItem>
                 <DropdownMenuItem
                   class="text-destructive focus:text-destructive"
                   @click="handleDelete(category)"
@@ -103,14 +109,8 @@ function handleDelete(category: Category) {
       </TableBody>
     </Table>
 
-    <CategoryFormDialog
-      v-model:open="isFormOpen"
-      :category="selectedCategory"
-    />
+    <CategoryFormDialog v-model:open="isFormOpen" :category="selectedCategory" />
 
-    <CategoryDeleteDialog
-      v-model:open="isDeleteOpen"
-      :category="selectedCategory"
-    />
+    <CategoryDeleteDialog v-model:open="isDeleteOpen" :category="selectedCategory" />
   </AppLayout>
 </template>
