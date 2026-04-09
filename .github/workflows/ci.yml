@@ -1,0 +1,32 @@
+name: Build Check (Go & Vue)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  server-build:
+    name: Build Golang server
+    runs-on: ubuntu-22.04
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup@v5
+        with:
+          go-version: "1.25"
+          cache-dependency-path: ./server/go.sum
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Verify Build API
+        run: go build -v ./cmd/api/main.go

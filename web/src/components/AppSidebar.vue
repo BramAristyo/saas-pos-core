@@ -77,7 +77,7 @@ const data = {
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
-      <SearchForm />
+      <!-- <SearchForm /> -->
     </SidebarHeader>
     <SidebarContent>
       <SidebarGroup>

@@ -5,7 +5,7 @@ import { SidebarGroup, SidebarGroupContent, SidebarInput } from '@/components/ui
 </script>
 
 <template>
-  <!-- <form>
+  <form>
     <SidebarGroup class="py-0">
       <SidebarGroupContent class="relative">
         <Label for="search" class="sr-only"> Search </Label>
@@ -15,5 +15,5 @@ import { SidebarGroup, SidebarGroupContent, SidebarInput } from '@/components/ui
         />
       </SidebarGroupContent>
     </SidebarGroup>
-  </form> -->
+  </form>
 </template>
