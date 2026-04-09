@@ -10,19 +10,19 @@ import (
 func SeedUserData(db *gorm.DB) {
 	users := []*domain.User{
 		{
-			Name:     "Camelia Admin",
-			Email:    "camelia.admin@cameliawhite.my.id",
+			Name:     "Camelia",
+			Email:    "camelia@cameliawhite.my.id",
 			Password: "password",
 			Role:     domain.RoleAdmin,
 		}, {
-			Name:     "White Admin",
-			Email:    "white.admin@cameliawhite.my.id",
+			Name:     "White",
+			Email:    "white@cameliawhite.my.id",
 			Password: "password",
 			Role:     domain.RoleAdmin,
 		},
 		{
-			Name:     "John Cashier",
-			Email:    "john.cashier@cameliawhite.my.id",
+			Name:     "John",
+			Email:    "john@cameliawhite.my.id",
 			Password: "password",
 			Role:     domain.RoleCashier,
 		},
