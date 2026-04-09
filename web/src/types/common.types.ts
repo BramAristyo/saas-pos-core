@@ -1,3 +1,5 @@
+export type AdjustmentType = 'fixed' | 'percentage'
+
 export interface BaseResponse<T> {
   success: boolean
   message?: string
