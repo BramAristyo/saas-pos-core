@@ -47,7 +47,7 @@ const breadcrumbs = computed(() => {
         <Separator orientation="vertical" class="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            <template v-for="(breadcrumb, index) in breadcrumbs" :key="breadcrumb.url">
+            <template v-for="breadcrumb in breadcrumbs" :key="breadcrumb.url">
               <BreadcrumbItem>
                 <BreadcrumbLink v-if="!breadcrumb.isLast" as-child>
                   <RouterLink :to="breadcrumb.url">

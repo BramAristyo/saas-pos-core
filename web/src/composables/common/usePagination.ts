@@ -12,11 +12,11 @@ export function usePagination(defaultPageSize = MEDIUM_SIZE) {
   const hasPrev = computed(() => page.value > 1)
 
   function nextPage() {
-    if (hasNext) page.value++
+    if (hasNext.value) page.value++
   }
 
   function prevPage() {
-    if (hasPrev) page.value--
+    if (hasPrev.value) page.value--
   }
 
   function goToPage(target: number) {
@@ -29,7 +29,7 @@ export function usePagination(defaultPageSize = MEDIUM_SIZE) {
   }
 
   function reset() {
-    page.value
+    page.value = 1
   }
 
   return {
