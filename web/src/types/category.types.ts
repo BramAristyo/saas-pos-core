@@ -6,12 +6,5 @@ export interface Category {
   createdAt: string
 }
 
-export interface CreateCategoryRequest {
-  name: string
-  description: string
-}
-
-export interface UpdateCategoryRequest {
-  name: string
-  description: string
-}
+export type CreateCategoryRequest = Omit<Category, 'id' | 'updatedAt' | 'createdAt'>
+export type UpdateCategoryRequest = CreateCategoryRequest

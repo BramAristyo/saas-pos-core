@@ -1,10 +1,12 @@
 import { categoryApi } from '@/api/category.api'
 import type { Category, CreateCategoryRequest, UpdateCategoryRequest } from '@/types/category.types'
+import type { BaseFilterRequest, Meta } from '@/types/common.types'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useCategoryStore = defineStore('category', () => {
   const categories = ref<Category[]>([])
+  const meta = ref<Meta | null>(null)
   const selected = ref<Category | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
@@ -15,6 +17,20 @@ export const useCategoryStore = defineStore('category', () => {
     try {
       const res = await categoryApi.getAll()
       categories.value = res.data
+    } catch (err: any) {
+      error.value = err?.message || 'Unsuccessfully get categories'
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function fetchPaginated(params: BaseFilterRequest) {
+    loading.value = true
+    error.value = null
+    try {
+      const res = await categoryApi.paginate(params)
+      categories.value = res.data
+      meta.value = res.meta || null
     } catch (err: any) {
       error.value = err?.message || 'Unsuccessfully get categories'
     } finally {
@@ -40,7 +56,7 @@ export const useCategoryStore = defineStore('category', () => {
     error.value = null
     try {
       const res = await categoryApi.create(payload)
-      categories.value.push(res.data)
+      categories.value = [res.data, ...categories.value]
     } catch (err: any) {
       error.value = err?.message || 'Unsuccessfully create category'
       throw err
@@ -80,10 +96,12 @@ export const useCategoryStore = defineStore('category', () => {
 
   return {
     categories,
+    meta,
     selected,
     loading,
     error,
     fetchAll,
+    fetchPaginated,
     fetchById,
     create,
     update,

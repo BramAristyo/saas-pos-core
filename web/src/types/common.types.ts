@@ -1,3 +1,5 @@
+export type AdjustmentType = 'fixed' | 'percentage'
+
 export interface BaseResponse<T> {
   success: boolean
   message?: string
@@ -20,4 +22,13 @@ export interface ValidationError {
   tag: string
   value: string
   message?: string
+}
+
+export interface PaginationInput {
+  pageSize: number
+  pageNumber: number
+}
+
+export interface BaseFilterRequest extends PaginationInput {
+  search?: string
 }
