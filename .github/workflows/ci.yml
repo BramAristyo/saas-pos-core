@@ -8,19 +8,17 @@ on:
 
 jobs:
   server-build:
-    name: Build Golang server
+    name: Build Golang Server
     runs-on: ubuntu-22.04
-
     defaults:
       run:
         working-directory: ./server
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: "1.25"
           cache-dependency-path: ./server/go.sum
@@ -30,3 +28,26 @@ jobs:
 
       - name: Verify Build API
         run: go build -v ./cmd/api/main.go
+
+  web-client-build:
+    name: Build Web Vue Client
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./web
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: ./web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Web Client Build
+        run: npm run build
