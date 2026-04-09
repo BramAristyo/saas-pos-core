@@ -179,7 +179,7 @@ function handleDelete(category: Category) {
             <template v-for="(item, index) in items">
               <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
                 <Button
-                  class="w-10 h-10 p-0"
+                  class="w-8 h-8 p-0"
                   :variant="item.value === currentPage ? 'default' : 'outline'"
                 >
                   {{ item.value }}
