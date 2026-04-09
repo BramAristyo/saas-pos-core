@@ -21,3 +21,12 @@ export interface ValidationError {
   value: string
   message?: string
 }
+
+export interface PaginationInput {
+  pageSize: number
+  pageNumber: number
+}
+
+export interface BaseFilterRequest extends PaginationInput {
+  search?: string
+}
