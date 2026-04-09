@@ -1,20 +1,24 @@
-import http from '@/lib/http'
 import type { Category, CreateCategoryRequest, UpdateCategoryRequest } from '@/types/category.types'
-import type { BaseFilterRequest, BaseResponse } from '@/types/common.types'
+import { createCrudApi } from './base.api'
 
-export const categoryApi = {
-  paginate: (params: BaseFilterRequest) =>
-    http.get<any, BaseResponse<Category[]>>('/categories', { params }),
+// export const categoryApi = {
+//   paginate: (params: BaseFilterRequest) =>
+//     http.get<any, BaseResponse<Category[]>>('/categories', { params }),
 
-  getAll: () => http.get<any, BaseResponse<Category[]>>('/categories/get-all'),
+//   getAll: () => http.get<any, BaseResponse<Category[]>>('/categories/get-all'),
 
-  getById: (id: string) => http.get<any, BaseResponse<Category>>(`/categories/${id}`),
+//   getById: (id: string) => http.get<any, BaseResponse<Category>>(`/categories/${id}`),
 
-  create: (payload: CreateCategoryRequest) =>
-    http.post<any, BaseResponse<Category>>('/categories', payload),
+//   create: (payload: CreateCategoryRequest) =>
+//     http.post<any, BaseResponse<Category>>('/categories', payload),
 
-  update: (id: string, payload: UpdateCategoryRequest) =>
-    http.put<any, BaseResponse<Category>>(`/categories/${id}`, payload),
+//   update: (id: string, payload: UpdateCategoryRequest) =>
+//     http.put<any, BaseResponse<Category>>(`/categories/${id}`, payload),
 
-  delete: (id: string) => http.delete<any, BaseResponse<null>>(`categories/${id}`),
-}
+//   delete: (id: string) => http.delete<any, BaseResponse<null>>(`/categories/${id}`),
+// }
+
+export const categoryApi = createCrudApi<Category, CreateCategoryRequest, UpdateCategoryRequest>(
+  'categories',
+  { hasGetAll: true },
+)

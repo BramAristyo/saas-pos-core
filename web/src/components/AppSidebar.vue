@@ -89,24 +89,24 @@ const data = {
             class="group/collapsible"
           >
             <SidebarMenuItem>
-              <CollapsibleTrigger as-child>
-                <SidebarMenuButton>
-                  {{ item.title }}
-                  <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
-                  <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent v-if="item.items.length">
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
-                    <RouterLink :to="childItem.url" v-slot="{ isActive }">
-                      <SidebarMenuSubButton :is-active="isActive">
-                        {{ childItem.title }}
-                      </SidebarMenuSubButton>
-                    </RouterLink>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
+              <!-- <CollapsibleTrigger as-child> -->
+              <SidebarMenuButton>
+                {{ item.title }}
+                <!-- <Plus class="ml-auto group-data-[state=open]/collapsible:hidden" />
+                  <Minus class="ml-auto group-data-[state=closed]/collapsible:hidden" /> -->
+              </SidebarMenuButton>
+              <!-- </CollapsibleTrigger> -->
+              <!-- <CollapsibleContent v-if="item.items.length"> -->
+              <SidebarMenuSub>
+                <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
+                  <RouterLink :to="childItem.url" v-slot="{ isActive }">
+                    <SidebarMenuSubButton :is-active="isActive">
+                      {{ childItem.title }}
+                    </SidebarMenuSubButton>
+                  </RouterLink>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+              <!-- </CollapsibleContent> -->
             </SidebarMenuItem>
           </Collapsible>
         </SidebarMenu>

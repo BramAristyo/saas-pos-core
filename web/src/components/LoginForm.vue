@@ -54,9 +54,9 @@ async function handleSubmit() {
             <div class="flex size-8 items-center justify-center rounded-md">
               <GalleryVerticalEnd class="size-6" />
             </div>
-            <span class="sr-only">Mawish POS by Camelia White</span>
+            <span class="sr-only">Point of Sales by Camelia White</span>
           </a>
-          <h1 class="text-xl font-bold">Welcome to Mawish POS</h1>
+          <h1 class="text-xl font-bold">Welcome to Point of Sales</h1>
           <!-- <FieldDescription> Have a nice shift </FieldDescription> -->
         </div>
 

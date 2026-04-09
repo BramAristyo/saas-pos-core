@@ -30,6 +30,7 @@ func (e *CustomFieldErrors) Error() string {
 
 var (
 	EmailExist         = &UseCaseError{http.StatusConflict, "email already registered"}
+	EmailNotFound      = &UseCaseError{http.StatusConflict, "email doesn't registered yet"}
 	DuplicateEntry     = &UseCaseError{http.StatusConflict, "data already exist"}
 	UserNotActive      = &UseCaseError{http.StatusForbidden, "user is not active"}
 	InvalidPassword    = &UseCaseError{http.StatusUnauthorized, "invalid email or password"}
