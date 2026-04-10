@@ -55,6 +55,10 @@ const data = {
           title: 'Tax',
           url: '/taxes',
         },
+        {
+          title: 'Sales Type',
+          url: '/sales-types',
+        },
       ],
     },
   ],

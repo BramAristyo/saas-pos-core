@@ -36,6 +36,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Taxes' },
     },
     {
+      path: '/sales-types',
+      name: 'sales-types',
+      component: () => import('@/views/sales-type/SalesTypeView.vue'),
+      meta: { requiresAuth: true, title: 'Sales Types' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
