@@ -30,6 +30,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Categories' },
     },
     {
+      path: '/taxes',
+      name: 'taxes',
+      component: () => import('@/views/tax/TaxView.vue'),
+      meta: { requiresAuth: true, title: 'Taxes' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

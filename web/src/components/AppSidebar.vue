@@ -51,6 +51,10 @@ const data = {
           title: 'Category',
           url: '/categories',
         },
+        {
+          title: 'Tax',
+          url: '/taxes',
+        },
       ],
     },
   ],
