@@ -22,6 +22,4 @@ export const salesTypeApi = {
     http.put<any, BaseResponse<SalesType>>(`/sales-types/${id}`, payload),
 
   delete: (id: string) => http.delete<any, BaseResponse<null>>(`/sales-types/${id}`),
-
-  restore: (id: string) => http.patch<any, BaseResponse<null>>(`/sales-types/${id}/restore`),
 }

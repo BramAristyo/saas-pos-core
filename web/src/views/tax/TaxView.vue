@@ -17,24 +17,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Plus, Search } from 'lucide-vue-next'
+import { MoreHorizontal, Plus, Search, Tag } from 'lucide-vue-next'
 import type { Tax } from '@/types/tax.types'
 import TaxFormDialog from './TaxFormDialog.vue'
 import TaxDeleteDialog from './TaxDeleteDialog.vue'
 import { useSearch } from '@/composables/common/useSearch'
 import { usePagination } from '@/composables/common/usePagination'
 import { Input } from '@/components/ui/input'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
+import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
+import { Skeleton } from '@/components/ui/skeleton'
+import { CommonEmpty } from '@/components/common/empty'
 
 const taxStore = useTaxStore()
 
@@ -99,20 +92,37 @@ function handleDelete(tax: Tax) {
       </div>
     </div>
 
-    <div v-if="taxStore.loading && taxStore.taxes.length === 0" class="flex justify-center py-8">
-      <p>Loading...</p>
+    <div v-if="taxStore.loading && taxStore.taxes.length === 0" class="space-y-4">
+      <div class="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Percentage</TableHead>
+              <TableHead class="w-12.5"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="i in 5" :key="i">
+              <TableCell><Skeleton class="h-4 w-32" /></TableCell>
+              <TableCell><Skeleton class="h-4 w-16" /></TableCell>
+              <TableCell><Skeleton class="h-8 w-8 rounded-md" /></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
     </div>
 
-    <div
+    <CommonEmpty
       v-else-if="taxStore.taxes.length === 0"
-      class="flex flex-col items-center justify-center py-12 border rounded-lg bg-muted/20"
-    >
-      <p class="text-muted-foreground mb-4">
-        {{ search ? 'No taxes match your search' : 'No taxes found' }}
-      </p>
-      <Button v-if="!search" variant="outline" @click="handleAdd">Create your first tax</Button>
-      <Button v-else variant="outline" @click="search = ''">Clear search</Button>
-    </div>
+      title="Taxes"
+      description="Create your first tax rate to apply to your products and services."
+      :icon="Tag"
+      :search="search"
+      add-button-text="Create Tax"
+      @add="handleAdd"
+      @clear-search="search = ''"
+    />
 
     <div v-else class="space-y-4">
       <div class="overflow-hidden">
@@ -151,41 +161,14 @@ function handleDelete(tax: Tax) {
         </Table>
       </div>
 
-      <div
-        v-if="taxStore.meta && taxStore.meta.totalPages > 1"
-        class="flex items-center justify-between w-full mt-4"
-      >
-        <div></div>
-        <Pagination
-          v-slot="{ page: currentPage }"
-          :total="taxStore.meta.totalRows"
-          :sibling-count="1"
-          :items-per-page="pageSize"
-          show-edges
-          :page="page"
-          @update:page="goToPage"
-        >
-          <PaginationContent v-slot="{ items }">
-            <PaginationFirst />
-            <PaginationPrevious />
-
-            <template v-for="(item, index) in items">
-              <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                <Button
-                  class="w-8 h-8 p-0"
-                  :variant="item.value === currentPage ? 'default' : 'outline'"
-                >
-                  {{ item.value }}
-                </Button>
-              </PaginationItem>
-              <PaginationEllipsis v-else :key="item.type" :index="index" />
-            </template>
-
-            <PaginationNext />
-            <PaginationLast />
-          </PaginationContent>
-        </Pagination>
-      </div>
+      <CommonPagination
+        v-if="taxStore.meta"
+        :page="page"
+        :page-size="pageSize"
+        :total-rows="taxStore.meta.totalRows"
+        :total-pages="taxStore.meta.totalPages"
+        @update:page="goToPage"
+      />
     </div>
 
     <TaxFormDialog v-model:open="isFormOpen" :tax="selectedTax" @success="loadData" />

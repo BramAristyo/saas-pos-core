@@ -97,19 +97,6 @@ export const useSalesType = () => {
     }
   }
 
-  async function restore(id: string) {
-    loading.value = true
-    error.value = null
-    try {
-      await salesTypeApi.restore(id)
-    } catch (err: any) {
-      error.value = err?.message || 'Unsuccessfully restore sales type'
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
   return {
     salesTypes,
     salesType,
@@ -122,6 +109,5 @@ export const useSalesType = () => {
     create,
     update,
     remove,
-    restore,
   }
 }
