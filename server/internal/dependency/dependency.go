@@ -2,6 +2,7 @@ package dependency
 
 import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/api/handler"
+	"github.com/BramAristyo/saas-pos-core/server/internal/api/validation"
 	"github.com/BramAristyo/saas-pos-core/server/internal/infrastructure/config"
 	"github.com/BramAristyo/saas-pos-core/server/internal/repository"
 	"github.com/BramAristyo/saas-pos-core/server/internal/usecase"
@@ -26,6 +27,8 @@ type Handlers struct {
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
+	validation.RegisterCustomValidators()
+
 	userRepository := repository.NewUserRepository(db)
 	auditLogRepository := repository.NewAuditLogRepository(db)
 

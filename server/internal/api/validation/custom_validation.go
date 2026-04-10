@@ -36,6 +36,10 @@ func (ve *ValidationError) setValidationMessage() {
 	case "email":
 		ve.Message = ve.Property + " must be a valid email address"
 
+	case "gt":
+		ve.Message = ve.Property + " must be greater than " + ve.Value
+	case "lt":
+		ve.Message = ve.Property + " must be less than " + ve.Value
 	case "gte":
 		ve.Message = ve.Property + " must be greater than or equal to " + ve.Value
 	case "lte":
