@@ -92,26 +92,7 @@ function handleDelete(st: SalesType) {
       </div>
     </div>
 
-    <div v-if="loading && salesTypes.length === 0" class="space-y-4">
-      <div class="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead class="w-12.5"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow v-for="i in 5" :key="i">
-              <TableCell><Skeleton class="h-4 w-32" /></TableCell>
-              <TableCell><Skeleton class="h-4 w-24" /></TableCell>
-              <TableCell><Skeleton class="h-8 w-8 rounded-md" /></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    <TableSkeleton v-if="loading && salesTypes.length === 0" :column-count="3" />
 
     <CommonEmpty
       v-else-if="salesTypes.length === 0"

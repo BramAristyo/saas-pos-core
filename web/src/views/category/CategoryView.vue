@@ -26,9 +26,7 @@ import { usePagination } from '@/composables/common/usePagination'
 import { Input } from '@/components/ui/input'
 import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
-import {
-  CommonEmpty,
-} from '@/components/common/empty'
+import { CommonEmpty } from '@/components/common/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const categoryStore = useCategoryStore()
@@ -94,28 +92,7 @@ function handleDelete(category: Category) {
       </div>
     </div>
 
-    <div v-if="categoryStore.loading && categoryStore.categories.length === 0" class="space-y-4">
-      <div class="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead class="w-12.5"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow v-for="i in 5" :key="i">
-              <TableCell><Skeleton class="h-4 w-32" /></TableCell>
-              <TableCell><Skeleton class="h-4 w-48" /></TableCell>
-              <TableCell><Skeleton class="h-4 w-24" /></TableCell>
-              <TableCell><Skeleton class="h-8 w-8 rounded-md" /></TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    <TableSkeleton v-if="true && categoryStore.categories.length === 0" :column-count="4" />
 
     <CommonEmpty
       v-else-if="categoryStore.categories.length === 0"
