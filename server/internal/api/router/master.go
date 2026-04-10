@@ -52,6 +52,7 @@ func BundlingRoutes(r *gin.RouterGroup, h *handler.BundlingHandler) {
 }
 
 func TaxRoutes(r *gin.RouterGroup, h *handler.TaxHandler) {
+	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
 	r.POST("", h.Store)
@@ -61,6 +62,7 @@ func TaxRoutes(r *gin.RouterGroup, h *handler.TaxHandler) {
 }
 
 func DiscountRoutes(r *gin.RouterGroup, h *handler.DiscountHandler) {
+	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
 	r.POST("", h.Store)
@@ -70,6 +72,7 @@ func DiscountRoutes(r *gin.RouterGroup, h *handler.DiscountHandler) {
 }
 
 func SalesTypeRoutes(r *gin.RouterGroup, h *handler.SalesTypeHandler) {
+	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
 	r.POST("", h.Store)

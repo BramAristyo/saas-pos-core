@@ -36,6 +36,15 @@ func (u *TaxUseCase) Paginate(ctx context.Context, req filter.PaginationWithInpu
 	return dto.ToTaxResponsePagination(taxResponses, req, totalRows), nil
 }
 
+func (u *TaxUseCase) GetAll(ctx context.Context) ([]dto.TaxResponse, error) {
+	taxes, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.TaxResponse{}, err
+	}
+
+	return dto.ToTaxResponses(taxes), nil
+}
+
 func (u *TaxUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
 	tax, err := u.Repo.FindById(ctx, id)
 	if err != nil {

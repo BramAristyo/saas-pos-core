@@ -36,6 +36,16 @@ func (h *DiscountHandler) Paginate(c *gin.Context) {
 	response.OKPaginate(c, res.Data, res.Meta)
 }
 
+func (h *DiscountHandler) GetAll(c *gin.Context) {
+	res, err := h.UseCase.GetAll(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success get all discount")
+}
+
 func (h *DiscountHandler) FindById(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {

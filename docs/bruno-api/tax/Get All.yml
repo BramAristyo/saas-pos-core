@@ -1,0 +1,40 @@
+info:
+  name: Get All
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{url}}/taxes/get-all"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: success get all taxes
+    request:
+      url: "{{url}}/taxes/get-all"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": [
+              {
+                "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+                "name": "VAT 10%",
+                "percentage": "10",
+                "deletedAt": null,
+                "createdAt": "2026-04-10 10:00:00"
+              }
+            ],
+            "message": "success get all taxes"
+          }

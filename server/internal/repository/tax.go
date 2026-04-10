@@ -45,6 +45,16 @@ func (r *TaxRepository) Paginate(ctx context.Context, req filter.PaginationWithI
 	return totalRows, t, nil
 }
 
+func (r *TaxRepository) GetAll(ctx context.Context) ([]domain.Tax, error) {
+	var taxes []domain.Tax
+
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&taxes).Error; err != nil {
+		return []domain.Tax{}, err
+	}
+
+	return taxes, nil
+}
+
 func (r *TaxRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Tax, error) {
 	var t domain.Tax
 

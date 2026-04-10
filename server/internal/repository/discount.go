@@ -45,6 +45,16 @@ func (r *DiscountRepository) Paginate(ctx context.Context, req filter.Pagination
 	return totalRows, d, nil
 }
 
+func (r *DiscountRepository) GetAll(ctx context.Context) ([]domain.Discount, error) {
+	var discounts []domain.Discount
+
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&discounts).Error; err != nil {
+		return []domain.Discount{}, err
+	}
+
+	return discounts, nil
+}
+
 func (r *DiscountRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Discount, error) {
 	var d domain.Discount
 

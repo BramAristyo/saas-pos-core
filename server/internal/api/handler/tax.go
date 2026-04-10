@@ -19,6 +19,16 @@ func NewTaxHandler(u *usecase.TaxUseCase) *TaxHandler {
 	}
 }
 
+func (h *TaxHandler) GetAll(c *gin.Context) {
+	res, err := h.UseCase.GetAll(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success get all taxes")
+}
+
 func (h *TaxHandler) Paginate(c *gin.Context) {
 	var req filter.PaginationWithInputFilter
 	if err := c.ShouldBindQuery(&req); err != nil {
