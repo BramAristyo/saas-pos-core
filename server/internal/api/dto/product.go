@@ -10,8 +10,6 @@ import (
 type ProductResponse struct {
 	ID             uuid.UUID               `json:"id"`
 	CategoryID     uuid.UUID               `json:"categoryId"`
-	Category       *CategoryResponse       `json:"category,omitempty"`
-	ModifierGroups []ModifierGroupResponse `json:"modifierGroups,omitempty"`
 	Name           string                  `json:"name"`
 	Description    *string                 `json:"description"`
 	Price          decimal.Decimal         `json:"price"`
@@ -20,6 +18,8 @@ type ProductResponse struct {
 	DeletedAt      *string                 `json:"deletedAt,omitempty"`
 	CreatedAt      string                  `json:"createdAt"`
 	UpdatedAt      string                  `json:"updatedAt"`
+	Category       *CategoryResponse       `json:"category,omitempty"`
+	ModifierGroups []ModifierGroupResponse `json:"modifierGroups,omitempty"`
 }
 
 type ProductResponsePagination struct {

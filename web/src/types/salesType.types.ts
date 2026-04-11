@@ -10,7 +10,7 @@ export interface AdditionalCharge {
   id: string
   salesTypeId: string
   name: string
-  adjustmentType: AdjustmentType
+  type: AdjustmentType
   amount: string
   createdAt: string
 }
@@ -21,7 +21,7 @@ export interface SalesTypeDetail extends SalesType {
 
 export interface AdditionalChargeRequest {
   name: string
-  adjustmentType: AdjustmentType
+  type: AdjustmentType
   amount: string
 }
 
