@@ -86,7 +86,7 @@ func (h *ReportHandler) DiscountUsage(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "Discount usage retrieved successfully")
+	response.OK(c, res, "successfully get discounts Report")
 }
 
 func (h *ReportHandler) ShiftReconciliation(c *gin.Context) {

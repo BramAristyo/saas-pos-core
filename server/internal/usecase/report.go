@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/api/dto"
+	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
 	"github.com/BramAristyo/saas-pos-core/server/internal/repository"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
 )
@@ -42,6 +44,7 @@ func (u *ReportUseCase) GrossProfit(ctx context.Context, req filter.DynamicFilte
 	}
 
 	grossProfit.CalculateGrossProfit()
+	grossProfit.PercentageCalculation()
 
 	return dto.ToGrossProfitReportResponse(grossProfit), nil
 }
@@ -65,23 +68,36 @@ func (u *ReportUseCase) Transactions(ctx context.Context, req filter.PaginationW
 	return dto.TransactionReportResponsePagination{Data: transactionResponses, Meta: req.ToMeta(totalRows)}, nil
 }
 
-func (u *ReportUseCase) DiscountUsage(ctx context.Context, req filter.PaginationWithInputFilter) (dto.DiscountReportResponsePagination, error) {
-	totalRows, drs, err := u.DiscountRepo.Usage(ctx, req)
+func (u *ReportUseCase) DiscountUsage(ctx context.Context, req filter.PaginationWithInputFilter) (dto.DiscountReportResponse, error) {
+	drs, err := u.DiscountRepo.Usage(ctx, req)
 	if err != nil {
-		return dto.DiscountReportResponsePagination{}, err
+		return dto.DiscountReportResponse{}, err
 	}
 
-	discountResponses := make([]dto.DiscountReportResponse, 0, len(drs))
-	for _, dr := range drs {
-		discountResponses = append(discountResponses, dto.DiscountReportResponse{
+	fmt.Println(drs)
+
+	discountWithFooter := domain.DiscountReportWihFooter{Discounts: drs}
+	discountWithFooter.CalculateTotal()
+
+	fmt.Println(discountWithFooter.TotalCount)
+
+	fmt.Println(discountWithFooter.Discounts)
+
+	discountResponses := make([]dto.DiscountReport, len(drs))
+	for i, dr := range drs {
+		discountResponses[i] = dto.DiscountReport{
 			Name:          dr.Name,
 			Count:         dr.Count,
 			GrossDiscount: dr.GrossDiscount,
-			Discount:      dr.Discount,
-		})
+		}
 	}
 
-	return dto.DiscountReportResponsePagination{Data: discountResponses, Meta: req.ToMeta(totalRows)}, nil
+	return dto.DiscountReportResponse{
+		TotalCount:         discountWithFooter.TotalCount,
+		TotalGrossDiscount: discountWithFooter.TotalGrossDiscount,
+		Discounts:          discountResponses,
+	}, nil
+
 }
 
 func (u *ReportUseCase) ShiftReconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ShiftReconciliationtResponsePagination, error) {

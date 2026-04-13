@@ -27,29 +27,41 @@ func ToSalesReportResponse(s domain.SalesSummary) SalesReportResponse {
 }
 
 type GrossProfitReportResponse struct {
-	GrossSales  decimal.Decimal `json:"grossSales"`
-	Discounts   decimal.Decimal `json:"discounts"`
-	NetSales    decimal.Decimal `json:"netSales"`
-	Cogs        decimal.Decimal `json:"cogs"`
-	GrossProfit decimal.Decimal `json:"grossProfit"`
+	GrossSales            decimal.Decimal `json:"grossSales"`
+	Discounts             decimal.Decimal `json:"discounts"`
+	NetSales              decimal.Decimal `json:"netSales"`
+	NetSalesPercentage    decimal.Decimal `json:"netSalesPercentage"`
+	Cogs                  decimal.Decimal `json:"cogs"`
+	CogsPercetage         decimal.Decimal `json:"cogsPercentage"`
+	GrossProfit           decimal.Decimal `json:"grossProfit"`
+	GrossProfitPercentage decimal.Decimal `json:"grossProfitPercentage"`
 }
 
 func ToGrossProfitReportResponse(gp domain.GrossProfit) GrossProfitReportResponse {
 	return GrossProfitReportResponse{
-		GrossSales:  gp.GrossSales,
-		Discounts:   gp.Discounts,
-		NetSales:    gp.NetSales,
-		Cogs:        gp.Cogs,
-		GrossProfit: gp.GrossProfit,
+		GrossSales:            gp.GrossSales,
+		Discounts:             gp.Discounts,
+		NetSales:              gp.NetSales,
+		NetSalesPercentage:    gp.NetSalesPercentage,
+		Cogs:                  gp.Cogs,
+		CogsPercetage:         gp.CogsPercentage,
+		GrossProfit:           gp.GrossProfit,
+		GrossProfitPercentage: gp.GrossProfitPercentage,
 	}
 }
 
-type DiscountReportResponse struct {
+type DiscountReport struct {
 	Name          string          `json:"name"`
 	Count         int64           `json:"count"`
 	GrossDiscount decimal.Decimal `json:"grossDiscount"`
-	Discount      decimal.Decimal `json:"discount"`
+	// Discount      decimal.Decimal `json:"discount"`
 }
+type DiscountReportResponse struct {
+	TotalCount         int64            `json:"totalCount"`
+	TotalGrossDiscount decimal.Decimal  `json:"totalGrossDiscount"`
+	Discounts          []DiscountReport `json:"discounts"`
+}
+
 type DiscountReportResponsePagination struct {
 	Data []DiscountReportResponse `json:"data"`
 	Meta filter.Meta              `json:"meta"`

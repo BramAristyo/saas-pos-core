@@ -6,7 +6,6 @@ info:
 http:
   method: POST
   url: "{{url}}/sales-types"
-  auth: inherit
   body:
     type: json
     data: |-
@@ -16,7 +15,7 @@ http:
           {
             "name": "Service Charge",
             "type": "percentage",
-            "amount": 5
+            "amount": -800
           },
           {
             "name": "PB1",
@@ -25,3 +24,10 @@ http:
           }
         ]
       }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

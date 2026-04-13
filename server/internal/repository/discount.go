@@ -120,11 +120,11 @@ func (r *DiscountRepository) Restore(ctx context.Context, id uuid.UUID) error {
 	return result.Error
 }
 
-func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error) {
+func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) ([]domain.DiscountReport, error) {
 	var totalRows int64
 
 	allowedFields := map[string]string{
-		"created_at": "o.created_at",
+		"created_at": "d.created_at",
 	}
 
 	q := database.BuildQuery(r.DB.WithContext(ctx).Table("discounts d"), req.DynamicFilter, nil, allowedFields)
@@ -132,20 +132,20 @@ func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWit
 	q = q.
 		Select("d.name, COUNT(o.id) as count, COALESCE(SUM(o.subtotal), 0) as gross_discount, COALESCE(SUM(o.discount_amount), 0) as discount").
 		Joins("LEFT JOIN orders o ON o.discount_id = d.id AND o.status = ?", domain.OrderCompleted).
-		Group("d.name")
+		Group("d.id, d.name")
 
 	if err := q.Count(&totalRows).Error; err != nil {
-		return 0, nil, err
+		return nil, err
 	}
 
 	if totalRows == 0 {
-		return 0, nil, nil
+		return nil, nil
 	}
 
 	var results []domain.DiscountReport
-	if err := q.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Scan(&results).Error; err != nil {
-		return 0, nil, err
+	if err := q.Scan(&results).Error; err != nil {
+		return nil, err
 	}
 
-	return totalRows, results, nil
+	return results, nil
 }
