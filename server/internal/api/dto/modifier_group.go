@@ -10,10 +10,10 @@ type ModifierGroupResponse struct {
 	ID         uuid.UUID                `json:"id"`
 	Name       string                   `json:"name"`
 	IsRequired bool                     `json:"isRequired"`
-	Options    []ModifierOptionResponse `json:"options,omitempty"`
 	DeletedAt  *string                  `json:"deletedAt,omitempty"`
 	CreatedAt  string                   `json:"createdAt"`
 	UpdatedAt  string                   `json:"updatedAt"`
+	Options    []ModifierOptionResponse `json:"options,omitempty"`
 }
 
 type ModifierGroupResponsePagination struct {
