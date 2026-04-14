@@ -26,13 +26,16 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div v-if="totalPages > 1" class="flex items-center justify-between w-full mt-4">
-    <!-- <div>
-      <p class="text-sm text-muted-foreground">
-        Showing {{ (page - 1) * pageSize + 1 }} to
-        {{ Math.min(page * pageSize, totalRows) }} of {{ totalRows }} entries
-      </p>
-    </div> -->
+  <div class="flex items-center justify-between w-full mt-4">
+    <p class="text-sm text-muted-foreground whitespace-nowrap">
+      Showing
+      {{ (page - 1) * pageSize + 1 }}
+      to
+      {{ Math.min(page * pageSize, totalRows) }}
+      of
+      {{ totalRows }} entries
+    </p>
+
     <Pagination
       v-slot="{ page: currentPage }"
       :total="totalRows"
@@ -42,20 +45,20 @@ const emit = defineEmits<{
       :page="page"
       @update:page="emit('update:page', $event)"
     >
-      <PaginationContent v-slot="{ items }">
+      <PaginationContent v-slot="{ items }" class="flex items-center gap-2">
         <PaginationFirst />
         <PaginationPrevious />
 
-        <template v-for="(item, index) in items">
-          <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+        <template v-for="(item, index) in items" :key="index">
+          <PaginationItem v-if="item.type === 'page'" :value="item.value" as-child>
             <Button
-              class="w-8 h-8 p-0"
+              class="h-8 w-8 p-0"
               :variant="item.value === currentPage ? 'default' : 'outline'"
             >
               {{ item.value }}
             </Button>
           </PaginationItem>
-          <PaginationEllipsis v-else :key="item.type" :index="index" />
+          <PaginationEllipsis v-else :index="index" />
         </template>
 
         <PaginationNext />
