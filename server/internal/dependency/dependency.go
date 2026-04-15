@@ -10,20 +10,19 @@ import (
 )
 
 type Handlers struct {
-	Auth           *handler.AuthHandler
-	User           *handler.UserHandler
-	Category       *handler.CategoryHandler
-	Product        *handler.ProductHandler
-	ModifierGroup  *handler.ModifierGroupHandler
-	ModifierOption *handler.ModifierOptionHandler
-	Bundling       *handler.BundlingHandler
-	Tax            *handler.TaxHandler
-	Discount       *handler.DiscountHandler
-	Shift          *handler.ShiftHandler
-	SalesType      *handler.SalesTypeHandler
-	Order          *handler.OrderHandler
-	Report         *handler.ReportHandler
-	Dashboard      *handler.DashboardHandler
+	Auth          *handler.AuthHandler
+	User          *handler.UserHandler
+	Category      *handler.CategoryHandler
+	Product       *handler.ProductHandler
+	ModifierGroup *handler.ModifierGroupHandler
+	Bundling      *handler.BundlingHandler
+	Tax           *handler.TaxHandler
+	Discount      *handler.DiscountHandler
+	Shift         *handler.ShiftHandler
+	SalesType     *handler.SalesTypeHandler
+	Order         *handler.OrderHandler
+	Report        *handler.ReportHandler
+	Dashboard     *handler.DashboardHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -46,7 +45,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	modifierGroupUseCase := usecase.NewModifierGroupUseCase(modifierGroupRepository, auditLogUseCase)
 
 	modifierOptionRepository := repository.NewModifierOptionRepository(db)
-	modifierOptionUseCase := usecase.NewModifierOptionUseCase(modifierOptionRepository, auditLogUseCase)
 
 	bundlingRepository := repository.NewBundlingRepository(db)
 	bundlingUseCase := usecase.NewBundlingUseCase(bundlingRepository, auditLogUseCase)
@@ -80,19 +78,18 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	dashboardUseCase := usecase.NewDashboardUseCase(orderRepository)
 
 	return &Handlers{
-		Auth:           handler.NewAuthHandler(authUseCase),
-		User:           handler.NewUserHandler(userUseCase),
-		Category:       handler.NewCategoryHandler(categoryUseCase),
-		Product:        handler.NewProductHandler(productUseCase),
-		ModifierGroup:  handler.NewModifierGroupHandler(modifierGroupUseCase),
-		ModifierOption: handler.NewModifierOptionHandler(modifierOptionUseCase),
-		Bundling:       handler.NewBundlingHandler(bundlingUseCase),
-		Tax:            handler.NewTaxHandler(taxUseCase),
-		Discount:       handler.NewDiscountHandler(discountUseCase),
-		Shift:          handler.NewShiftHandler(shiftUseCase),
-		SalesType:      handler.NewSalesTypeHandler(salesTypeUseCase),
-		Order:          handler.NewOrderHandler(orderUseCase),
-		Report:         handler.NewReportHandler(reportUseCase),
-		Dashboard:      handler.NewDashboardHandler(dashboardUseCase),
+		Auth:          handler.NewAuthHandler(authUseCase),
+		User:          handler.NewUserHandler(userUseCase),
+		Category:      handler.NewCategoryHandler(categoryUseCase),
+		Product:       handler.NewProductHandler(productUseCase),
+		ModifierGroup: handler.NewModifierGroupHandler(modifierGroupUseCase),
+		Bundling:      handler.NewBundlingHandler(bundlingUseCase),
+		Tax:           handler.NewTaxHandler(taxUseCase),
+		Discount:      handler.NewDiscountHandler(discountUseCase),
+		Shift:         handler.NewShiftHandler(shiftUseCase),
+		SalesType:     handler.NewSalesTypeHandler(salesTypeUseCase),
+		Order:         handler.NewOrderHandler(orderUseCase),
+		Report:        handler.NewReportHandler(reportUseCase),
+		Dashboard:     handler.NewDashboardHandler(dashboardUseCase),
 	}
 }

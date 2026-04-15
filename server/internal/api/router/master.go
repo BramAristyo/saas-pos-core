@@ -33,15 +33,6 @@ func ModifierRoutes(r *gin.RouterGroup, h *handler.ModifierGroupHandler) {
 	r.PATCH("/:id/restore", h.Restore)
 }
 
-func ModifierOptionRoutes(r *gin.RouterGroup, h *handler.ModifierOptionHandler) {
-	r.GET("", h.Paginate)
-	r.GET("/:id", h.FindById)
-	r.POST("", h.Store)
-	r.PUT("/:id", h.Update)
-	r.DELETE("/:id", h.Delete)
-	r.PATCH("/:id/restore", h.Restore)
-}
-
 func BundlingRoutes(r *gin.RouterGroup, h *handler.BundlingHandler) {
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
