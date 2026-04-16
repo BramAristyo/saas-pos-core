@@ -90,6 +90,23 @@ func toModifierOptionResponse(mo *domain.ModifierOption) ModifierOptionResponse 
 }
 
 func ToModifierGroupResponse(mg *domain.ModifierGroup) ModifierGroupResponse {
+	resp := ModifierGroupResponse{
+		ID:         mg.ID,
+		Name:       mg.Name,
+		IsRequired: mg.IsRequired,
+		CreatedAt:  mg.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:  mg.UpdatedAt.Format("2006-01-02 15:04:05"),
+	}
+
+	if mg.DeletedAt.Valid {
+		at := mg.DeletedAt.Time.Format("2006-01-02 15:04:05")
+		resp.DeletedAt = &at
+	}
+
+	return resp
+}
+
+func ToModifierGroupDetailResponse(mg *domain.ModifierGroup) ModifierGroupDetailResponse {
 	var options []ModifierOptionResponse
 	if len(mg.ModifierOptions) > 0 {
 		for _, o := range mg.ModifierOptions {
@@ -97,12 +114,21 @@ func ToModifierGroupResponse(mg *domain.ModifierGroup) ModifierGroupResponse {
 		}
 	}
 
-	resp := ModifierGroupResponse{
-		ID:         mg.ID,
-		Name:       mg.Name,
-		IsRequired: mg.IsRequired,
-		CreatedAt:  mg.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:  mg.UpdatedAt.Format("2006-01-02 15:04:05"),
+	var productModifiers []ProductResponse
+	if len(mg.ProductModifiers) > 0 {
+		for _, pm := range mg.ProductModifiers {
+			productModifiers = append(productModifiers, ToProductResponse(&pm.Product))
+		}
+	}
+
+	resp := ModifierGroupDetailResponse{
+		ID:               mg.ID,
+		Name:             mg.Name,
+		IsRequired:       mg.IsRequired,
+		CreatedAt:        mg.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:        mg.UpdatedAt.Format("2006-01-02 15:04:05"),
+		Options:          options,
+		ProductModifiers: productModifiers,
 	}
 
 	if mg.DeletedAt.Valid {
@@ -121,15 +147,56 @@ func ToModifierGroupResponsePagination(mg []ModifierGroupResponse, f filter.Pagi
 }
 
 func ToModifierGroupModel(req *CreateModifierGroupRequest) domain.ModifierGroup {
+	options := make([]domain.ModifierOption, 0, len(req.Options))
+	for _, o := range req.Options {
+		options = append(options, domain.ModifierOption{
+			Name:            o.Name,
+			PriceAdjustment: o.PriceAdjustment,
+			CogsAdjustment:  o.CogsAdjustment,
+		})
+	}
+
+	productModifiers := make([]domain.ProductModifier, 0, len(req.ProductModifiers))
+	for _, pid := range req.ProductModifiers {
+		productModifiers = append(productModifiers, domain.ProductModifier{
+			ProductID: pid,
+		})
+	}
+
 	return domain.ModifierGroup{
-		Name:       req.Name,
-		IsRequired: req.IsRequired,
+		Name:             req.Name,
+		IsRequired:       req.IsRequired,
+		ModifierOptions:  options,
+		ProductModifiers: productModifiers,
 	}
 }
 
 func ToUpdateModifierGroupModel(req *UpdateModifierGroupRequest) domain.ModifierGroup {
+	options := make([]domain.ModifierOption, 0, len(req.Options))
+	for _, o := range req.Options {
+		var id uuid.UUID
+		if o.ID != nil {
+			id = *o.ID
+		}
+		options = append(options, domain.ModifierOption{
+			ID:              id,
+			Name:            o.Name,
+			PriceAdjustment: o.PriceAdjustment,
+			CogsAdjustment:  o.CogsAdjustment,
+		})
+	}
+
+	productModifiers := make([]domain.ProductModifier, 0, len(req.ProductModifiers))
+	for _, pid := range req.ProductModifiers {
+		productModifiers = append(productModifiers, domain.ProductModifier{
+			ProductID: pid,
+		})
+	}
+
 	return domain.ModifierGroup{
-		Name:       req.Name,
-		IsRequired: req.IsRequired,
+		Name:             req.Name,
+		IsRequired:       req.IsRequired,
+		ModifierOptions:  options,
+		ProductModifiers: productModifiers,
 	}
 }

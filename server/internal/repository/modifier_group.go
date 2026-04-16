@@ -48,7 +48,7 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (d
 
 	err := r.DB.WithContext(ctx).
 		Preload("ModifierOptions").
-		Preload("ProductModifiers").
+		Preload("ProductModifiers.Product.Category").
 		Where("id = ?", id).
 		First(&mg).
 		Error
@@ -64,7 +64,12 @@ func (r *ModifierGroupRepository) FindById(ctx context.Context, id uuid.UUID) (d
 }
 
 func (r *ModifierGroupRepository) Store(ctx context.Context, mg *domain.ModifierGroup) (domain.ModifierGroup, error) {
-	if err := r.DB.WithContext(ctx).Create(mg).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(mg).Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return domain.ModifierGroup{}, err
 	}
 
@@ -72,24 +77,117 @@ func (r *ModifierGroupRepository) Store(ctx context.Context, mg *domain.Modifier
 }
 
 func (r *ModifierGroupRepository) Update(ctx context.Context, id uuid.UUID, mg *domain.ModifierGroup) (domain.ModifierGroup, error) {
-	var existing domain.ModifierGroup
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&existing).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return domain.ModifierGroup{}, usecase_errors.NotFound
+	err := r.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var existing domain.ModifierGroup
+		if err := tx.Where("id = ?", id).First(&existing).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return usecase_errors.NotFound
+			}
+			return err
 		}
+
+		updateData := map[string]any{
+			"name":        mg.Name,
+			"is_required": mg.IsRequired,
+		}
+
+		if err := tx.Model(&existing).Updates(updateData).Error; err != nil {
+			return err
+		}
+
+		// Sync ModifierOptions
+		var currentOptions []domain.ModifierOption
+		if err := tx.Where("modifier_group_id = ?", id).Find(&currentOptions).Error; err != nil {
+			return err
+		}
+
+		currentOptionsMap := make(map[uuid.UUID]bool)
+		for _, o := range currentOptions {
+			currentOptionsMap[o.ID] = true
+		}
+
+		reqOptionsMap := make(map[uuid.UUID]bool)
+		for _, o := range mg.ModifierOptions {
+			if o.ID != uuid.Nil {
+				reqOptionsMap[o.ID] = true
+			}
+		}
+
+		// Delete options not in request
+		for _, o := range currentOptions {
+			if !reqOptionsMap[o.ID] {
+				if err := tx.Delete(&o).Error; err != nil {
+					return err
+				}
+			}
+		}
+
+		// Update or Create options
+		for _, o := range mg.ModifierOptions {
+			o.ModifierGroupID = id
+			if o.ID != uuid.Nil && currentOptionsMap[o.ID] {
+				if err := tx.Model(&domain.ModifierOption{}).Where("id = ?", o.ID).Updates(o).Error; err != nil {
+					return err
+				}
+			} else {
+				o.ID = uuid.New() // Ensure new ID if not provided or doesn't exist
+				if err := tx.Create(&o).Error; err != nil {
+					return err
+				}
+			}
+		}
+
+		// Sync ProductModifiers (Join Table)
+		var currentProductIds []uuid.UUID
+		if err := tx.Model(&domain.ProductModifier{}).Where("modifier_group_id = ?", id).Pluck("product_id", &currentProductIds).Error; err != nil {
+			return err
+		}
+
+		currentPmMap := make(map[uuid.UUID]bool)
+		for _, pid := range currentProductIds {
+			currentPmMap[pid] = true
+		}
+
+		reqPmMap := make(map[uuid.UUID]bool)
+		for _, pm := range mg.ProductModifiers {
+			reqPmMap[pm.ProductID] = true
+		}
+
+		var pmToDelete []uuid.UUID
+		for _, pid := range currentProductIds {
+			if !reqPmMap[pid] {
+				pmToDelete = append(pmToDelete, pid)
+			}
+		}
+
+		var pmToCreate []domain.ProductModifier
+		for _, pm := range mg.ProductModifiers {
+			if !currentPmMap[pm.ProductID] {
+				pm.ModifierGroupID = id
+				pmToCreate = append(pmToCreate, pm)
+			}
+		}
+
+		if len(pmToDelete) > 0 {
+			if err := tx.Where("modifier_group_id = ? AND product_id IN ?", id, pmToDelete).Delete(&domain.ProductModifier{}).Error; err != nil {
+				return err
+			}
+		}
+
+		if len(pmToCreate) > 0 {
+			if err := tx.Create(&pmToCreate).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
 		return domain.ModifierGroup{}, err
 	}
 
-	updateData := map[string]any{
-		"name":        mg.Name,
-		"is_required": mg.IsRequired,
-	}
-
-	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
-		return domain.ModifierGroup{}, err
-	}
-
-	return existing, nil
+	return r.FindById(ctx, id)
 }
 
 func (r *ModifierGroupRepository) Delete(ctx context.Context, id uuid.UUID) error {

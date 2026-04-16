@@ -11,8 +11,23 @@ http:
     type: json
     data: |-
       {
-        "name": "New Modifier Group",
-        "is_required": true
+        "name": "Drink Ice Level",
+        "isRequired": true,
+        "options": [
+          {
+            "name": "No Ice",
+            "priceAdjustment": "0",
+            "cogsAdjustment": "0"
+          },
+          {
+            "name": "Normal Ice",
+            "priceAdjustment": "0",
+            "cogsAdjustment": "0"
+          }
+        ],
+        "productModifiers": [
+          "550e8400-e29b-41d4-a716-446655440000"
+        ]
       }
 
 settings:
