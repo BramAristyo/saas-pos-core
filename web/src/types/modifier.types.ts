@@ -1,5 +1,7 @@
+import type { Product } from './product.types'
+
 export interface ModifierOption {
-  id: string
+  id?: string | null
   name: string
   priceAdjustment: string
   cogsAdjustment: string
@@ -21,4 +23,30 @@ export interface ModifierGroupDetail {
   created_at: string
   updated_at: string
   options: ModifierGroup[]
+  productModifiers: Product[]
+}
+
+export interface CreateModifierOptionRequest {
+  name: string
+  priceAdjustment: string
+  cogsAdjustment: string
+}
+
+export interface UpdateModifierOptionRequest extends CreateModifierOptionRequest {
+  id?: string
+}
+
+export interface CreateModifierGroupRequest {
+  name: string
+  isRequired: boolean
+  options: CreateModifierOptionRequest[]
+  productModifiers: string[] | null
+}
+
+export interface UpdateModifierGroupRequest {
+  id: string
+  name: string
+  isRequired: boolean
+  options: UpdateModifierOptionRequest[]
+  productModifiers: string[] | null
 }

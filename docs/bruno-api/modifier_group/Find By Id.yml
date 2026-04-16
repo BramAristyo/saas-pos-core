@@ -5,12 +5,8 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/modifier-groups/:id"
+  url: "{{url}}/modifier-groups/80d3737d-3485-4933-9eeb-cd4ace472dc2"
   auth: inherit
-
-params:
-  path:
-    id: b2112ee9-417d-496c-ac7b-78ce050ea7b1
 
 settings:
   encodeUrl: true
