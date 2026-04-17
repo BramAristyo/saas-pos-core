@@ -18,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AmountInput } from '@/components/common/form/input/amount'
+import { Toggle } from '@/components/common/form'
 import { Field, FieldContent, FieldLabel, FieldError } from '@/components/ui/field'
 import { Plus, Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -174,20 +175,14 @@ async function handleSubmit() {
                     </FieldContent>
                   </Field>
 
-                  <Field>
-                    <FieldLabel>Type</FieldLabel>
-                    <FieldContent>
-                      <select
-                        v-model="charge.type"
-                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                        :aria-invalid="hasError(`Charges[${index}].Type`)"
-                      >
-                        <option value="fixed">Fixed Amount</option>
-                        <option value="percentage">Percentage</option>
-                      </select>
-                      <FieldError v-if="hasError(`Charges[${index}].Type`)" :errors="[getErrorMessage(`Charges[${index}].Type`)]" />
-                    </FieldContent>
-                  </Field>
+                  <Toggle
+                    v-model="charge.type"
+                    label="Type"
+                    :options="[
+                      { label: 'Fixed', value: 'fixed' },
+                      { label: 'Percentage', value: 'percentage' },
+                    ]"
+                  />
 
                   <Field>
                     <FieldLabel>Amount</FieldLabel>

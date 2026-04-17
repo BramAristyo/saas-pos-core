@@ -47,18 +47,18 @@ watch(
       displayValue.value = formatted
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 function onInput(e: Event) {
   const el = e.target as HTMLInputElement
   const rawValue = el.value
-  
+
   // Clean it up (allow only digits and decimal separator if decimals > 0)
   // We use regex to extract numeric parts.
   const regex = props.decimals > 0 ? /[^0-9.]/g : /[^0-9]/g
   let cleanValue = rawValue.replace(regex, '')
-  
+
   // Ensure only one dot
   if (props.decimals > 0) {
     const parts = cleanValue.split('.')
@@ -69,15 +69,15 @@ function onInput(e: Event) {
 
   // Format it for display
   const formattedValue = formatAmount(cleanValue, props.decimals)
-  
+
   // Update internal and emit raw
   displayValue.value = formattedValue
   emit('update:modelValue', cleanValue)
-  
+
   // Important: manual sync to the element to handle cursor
   const cursor = el.selectionStart || 0
   const oldLen = rawValue.length
-  
+
   nextTick(() => {
     if (el) {
       el.value = formattedValue
@@ -108,7 +108,7 @@ function onBlur() {
     >
       {{ effectivePrefix }}
     </div>
-    
+
     <input
       ref="inputRef"
       type="text"
@@ -116,12 +116,14 @@ function onBlur() {
       :value="displayValue"
       :placeholder="placeholder"
       :disabled="disabled"
-      :class="cn(
-        'flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 text-right font-bold',
-        effectivePrefix ? 'pl-10' : 'pl-3',
-        effectiveSuffix ? 'pr-8' : 'pr-3',
-        props.class
-      )"
+      :class="
+        cn(
+          'flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 text-right font-bold',
+          effectivePrefix ? 'pl-10' : 'pl-3',
+          effectiveSuffix ? 'pr-8' : 'pr-3',
+          props.class,
+        )
+      "
       @input="onInput"
       @blur="onBlur"
     />

@@ -9,6 +9,7 @@ import { X } from 'lucide-vue-next'
 import type { CreateDiscountRequest, Discount, UpdateDiscountRequest } from '@/types/discount.types'
 import { CancelModal } from '@/components/common/cancel'
 import { AmountInput } from '@/components/common/form/input/amount'
+import { Toggle } from '@/components/common/form'
 import { toast } from 'vue-sonner'
 
 const props = defineProps<{
@@ -91,29 +92,14 @@ function handleSubmit() {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-3">
-            <Label>Adjustment Type</Label>
-            <div class="flex items-center gap-2 p-1 border rounded-lg w-fit bg-muted/50">
-              <Button
-                type="button"
-                :variant="type === 'fixed' ? 'default' : 'ghost'"
-                size="sm"
-                class="w-24 transition-all"
-                @click="type = 'fixed'"
-              >
-                Fixed
-              </Button>
-              <Button
-                type="button"
-                :variant="type === 'percentage' ? 'default' : 'ghost'"
-                size="sm"
-                class="w-24 transition-all"
-                @click="type = 'percentage'"
-              >
-                Percentage
-              </Button>
-            </div>
-          </div>
+          <Toggle
+            v-model="type"
+            label="Adjustment Type"
+            :options="[
+              { label: 'Fixed', value: 'fixed' },
+              { label: 'Percentage', value: 'percentage' },
+            ]"
+          />
 
           <div class="space-y-2">
             <Label for="value">Value</Label>

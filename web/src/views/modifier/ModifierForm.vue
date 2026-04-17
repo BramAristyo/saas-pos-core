@@ -15,6 +15,7 @@ import type {
 } from '@/types/modifier.types'
 import ProductSelectModal from '@/components/common/product/ProductSelectModal.vue'
 import { CancelModal } from '@/components/common/cancel'
+import { Toggle } from '@/components/common/form'
 import { MoneyInput } from '@/components/common/form/input/money'
 import { useProductStore } from '@/stores/product.store'
 import { toast } from 'vue-sonner'
@@ -131,35 +132,16 @@ onMounted(async () => {
             <Label for="name">Modifier Group Name</Label>
             <Input id="name" v-model="name" placeholder="e.g. Extra Toppings, Sugar Level" />
           </div>
-          <div class="space-y-3">
-            <div class="space-y-0.5">
-              <Label class="text-sm font-medium">Requirement Status</Label>
-              <p class="text-sm text-muted-foreground">
-                Specify whether this modifier is required or optional for customers.
-              </p>
-            </div>
-            <div class="flex items-center gap-2 p-1 border rounded-lg w-fit bg-muted/50">
 
-              <Button
-                type="button"
-                :variant="!isRequired ? 'default' : 'ghost'"
-                size="sm"
-                class="w-24 transition-all"
-                @click="isRequired = false"
-              >
-                Optional
-              </Button>
-              <Button
-                type="button"
-                :variant="isRequired ? 'default' : 'ghost'"
-                size="sm"
-                class="w-24 transition-all"
-                @click="isRequired = true"
-              >
-                Required
-              </Button>
-            </div>
-          </div>
+          <Toggle
+            v-model="isRequired"
+            label="Requirement Status"
+            description="Specify whether this modifier is required or optional for customers."
+            :options="[
+              { label: 'Optional', value: false },
+              { label: 'Required', value: true },
+            ]"
+          />
         </CardContent>
       </Card>
 
