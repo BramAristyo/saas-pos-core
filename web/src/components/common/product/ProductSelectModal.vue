@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Search, Package } from 'lucide-vue-next'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useFormatter } from '@/composables/common/useFormatter'
 
 const props = defineProps<{
   open: boolean
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 }>()
 
 const productStore = useProductStore()
+const { formatRupiah } = useFormatter()
 const searchQuery = ref('')
 const localSelectedIds = ref<string[]>([])
 
@@ -82,7 +84,7 @@ function handleSave() {
         </div>
       </div>
 
-      <ScrollArea class="h-[60vh] sm:h-[400px] p-4">
+      <ScrollArea class="h-[60vh] sm:h-100 p-4">
         <div
           v-if="filteredProducts.length === 0"
           class="flex flex-col items-center justify-center py-10 text-muted-foreground"
@@ -114,7 +116,7 @@ function handleSave() {
               </p>
             </div>
             <div class="text-sm font-medium">
-              {{ product.price }}
+              {{ formatRupiah(product.price) }}
             </div>
           </div>
         </div>
