@@ -38,6 +38,20 @@ func (u *ModifierGroupUseCase) Paginate(ctx context.Context, req filter.Paginati
 	return dto.ToModifierGroupResponsePagination(modifierGroups, req, totalRows), nil
 }
 
+func (u *ModifierGroupUseCase) GetAll(ctx context.Context) ([]dto.ModifierGroupResponse, error) {
+	mgs, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.ModifierGroupResponse{}, err
+	}
+
+	res := make([]dto.ModifierGroupResponse, 0, len(mgs))
+	for i := range mgs {
+		res = append(res, dto.ToModifierGroupResponse(&mgs[i]))
+	}
+
+	return res, nil
+}
+
 func (u *ModifierGroupUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierGroupDetailResponse, error) {
 	mg, err := u.Repo.FindById(ctx, id)
 	if err != nil {

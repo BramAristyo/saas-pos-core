@@ -33,6 +33,20 @@ func (u *BundlingUseCase) Paginate(ctx context.Context, req filter.PaginationWit
 	return dto.ToBundlingPackagePaginationResponse(bps, req, totalRows), nil
 }
 
+func (u *BundlingUseCase) GetAll(ctx context.Context) ([]dto.BundlingPackageResponse, error) {
+	bps, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.BundlingPackageResponse{}, err
+	}
+
+	res := make([]dto.BundlingPackageResponse, 0, len(bps))
+	for i := range bps {
+		res = append(res, dto.ToBundlingPackageResponse(&bps[i]))
+	}
+
+	return res, nil
+}
+
 func (u *BundlingUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.BundlingPackageResponse, error) {
 	bp, err := u.Repo.FindById(ctx, id)
 	if err != nil {

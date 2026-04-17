@@ -21,6 +21,15 @@ func NewModifierGroupRepository(db *gorm.DB) *ModifierGroupRepository {
 	}
 }
 
+func (r *ModifierGroupRepository) GetAll(ctx context.Context) ([]domain.ModifierGroup, error) {
+	var mg []domain.ModifierGroup
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&mg).Error; err != nil {
+		return []domain.ModifierGroup{}, err
+	}
+
+	return mg, nil
+}
+
 func (r *ModifierGroupRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ModifierGroup, error) {
 	var mg []domain.ModifierGroup
 	var totalRows int64

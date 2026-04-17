@@ -19,6 +19,15 @@ func NewBundlingRepository(db *gorm.DB) *BundlingRepository {
 	return &BundlingRepository{DB: db}
 }
 
+func (r *BundlingRepository) GetAll(ctx context.Context) ([]domain.BundlingPackage, error) {
+	var bps []domain.BundlingPackage
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&bps).Error; err != nil {
+		return []domain.BundlingPackage{}, err
+	}
+
+	return bps, nil
+}
+
 func (r *BundlingRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.BundlingPackage, error) {
 	bps := make([]domain.BundlingPackage, 0, req.PaginationInput.PageSize)
 	var totalRows int64

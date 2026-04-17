@@ -16,16 +16,17 @@ func CategoryRoutes(r *gin.RouterGroup, h *handler.CategoryHandler) {
 }
 
 func ProductRoutes(r *gin.RouterGroup, h *handler.ProductHandler) {
+	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)
-	r.POST("", h.Store)
-	r.GET("/get-all", h.GetAll)
 	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
 	r.PUT("/:id", h.Update)
 	r.DELETE("/:id", h.Delete)
 	r.PATCH("/:id/restore", h.Restore)
 }
 
 func ModifierRoutes(r *gin.RouterGroup, h *handler.ModifierGroupHandler) {
+	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
 	r.POST("", h.Store)
@@ -35,6 +36,7 @@ func ModifierRoutes(r *gin.RouterGroup, h *handler.ModifierGroupHandler) {
 }
 
 func BundlingRoutes(r *gin.RouterGroup, h *handler.BundlingHandler) {
+	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
 	r.POST("", h.Store)
