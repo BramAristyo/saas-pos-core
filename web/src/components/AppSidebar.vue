@@ -68,6 +68,10 @@ const data = {
           title: 'Sales Type',
           url: '/sales-types',
         },
+        {
+          title: 'Discounts',
+          url: '/discounts',
+        },
       ],
     },
   ],
