@@ -44,30 +44,30 @@ type ModifierGroupResponsePagination struct {
 }
 
 type CreateModifierOptionRequest struct {
-	Name            string          `json:"name" binding:"required,min=3,max=100"`
-	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
-	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`
+	Name            string           `json:"name" binding:"required,min=3,max=100"`
+	PriceAdjustment *decimal.Decimal `json:"priceAdjustment" binding:"required"`
+	CogsAdjustment  *decimal.Decimal `json:"cogsAdjustment" binding:"required"`
 }
 
 type UpdateModifierOptionRequest struct {
-	ID              *uuid.UUID      `json:"id"`
-	Name            string          `json:"name" binding:"required,min=3,max=100"`
-	PriceAdjustment decimal.Decimal `json:"priceAdjustment" binding:"required"`
-	CogsAdjustment  decimal.Decimal `json:"cogsAdjustment" binding:"required"`
+	ID              *uuid.UUID       `json:"id"`
+	Name            string           `json:"name" binding:"required,min=3,max=100"`
+	PriceAdjustment *decimal.Decimal `json:"priceAdjustment" binding:"required"`
+	CogsAdjustment  *decimal.Decimal `json:"cogsAdjustment" binding:"required"`
 }
 
 type CreateModifierGroupRequest struct {
 	Name             string                        `json:"name" binding:"required,min=3,max=100"`
 	IsRequired       bool                          `json:"isRequired"`
 	Options          []CreateModifierOptionRequest `json:"options" binding:"required,min=1,dive"`
-	ProductModifiers []uuid.UUID                   `json:"productModifiers" binding:"uuid"`
+	ProductModifiers []uuid.UUID                   `json:"productModifiers"`
 }
 
 type UpdateModifierGroupRequest struct {
 	Name             string                        `json:"name" binding:"required,min=3,max=100"`
 	IsRequired       bool                          `json:"isRequired"`
 	Options          []UpdateModifierOptionRequest `json:"options" binding:"required,min=1,dive"`
-	ProductModifiers []uuid.UUID                   `json:"productModifiers" binding:"uuid"`
+	ProductModifiers []uuid.UUID                   `json:"productModifiers"`
 }
 
 func toModifierOptionResponse(mo *domain.ModifierOption) ModifierOptionResponse {
@@ -151,8 +151,8 @@ func ToModifierGroupModel(req *CreateModifierGroupRequest) domain.ModifierGroup 
 	for _, o := range req.Options {
 		options = append(options, domain.ModifierOption{
 			Name:            o.Name,
-			PriceAdjustment: o.PriceAdjustment,
-			CogsAdjustment:  o.CogsAdjustment,
+			PriceAdjustment: *o.PriceAdjustment,
+			CogsAdjustment:  *o.CogsAdjustment,
 		})
 	}
 
@@ -181,8 +181,8 @@ func ToUpdateModifierGroupModel(req *UpdateModifierGroupRequest) domain.Modifier
 		options = append(options, domain.ModifierOption{
 			ID:              id,
 			Name:            o.Name,
-			PriceAdjustment: o.PriceAdjustment,
-			CogsAdjustment:  o.CogsAdjustment,
+			PriceAdjustment: *o.PriceAdjustment,
+			CogsAdjustment:  *o.CogsAdjustment,
 		})
 	}
 

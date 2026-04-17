@@ -10,13 +10,14 @@ import { toast } from 'vue-sonner'
 const modifierStore = useModifierStore()
 const router = useRouter()
 const loading = ref(false)
+const formRef = ref<any>(null)
 
 async function handleSubmit(data: any) {
   loading.value = true
   try {
     await modifierStore.create(data as CreateModifierGroupRequest)
     toast.success('Modifier group created successfully')
-    router.push({ name: 'modifiers' })
+    formRef.value?.reset()
   } catch (error: any) {
     toast.error(error?.message || 'Failed to create modifier group')
   } finally {
@@ -27,6 +28,6 @@ async function handleSubmit(data: any) {
 
 <template>
   <AppLayout>
-    <ModifierForm :loading="loading" @submit="handleSubmit" />
+    <ModifierForm ref="formRef" :loading="loading" @submit="handleSubmit" />
   </AppLayout>
 </template>

@@ -89,9 +89,8 @@ const filteredNavMain = computed(() => {
 })
 
 function updateOpenSection() {
-  const currentPath = route.path
   const activeSection = data.navMain.find((item) =>
-    item.items.some((child) => child.url === currentPath),
+    item.items.some((child) => isChildActive(child.url)),
   )
   openSectionTitle.value = activeSection ? activeSection.title : null
 }

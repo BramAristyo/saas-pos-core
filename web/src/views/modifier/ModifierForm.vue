@@ -34,16 +34,14 @@ const productStore = useProductStore()
 const name = ref(props.initialData?.name || '')
 const isRequired = ref(props.initialData?.isRequired || false)
 const options = ref<(CreateModifierOptionRequest | UpdateModifierOptionRequest)[]>(
-  props.initialData?.options.map(o => ({
+  props.initialData?.options.map((o) => ({
     id: o.id,
     name: o.name,
     priceAdjustment: o.priceAdjustment,
-    cogsAdjustment: o.cogsAdjustment
-  })) || [{ name: '', priceAdjustment: '0', cogsAdjustment: '0' }]
+    cogsAdjustment: o.cogsAdjustment,
+  })) || [{ name: '', priceAdjustment: '0', cogsAdjustment: '0' }],
 )
-const selectedProductIds = ref<string[]>(
-  props.initialData?.productModifiers.map((p) => p.id) || []
-)
+const selectedProductIds = ref<string[]>(props.initialData?.productModifiers.map((p) => p.id) || [])
 
 const isProductModalOpen = ref(false)
 
@@ -66,6 +64,20 @@ function removeOption(index: number) {
 function handleProductSelect(ids: string[]) {
   selectedProductIds.value = ids
 }
+
+function reset() {
+  name.value = props.initialData?.name || ''
+  isRequired.value = props.initialData?.isRequired || false
+  options.value = props.initialData?.options.map((o) => ({
+    id: o.id,
+    name: o.name,
+    priceAdjustment: o.priceAdjustment,
+    cogsAdjustment: o.cogsAdjustment,
+  })) || [{ name: '', priceAdjustment: '0', cogsAdjustment: '0' }]
+  selectedProductIds.value = props.initialData?.productModifiers.map((p) => p.id) || []
+}
+
+defineExpose({ reset })
 
 function handleSubmit() {
   if (!name.value) {
@@ -118,11 +130,9 @@ onMounted(async () => {
           <div class="flex items-center justify-between p-4 border rounded-lg">
             <div class="space-y-0.5">
               <Label>Required</Label>
-              <p class="text-sm text-muted-foreground">
-                Customer must select at least one option
-              </p>
+              <p class="text-sm text-muted-foreground">Customer must select at least one option</p>
             </div>
-            <Switch v-model:checked="isRequired" />
+            <Switch id="is-required" v-model:checked="isRequired" />
           </div>
         </CardContent>
       </Card>
@@ -131,7 +141,7 @@ onMounted(async () => {
       <Card>
         <CardHeader class="flex flex-row items-center justify-between space-y-0">
           <CardTitle>Products</CardTitle>
-          <Button variant="ghost" size="sm" @click="isProductModalOpen = true">
+          <Button variant="outline" size="sm" @click="isProductModalOpen = true">
             <Plus class="size-4 mr-1" />
             Assign
           </Button>
@@ -141,7 +151,7 @@ onMounted(async () => {
             <Package class="size-8 mx-auto mb-2 opacity-20" />
             <p class="text-xs">No products assigned</p>
           </div>
-          <div v-else class="space-y-2">
+          <div v-else class="space-y-2 max-h-60 overflow-y-auto pr-1">
             <div
               v-for="product in selectedProducts"
               :key="product.id"
@@ -152,7 +162,7 @@ onMounted(async () => {
                 variant="ghost"
                 size="icon"
                 class="size-6 text-destructive h-auto w-auto p-1"
-                @click="selectedProductIds = selectedProductIds.filter(id => id !== product.id)"
+                @click="selectedProductIds = selectedProductIds.filter((id) => id !== product.id)"
               >
                 <Trash2 class="size-3" />
               </Button>

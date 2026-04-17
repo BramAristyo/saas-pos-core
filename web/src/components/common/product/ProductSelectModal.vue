@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Search, Package } from 'lucide-vue-next'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
@@ -37,29 +36,29 @@ onMounted(async () => {
   await productStore.ensureDataLoaded()
 })
 
-// Update local state when modal opens
 watch(
   () => props.open,
   (newVal) => {
     if (newVal) {
       localSelectedIds.value = [...props.selectedIds]
     }
-  }
+  },
+  { immediate: true },
 )
 
 const filteredProducts = computed(() => {
   if (!searchQuery.value) return productStore.products
   return productStore.products.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    p.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
   )
 })
 
 function toggleProduct(id: string) {
   const index = localSelectedIds.value.indexOf(id)
   if (index === -1) {
-    localSelectedIds.value.push(id)
+    localSelectedIds.value = [...localSelectedIds.value, id]
   } else {
-    localSelectedIds.value.splice(index, 1)
+    localSelectedIds.value = localSelectedIds.value.filter((i) => i !== id)
   }
 }
 
@@ -71,7 +70,7 @@ function handleSave() {
 
 <template>
   <Dialog v-model:open="isOpen">
-    <DialogContent class="sm:max-w-[500px] gap-0 p-0 overflow-hidden">
+    <DialogContent class="w-[95vw] sm:max-w-125 gap-0 p-0 overflow-hidden rounded-lg">
       <DialogHeader class="p-6 border-b">
         <DialogTitle>Select Products</DialogTitle>
       </DialogHeader>
@@ -83,8 +82,11 @@ function handleSave() {
         </div>
       </div>
 
-      <ScrollArea class="h-[400px] p-4">
-        <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-10 text-muted-foreground">
+      <ScrollArea class="h-[60vh] sm:h-[400px] p-4">
+        <div
+          v-if="filteredProducts.length === 0"
+          class="flex flex-col items-center justify-center py-10 text-muted-foreground"
+        >
           <Package class="size-10 mb-2 opacity-20" />
           <p>No products found</p>
         </div>
@@ -92,17 +94,24 @@ function handleSave() {
           <div
             v-for="product in filteredProducts"
             :key="product.id"
-            class="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent cursor-pointer transition-colors"
+            :class="[
+              'flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-colors',
+              localSelectedIds.includes(product.id)
+                ? 'bg-primary/10 text-primary hover:bg-primary/15'
+                : 'hover:bg-accent/50 text-foreground',
+            ]"
             @click="toggleProduct(product.id)"
           >
-            <Checkbox
-              :checked="localSelectedIds.includes(product.id)"
-              @update:checked="toggleProduct(product.id)"
-              @click.stop
-            />
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium leading-none truncate">{{ product.name }}</p>
-              <p class="text-xs text-muted-foreground mt-1">{{ product.category?.name }}</p>
+              <p
+                :class="[
+                  'text-xs mt-1',
+                  localSelectedIds.includes(product.id) ? 'opacity-80' : 'text-muted-foreground',
+                ]"
+              >
+                {{ product.category?.name }}
+              </p>
             </div>
             <div class="text-sm font-medium">
               {{ product.price }}

@@ -33,7 +33,6 @@ async function handleSubmit(data: any) {
   try {
     await modifierStore.update(id, data as UpdateModifierGroupRequest)
     toast.success('Modifier group updated successfully')
-    router.push({ name: 'modifiers' })
   } catch (error: any) {
     toast.error(error?.message || 'Failed to update modifier group')
   } finally {
