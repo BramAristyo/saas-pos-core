@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/api/dto"
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
@@ -22,6 +23,22 @@ func NewProductUseCase(repo *repository.ProductRepository, log *AuditLogUseCase)
 		Repo:       repo,
 		LogUseCase: log,
 	}
+}
+
+func (u *ProductUseCase) GetAll(ctx context.Context) ([]dto.ProductResponse, error) {
+	products, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.ProductResponse{}, err
+	}
+
+	fmt.Println(len(products))
+
+	res := make([]dto.ProductResponse, len(products))
+	for i, product := range products {
+		res[i] = dto.ToProductResponse(&product)
+	}
+
+	return res, nil
 }
 
 func (u *ProductUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ProductResponsePagination, error) {

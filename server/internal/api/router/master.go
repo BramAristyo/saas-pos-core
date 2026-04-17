@@ -18,6 +18,7 @@ func CategoryRoutes(r *gin.RouterGroup, h *handler.CategoryHandler) {
 func ProductRoutes(r *gin.RouterGroup, h *handler.ProductHandler) {
 	r.GET("", h.Paginate)
 	r.POST("", h.Store)
+	r.GET("/get-all", h.GetAll)
 	r.GET("/:id", h.FindById)
 	r.PUT("/:id", h.Update)
 	r.DELETE("/:id", h.Delete)
