@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Plus, Trash2, Package } from 'lucide-vue-next'
+import { Plus, Trash2, Package, X } from 'lucide-vue-next'
 import type {
   ModifierGroupDetail,
   CreateModifierGroupRequest,
@@ -14,6 +14,7 @@ import type {
   UpdateModifierOptionRequest,
 } from '@/types/modifier.types'
 import ProductSelectModal from '@/components/common/product/ProductSelectModal.vue'
+import { CancelModal } from '@/components/common/cancel'
 import { MoneyInput } from '@/components/common/form/input/money'
 import { useProductStore } from '@/stores/product.store'
 import { toast } from 'vue-sonner'
@@ -43,6 +44,7 @@ const options = ref<(CreateModifierOptionRequest | UpdateModifierOptionRequest)[
 const selectedProductIds = ref<string[]>(props.initialData?.productModifiers.map((p) => p.id) || [])
 
 const isProductModalOpen = ref(false)
+const isCancelModalOpen = ref(false)
 
 const selectedProducts = computed(() => {
   return productStore.products.filter((p) => selectedProductIds.value.includes(p.id))
@@ -108,7 +110,10 @@ onMounted(async () => {
     <div class="flex items-center justify-between">
       <h2 class="text-xl font-semibold">{{ initialData ? 'Edit' : 'Create' }} Modifier Group</h2>
       <div class="flex gap-2">
-        <Button variant="outline" @click="router.back()">Cancel</Button>
+        <Button variant="outline" @click="isCancelModalOpen = true">
+          <X class="size-4 mr-2" />
+          Cancel
+        </Button>
         <Button :disabled="loading" @click="handleSubmit">
           {{ loading ? 'Saving...' : 'Save Modifier Group' }}
         </Button>
@@ -242,5 +247,7 @@ onMounted(async () => {
       :selected-ids="selectedProductIds"
       @select="handleProductSelect"
     />
+
+    <CancelModal v-model:open="isCancelModalOpen" @confirm="router.back()" />
   </div>
 </template>
