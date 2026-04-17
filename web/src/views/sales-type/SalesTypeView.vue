@@ -23,6 +23,7 @@ import SalesTypeFormDialog from './SalesTypeFormDialog.vue'
 import SalesTypeDeleteDialog from './SalesTypeDeleteDialog.vue'
 import { useSearch } from '@/composables/common/useSearch'
 import { usePagination } from '@/composables/common/usePagination'
+import { useFormatter } from '@/composables/common/useFormatter'
 import { Input } from '@/components/ui/input'
 import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
@@ -30,6 +31,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { CommonEmpty } from '@/components/common/empty'
 
 const { salesTypes, loading, meta, fetchPaginated } = useSalesType()
+const { formatDate } = useFormatter()
 
 const isFormOpen = ref(false)
 const isDeleteOpen = ref(false)
@@ -118,7 +120,7 @@ function handleDelete(st: SalesType) {
           <TableBody>
             <TableRow v-for="st in salesTypes" :key="st.id">
               <TableCell class="font-medium">{{ st.name }}</TableCell>
-              <TableCell>{{ st.createdAt }}</TableCell>
+              <TableCell>{{ formatDate(st.createdAt) }}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>

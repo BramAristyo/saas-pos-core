@@ -24,6 +24,7 @@ import ModifierDeleteDialog from './ModifierDeleteDialog.vue'
 import ModifierRestoreDialog from './ModifierRestoreDialog.vue'
 import { useSearch } from '@/composables/common/useSearch'
 import { usePagination } from '@/composables/common/usePagination'
+import { useFormatter } from '@/composables/common/useFormatter'
 import { Input } from '@/components/ui/input'
 import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
@@ -32,6 +33,7 @@ import { TableSkeleton } from '@/components/common/skeleton'
 
 const modifierStore = useModifierStore()
 const router = useRouter()
+const { formatDate } = useFormatter()
 
 const isDeleteOpen = ref(false)
 const isRestoreOpen = ref(false)
@@ -153,7 +155,7 @@ function handleRestore(modifier: ModifierGroup) {
                   <span class="text-sm font-medium">{{ modifier.isRequired ? 'Yes' : 'No' }}</span>
                 </div>
               </TableCell>
-              <TableCell>{{ modifier.createdAt }}</TableCell>
+              <TableCell>{{ formatDate(modifier.createdAt) }}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>

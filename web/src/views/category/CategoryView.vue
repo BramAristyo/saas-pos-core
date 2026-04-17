@@ -23,6 +23,7 @@ import CategoryFormDialog from './CategoryFormDialog.vue'
 import CategoryDeleteDialog from './CategoryDeleteDialog.vue'
 import { useSearch } from '@/composables/common/useSearch'
 import { usePagination } from '@/composables/common/usePagination'
+import { useFormatter } from '@/composables/common/useFormatter'
 import { Input } from '@/components/ui/input'
 import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
@@ -30,6 +31,7 @@ import { CommonEmpty } from '@/components/common/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const categoryStore = useCategoryStore()
+const { formatDate } = useFormatter()
 
 const isFormOpen = ref(false)
 const isDeleteOpen = ref(false)
@@ -120,7 +122,7 @@ function handleDelete(category: Category) {
             <TableRow v-for="category in categoryStore.categories" :key="category.id">
               <TableCell class="font-medium">{{ category.name }}</TableCell>
               <TableCell>{{ category.description }}</TableCell>
-              <TableCell>{{ category.createdAt }}</TableCell>
+              <TableCell>{{ formatDate(category.createdAt) }}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
