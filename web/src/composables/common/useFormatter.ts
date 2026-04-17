@@ -30,9 +30,23 @@ export function useFormatter() {
     }).format(date)
   }
 
+  const formatDateOnly = (value: string | Date | null | undefined): string => {
+    if (!value) return '-'
+
+    const date = new Date(value)
+    if (isNaN(date.getTime())) return '-'
+
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(date)
+  }
+
   return {
     formatRupiah,
     formatPercent,
     formatDate,
+    formatDateOnly,
   }
 }

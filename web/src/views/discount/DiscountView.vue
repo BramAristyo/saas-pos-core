@@ -33,7 +33,7 @@ import { TableSkeleton } from '@/components/common/skeleton'
 
 const discountStore = useDiscountStore()
 const router = useRouter()
-const { formatDate, formatRupiah, formatPercent } = useFormatter()
+const { formatDate, formatDateOnly, formatRupiah, formatPercent } = useFormatter()
 
 const isDeleteOpen = ref(false)
 const selectedDiscount = ref<Discount | null>(null)
@@ -145,10 +145,13 @@ function formatValue(discount: Discount) {
                 <div class="flex flex-col gap-0.5">
                   <span v-if="!discount.startDate && !discount.endDate" class="text-sm">Always active</span>
                   <span v-else-if="discount.startDate && !discount.endDate" class="text-sm">
-                    From {{ formatDate(discount.startDate) }}
+                    From {{ formatDateOnly(discount.startDate) }}
+                  </span>
+                  <span v-else-if="!discount.startDate && discount.endDate" class="text-sm">
+                    Until {{ formatDateOnly(discount.endDate) }}
                   </span>
                   <span v-else class="text-sm">
-                    {{ formatDate(discount.startDate) }} - {{ formatDate(discount.endDate) }}
+                    {{ formatDateOnly(discount.startDate) }} - {{ formatDateOnly(discount.endDate) }}
                   </span>
                 </div>
               </TableCell>
