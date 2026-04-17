@@ -30,6 +30,24 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Categories' },
     },
     {
+      path: '/modifiers',
+      name: 'modifiers',
+      component: () => import('@/views/modifier/ModifierView.vue'),
+      meta: { requiresAuth: true, title: 'Modifier Groups' },
+    },
+    {
+      path: '/modifiers/create',
+      name: 'modifier-create',
+      component: () => import('@/views/modifier/ModifierCreateView.vue'),
+      meta: { requiresAuth: true, title: 'Create Modifier Group' },
+    },
+    {
+      path: '/modifiers/:id/edit',
+      name: 'modifier-edit',
+      component: () => import('@/views/modifier/ModifierEditView.vue'),
+      meta: { requiresAuth: true, title: 'Edit Modifier Group' },
+    },
+    {
       path: '/taxes',
       name: 'taxes',
       component: () => import('@/views/tax/TaxView.vue'),

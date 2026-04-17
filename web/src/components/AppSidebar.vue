@@ -49,8 +49,16 @@ const data = {
       url: '#',
       items: [
         {
+          title: 'Product',
+          url: '/products',
+        },
+        {
           title: 'Category',
           url: '/categories',
+        },
+        {
+          title: 'Modifier Group',
+          url: '/modifiers',
         },
         {
           title: 'Tax',
