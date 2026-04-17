@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, Trash2, Package } from 'lucide-vue-next'
 import type {
@@ -124,15 +123,37 @@ onMounted(async () => {
         </CardHeader>
         <CardContent class="space-y-4">
           <div class="space-y-2">
-            <Label for="name">Group Name</Label>
+            <Label for="name">Modifier Group Name</Label>
             <Input id="name" v-model="name" placeholder="e.g. Extra Toppings, Sugar Level" />
           </div>
-          <div class="flex items-center justify-between p-4 border rounded-lg">
+          <div class="space-y-3">
             <div class="space-y-0.5">
-              <Label>Required</Label>
-              <p class="text-sm text-muted-foreground">Customer must select at least one option</p>
+              <Label class="text-sm font-medium">Requirement Status</Label>
+              <p class="text-sm text-muted-foreground">
+                Specify whether this modifier is required or optional for customers.
+              </p>
             </div>
-            <Switch id="is-required" v-model:checked="isRequired" />
+            <div class="flex items-center gap-2 p-1 border rounded-lg w-fit bg-muted/50">
+
+              <Button
+                type="button"
+                :variant="!isRequired ? 'default' : 'ghost'"
+                size="sm"
+                class="w-24 transition-all"
+                @click="isRequired = false"
+              >
+                Optional
+              </Button>
+              <Button
+                type="button"
+                :variant="isRequired ? 'default' : 'ghost'"
+                size="sm"
+                class="w-24 transition-all"
+                @click="isRequired = true"
+              >
+                Required
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -188,15 +209,15 @@ onMounted(async () => {
               class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end border-b pb-4 last:border-0 last:pb-0"
             >
               <div class="md:col-span-5 space-y-2">
-                <Label v-if="index === 0">Option Name</Label>
+                <Label v-if="index === 0"></Label>
                 <Input v-model="option.name" placeholder="e.g. Extra Cheese" />
               </div>
               <div class="md:col-span-3 space-y-2">
-                <Label v-if="index === 0">Price Adj.</Label>
+                <Label v-if="index === 0">Price</Label>
                 <MoneyInput v-model="option.priceAdjustment" />
               </div>
               <div class="md:col-span-3 space-y-2">
-                <Label v-if="index === 0">COGS Adj.</Label>
+                <Label v-if="index === 0">COGS</Label>
                 <MoneyInput v-model="option.cogsAdjustment" />
               </div>
               <div class="md:col-span-1 flex justify-end">

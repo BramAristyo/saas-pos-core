@@ -48,10 +48,10 @@ const data = {
       title: 'Master Data',
       url: '#',
       items: [
-        {
-          title: 'Product',
-          url: '/products',
-        },
+        // {
+        //   title: 'Product',
+        //   url: '/products',
+        // },
         {
           title: 'Category',
           url: '/categories',
@@ -109,13 +109,13 @@ function handleToggle(title: string, open: boolean) {
 function isChildActive(itemUrl: string) {
   // Exact match
   if (route.path === itemUrl) return true
-  
+
   // Special handling for master data sub-routes
   // e.g. /modifiers/create should active /modifiers
   if (itemUrl !== '/' && itemUrl !== '/dashboard' && route.path.startsWith(itemUrl)) {
     return true
   }
-  
+
   return false
 }
 
