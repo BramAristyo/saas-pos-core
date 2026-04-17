@@ -28,7 +28,6 @@ import { Input } from '@/components/ui/input'
 import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
 import { CommonEmpty } from '@/components/common/empty'
-import { Badge } from '@/components/ui/badge'
 import { TableSkeleton } from '@/components/common/skeleton'
 
 const modifierStore = useModifierStore()
@@ -100,7 +99,7 @@ function handleRestore(modifier: ModifierGroup) {
 
     <TableSkeleton
       v-if="modifierStore.loading && modifierStore.modifiers.length === 0"
-      :column-count="4"
+      :column-count="3"
     />
 
     <CommonEmpty
@@ -115,30 +114,44 @@ function handleRestore(modifier: ModifierGroup) {
     />
 
     <div v-else class="space-y-4">
-      <div class="overflow-hidden rounded-lg">
+      <div class="overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Required</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead class="w-12.5"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="modifier in modifierStore.modifiers" :key="modifier.id">
-              <TableCell class="font-medium">{{ modifier.name }}</TableCell>
-              <TableCell>
-                <Badge :variant="modifier.isRequired ? 'default' : 'secondary'">
-                  {{ modifier.isRequired ? 'Yes' : 'No' }}
-                </Badge>
+            <TableRow
+              v-for="modifier in modifierStore.modifiers"
+              :key="modifier.id"
+              :class="{ 'opacity-60 bg-muted/30': modifier.deletedAt }"
+            >
+              <TableCell class="font-medium">
+                <div class="flex flex-col">
+                  <span>{{ modifier.name }}</span>
+                  <span
+                    v-if="modifier.deletedAt"
+                    class="text-[10px] text-destructive font-bold uppercase tracking-wider"
+                    >Deleted</span
+                  >
+                </div>
               </TableCell>
               <TableCell>
-                <Badge v-if="modifier.deletedAt" variant="destructive"> Deleted </Badge>
-                <Badge v-else variant="outline" class="text-green-600 border-green-600">
-                  Active
-                </Badge>
+                <div class="flex items-center gap-2">
+                  <div
+                    class="size-2 rounded-full"
+                    :class="
+                      modifier.isRequired
+                        ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'
+                        : 'bg-muted-foreground/30'
+                    "
+                  />
+                  <span class="text-sm font-medium">{{ modifier.isRequired ? 'Yes' : 'No' }}</span>
+                </div>
               </TableCell>
               <TableCell>{{ modifier.createdAt }}</TableCell>
               <TableCell>

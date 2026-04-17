@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { AmountInput } from '@/components/common/form/input/amount'
 import { Field, FieldContent, FieldLabel, FieldError } from '@/components/ui/field'
 import { Plus, Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -191,12 +192,10 @@ async function handleSubmit() {
                   <Field>
                     <FieldLabel>Amount</FieldLabel>
                     <FieldContent>
-                      <Input
+                      <AmountInput
                         v-model="charge.amount"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        required
+                        :mode="charge.type === 'fixed' ? 'money' : 'percentage'"
+                        placeholder="0"
                         :aria-invalid="hasError(`Charges[${index}].Amount`)"
                       />
                       <FieldError v-if="hasError(`Charges[${index}].Amount`)" :errors="[getErrorMessage(`Charges[${index}].Amount`)]" />

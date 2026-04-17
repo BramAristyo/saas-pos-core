@@ -1,0 +1,2 @@
+1. when on Modifier Create, Modifier Menu is Active
+2. dont need status on the field  of Index, Required Better Icon simple green or red just like active or something.

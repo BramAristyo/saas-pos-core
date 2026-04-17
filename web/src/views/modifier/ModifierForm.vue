@@ -15,6 +15,7 @@ import type {
   UpdateModifierOptionRequest,
 } from '@/types/modifier.types'
 import ProductSelectModal from '@/components/common/product/ProductSelectModal.vue'
+import { MoneyInput } from '@/components/common/form/input/money'
 import { useProductStore } from '@/stores/product.store'
 import { toast } from 'vue-sonner'
 
@@ -182,11 +183,11 @@ onMounted(async () => {
               </div>
               <div class="md:col-span-3 space-y-2">
                 <Label v-if="index === 0">Price Adj.</Label>
-                <Input v-model="option.priceAdjustment" type="number" step="0.01" />
+                <MoneyInput v-model="option.priceAdjustment" />
               </div>
               <div class="md:col-span-3 space-y-2">
                 <Label v-if="index === 0">COGS Adj.</Label>
-                <Input v-model="option.cogsAdjustment" type="number" step="0.01" />
+                <MoneyInput v-model="option.cogsAdjustment" />
               </div>
               <div class="md:col-span-1 flex justify-end">
                 <Button
