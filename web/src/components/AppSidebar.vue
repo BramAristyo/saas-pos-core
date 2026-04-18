@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from '@/components/ui/sidebar'
-import { LucideFlower, ChevronDown, ChevronUp } from 'lucide-vue-next'
+import { LucideFlower, ChevronDown, ChevronUp, LayoutDashboard, Settings2 } from 'lucide-vue-next'
 import SearchForm from '@/components/SearchForm.vue'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import NavUser from '@/components/NavUser.vue'
@@ -37,6 +37,7 @@ const data = {
     {
       title: 'Getting Started',
       url: '#',
+      icon: LayoutDashboard,
       items: [
         {
           title: 'Dashboard',
@@ -47,6 +48,7 @@ const data = {
     {
       title: 'Master Data',
       url: '#',
+      icon: Settings2,
       items: [
         // {
         //   title: 'Product',
@@ -57,7 +59,7 @@ const data = {
           url: '/categories',
         },
         {
-          title: 'Modifier Group',
+          title: 'Modifier',
           url: '/modifiers',
         },
         {
@@ -69,7 +71,7 @@ const data = {
           url: '/sales-types',
         },
         {
-          title: 'Discounts',
+          title: 'Promo',
           url: '/discounts',
         },
       ],
@@ -123,6 +125,10 @@ function isChildActive(itemUrl: string) {
   return false
 }
 
+const isParentActive = (item: any) => {
+  return item.items?.some((child: any) => isChildActive(child.url))
+}
+
 watch(
   () => route.path,
   () => {
@@ -166,7 +172,11 @@ watch(
           >
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>
-                <SidebarMenuButton>
+                <SidebarMenuButton
+                  :is-active="isParentActive(item)"
+                  :class="{ 'font-bold': isParentActive(item) }"
+                >
+                  <component :is="item.icon" v-if="item.icon" class="size-4 mr-2" />
                   {{ item.title }}
                   <ChevronDown
                     v-if="!searchQuery"
