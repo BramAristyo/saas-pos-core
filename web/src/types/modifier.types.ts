@@ -12,17 +12,19 @@ export interface ModifierGroup {
   id: string
   name: string
   isRequired: boolean
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string | null
 }
 
 export interface ModifierGroupDetail {
   id: string
   name: string
   isRequired: boolean
-  created_at: string
-  updated_at: string
-  options: ModifierGroup[]
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string | null
+  options: ModifierOption[]
   productModifiers: Product[]
 }
 

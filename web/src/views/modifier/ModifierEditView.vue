@@ -4,14 +4,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { useModifierStore } from '@/stores/modifier.store'
 import AppLayout from '@/layouts/AppLayout.vue'
 import ModifierForm from './ModifierForm.vue'
-import type { UpdateModifierGroupRequest } from '@/types/modifier.types'
-import { toast } from 'vue-sonner'
 import { Loader2 } from 'lucide-vue-next'
 
 const modifierStore = useModifierStore()
 const router = useRouter()
 const route = useRoute()
-const loading = ref(false)
 const fetching = ref(true)
 
 const id = route.params.id as string
@@ -21,37 +18,28 @@ onMounted(async () => {
   try {
     await modifierStore.fetchById(id)
   } catch (error: any) {
-    toast.error('Failed to fetch modifier group details')
     router.push({ name: 'modifiers' })
   } finally {
     fetching.value = false
   }
 })
 
-async function handleSubmit(data: any) {
-  loading.value = true
-  try {
-    await modifierStore.update(id, data as UpdateModifierGroupRequest)
-    toast.success('Modifier group updated successfully')
-  } catch (error: any) {
-    toast.error(error?.message || 'Failed to update modifier group')
-  } finally {
-    loading.value = false
-  }
+function handleSuccess() {
+  router.push({ name: 'modifiers' })
 }
 </script>
 
 <template>
   <AppLayout>
-    <div v-if="fetching" class="flex flex-col items-center justify-center min-h-[400px]">
+    <div v-if="fetching" class="flex flex-col items-center justify-center min-h-100">
       <Loader2 class="size-8 animate-spin text-primary mb-2" />
       <p class="text-muted-foreground">Loading modifier group...</p>
     </div>
     <ModifierForm
       v-else-if="modifierStore.selected"
       :initial-data="modifierStore.selected"
-      :loading="loading"
-      @submit="handleSubmit"
+      @success="handleSuccess"
     />
   </AppLayout>
 </template>
+/template>

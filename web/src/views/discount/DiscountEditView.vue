@@ -4,14 +4,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { useDiscountStore } from '@/stores/discount.store'
 import AppLayout from '@/layouts/AppLayout.vue'
 import DiscountForm from './DiscountForm.vue'
-import type { UpdateDiscountRequest } from '@/types/discount.types'
-import { toast } from 'vue-sonner'
 import { Loader2 } from 'lucide-vue-next'
 
 const discountStore = useDiscountStore()
 const router = useRouter()
 const route = useRoute()
-const loading = ref(false)
 const fetching = ref(true)
 
 const id = route.params.id as string
@@ -21,24 +18,14 @@ onMounted(async () => {
   try {
     await discountStore.fetchById(id)
   } catch (error: any) {
-    toast.error('Failed to fetch discount details')
     router.push({ name: 'discounts' })
   } finally {
     fetching.value = false
   }
 })
 
-async function handleSubmit(data: any) {
-  loading.value = true
-  try {
-    await discountStore.update(id, data as UpdateDiscountRequest)
-    toast.success('Discount updated successfully')
-    router.push({ name: 'discounts' })
-  } catch (error: any) {
-    toast.error(error?.message || 'Failed to update discount')
-  } finally {
-    loading.value = false
-  }
+function handleSuccess() {
+  router.push({ name: 'discounts' })
 }
 </script>
 
@@ -51,8 +38,7 @@ async function handleSubmit(data: any) {
     <DiscountForm
       v-else-if="discountStore.selected"
       :initial-data="discountStore.selected"
-      :loading="loading"
-      @submit="handleSubmit"
+      @success="handleSuccess"
     />
   </AppLayout>
 </template>

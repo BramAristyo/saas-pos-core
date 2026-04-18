@@ -21,7 +21,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
 
 const modelValue = useVModel(props, 'modelValue', emits, {
   passive: true,
-  defaultValue: props.defaultChecked,
+  defaultValue: props.defaultValue,
 })
 </script>
 

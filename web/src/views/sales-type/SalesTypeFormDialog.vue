@@ -175,14 +175,22 @@ async function handleSubmit() {
                     </FieldContent>
                   </Field>
 
-                  <Toggle
-                    v-model="charge.type"
-                    label="Type"
-                    :options="[
-                      { label: 'Fixed', value: 'fixed' },
-                      { label: 'Percentage', value: 'percentage' },
-                    ]"
-                  />
+                  <Field>
+                    <FieldContent>
+                      <Toggle
+                        v-model="charge.type"
+                        label="Type"
+                        :options="[
+                          { label: 'Fixed', value: 'fixed' },
+                          { label: 'Percentage', value: 'percentage' },
+                        ]"
+                      />
+                      <FieldError
+                        v-if="hasError(`Charges[${index}].Type`)"
+                        :errors="[getErrorMessage(`Charges[${index}].Type`)]"
+                      />
+                    </FieldContent>
+                  </Field>
 
                   <Field>
                     <FieldLabel>Amount</FieldLabel>

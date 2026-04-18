@@ -13,14 +13,22 @@ export function useFormErrors() {
   }
 
   const getErrorMessage = (property: string) => {
-    const error = errors.value.find((e) => e.property.toLowerCase() === property.toLowerCase())
+    if (!property) return ''
+
+    const error = errors.value.find(
+      (e) => e.property && e.property.toLowerCase() === property.toLowerCase(),
+    )
 
     if (!error) return ''
     return error.message || `${error.property} failed on ${error.tag}`
   }
 
   const hasError = (property: string) => {
-    return errors.value.some((e) => e.property.toLowerCase() === property.toLowerCase())
+    if (!property) return false
+
+    return errors.value.some(
+      (e) => e.property && e.property.toLowerCase() === property.toLowerCase(),
+    )
   }
 
   return {
