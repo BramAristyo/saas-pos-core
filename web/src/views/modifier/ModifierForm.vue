@@ -18,7 +18,13 @@ import ProductSelectModal from '@/components/common/product/ProductSelectModal.v
 import { CancelModal } from '@/components/common/cancel'
 import { Toggle } from '@/components/common/form'
 import { AmountInput } from '@/components/common/form/input/amount'
-import { Field, FieldContent, FieldLabel, FieldError } from '@/components/ui/field'
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+  FieldError,
+  FieldDescription,
+} from '@/components/ui/field'
 import { useProductStore } from '@/stores/product.store'
 import { useModifierStore } from '@/stores/modifier.store'
 import { toast } from 'vue-sonner'
