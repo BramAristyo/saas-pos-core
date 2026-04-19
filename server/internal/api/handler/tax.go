@@ -114,6 +114,38 @@ func (h *TaxHandler) Delete(c *gin.Context) {
 	response.OK(c, nil, "success delete tax")
 }
 
+func (h *TaxHandler) Activate(c *gin.Context) {
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	res, err := h.UseCase.Activate(c.Request.Context(), id)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success activate tax")
+}
+
+func (h *TaxHandler) Deactivate(c *gin.Context) {
+	id, err := helper.ParseUUID(c)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	res, err := h.UseCase.Deactivate(c.Request.Context(), id)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success deactivate tax")
+}
+
 func (h *TaxHandler) Restore(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {

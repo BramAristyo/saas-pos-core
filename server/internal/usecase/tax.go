@@ -136,6 +136,52 @@ func (u *TaxUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
+func (u *TaxUseCase) Activate(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Activate(ctx, id); err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	tax, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityTax,
+		EntityID:    &id,
+		Description: fmt.Sprintf("Activated tax %s", tax.Name),
+	})
+
+	return dto.ToTaxResponse(&tax), nil
+}
+
+func (u *TaxUseCase) Deactivate(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Deactivate(ctx, id); err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	tax, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityTax,
+		EntityID:    &id,
+		Description: fmt.Sprintf("Deactivated tax %s", tax.Name),
+	})
+
+	return dto.ToTaxResponse(&tax), nil
+}
+
 func (u *TaxUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
 	userId, _ := helper.ExtractUserID(ctx)
 

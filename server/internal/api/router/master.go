@@ -53,6 +53,8 @@ func TaxRoutes(r *gin.RouterGroup, h *handler.TaxHandler) {
 	r.PUT("/:id", h.Update)
 	r.DELETE("/:id", h.Delete)
 	r.PATCH("/:id/restore", h.Restore)
+	r.PATCH("/:id/activate", h.Activate)
+	r.PATCH("/:id/deactivate", h.Deactivate)
 }
 
 func DiscountRoutes(r *gin.RouterGroup, h *handler.DiscountHandler) {
