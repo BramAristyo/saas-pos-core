@@ -30,6 +30,8 @@ const (
 	EntityBundling       AuditEntity = "bundling"
 	EntityDiscount       AuditEntity = "discounts"
 	EntitySalesType      AuditEntity = "sales_types"
+	EntityExpense        AuditEntity = "expenses"
+	EntityShiftExpense   AuditEntity = "shift_expenses"
 )
 
 type AuditLog struct {
