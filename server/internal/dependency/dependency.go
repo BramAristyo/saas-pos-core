@@ -25,6 +25,7 @@ type Handlers struct {
 	Dashboard     *handler.DashboardHandler
 	Expense       *handler.ExpenseHandler
 	ShiftExpenses *handler.ShiftExpensesHandler
+	COA           *handler.COAHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -69,6 +70,9 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	shiftExpensesRepository := repository.NewShiftExpensesRepository(db)
 	shiftExpensesUseCase := usecase.NewShiftExpensesUseCase(shiftExpensesRepository)
 
+	coaRepository := repository.NewCOARepository(db)
+	coaUseCase := usecase.NewCOAUseCase(coaRepository, auditLogUseCase)
+
 	orderRepository := repository.NewOrderRepository(db)
 	orderUseCase := usecase.NewOrderUseCase(
 		orderRepository,
@@ -101,5 +105,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		Dashboard:     handler.NewDashboardHandler(dashboardUseCase),
 		Expense:       handler.NewExpenseHandler(expenseUseCase),
 		ShiftExpenses: handler.NewShiftExpensesHandler(shiftExpensesUseCase),
+		COA:           handler.NewCOAHandler(coaUseCase),
 	}
 }

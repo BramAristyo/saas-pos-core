@@ -11,7 +11,8 @@ import (
 
 type ExpenseResponse struct {
 	ID          uuid.UUID              `json:"id"`
-	Category    domain.ExpenseCategory `json:"category"`
+	COAID       uuid.UUID              `json:"coaId"`
+	COA         ChartOfAccountResponse `json:"coa"`
 	Amount      decimal.Decimal        `json:"amount"`
 	Description string                 `json:"description"`
 	Date        string                 `json:"date"`
@@ -25,17 +26,17 @@ type ExpenseResponsePagination struct {
 }
 
 type CreateExpenseRequest struct {
-	Category    domain.ExpenseCategory `json:"category" binding:"required"`
-	Amount      decimal.Decimal        `json:"amount" binding:"required,gt=0"`
-	Description string                 `json:"description" binding:"required"`
-	Date        string                 `json:"date" binding:"required" example:"2006-01-02"`
+	COAID       uuid.UUID       `json:"coaId" binding:"required"`
+	Amount      decimal.Decimal `json:"amount" binding:"required,gt=0"`
+	Description string          `json:"description" binding:"required"`
+	Date        string          `json:"date" binding:"required" example:"2006-01-02"`
 }
 
 type UpdateExpenseRequest struct {
-	Category    domain.ExpenseCategory `json:"category" binding:"required"`
-	Amount      decimal.Decimal        `json:"amount" binding:"required,gt=0"`
-	Description string                 `json:"description" binding:"required"`
-	Date        string                 `json:"date" binding:"required" example:"2006-01-02"`
+	COAID       uuid.UUID       `json:"coaId" binding:"required"`
+	Amount      decimal.Decimal `json:"amount" binding:"required,gt=0"`
+	Description string          `json:"description" binding:"required"`
+	Date        string          `json:"date" binding:"required" example:"2006-01-02"`
 }
 
 func ToExpenseModel(req *CreateExpenseRequest) (domain.Expense, error) {
@@ -44,7 +45,7 @@ func ToExpenseModel(req *CreateExpenseRequest) (domain.Expense, error) {
 		return domain.Expense{}, err
 	}
 	return domain.Expense{
-		Category:    req.Category,
+		COAID:       req.COAID,
 		Amount:      req.Amount,
 		Description: req.Description,
 		Date:        date,
@@ -57,7 +58,7 @@ func ToUpdateExpenseModel(req *UpdateExpenseRequest) (domain.Expense, error) {
 		return domain.Expense{}, err
 	}
 	return domain.Expense{
-		Category:    req.Category,
+		COAID:       req.COAID,
 		Amount:      req.Amount,
 		Description: req.Description,
 		Date:        date,
@@ -67,7 +68,8 @@ func ToUpdateExpenseModel(req *UpdateExpenseRequest) (domain.Expense, error) {
 func ToExpenseResponse(e *domain.Expense) ExpenseResponse {
 	resp := ExpenseResponse{
 		ID:          e.ID,
-		Category:    e.Category,
+		COAID:       e.COAID,
+		COA:         ToCOAResponse(&e.COA),
 		Amount:      e.Amount,
 		Description: e.Description,
 		Date:        e.Date.Format("2006-01-02"),

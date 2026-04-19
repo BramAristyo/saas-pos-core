@@ -191,12 +191,14 @@ func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.Paginat
 		Where("orders.shift_id = shifts.id AND payments.method = 'cash' AND orders.status = ?", domain.OrderCompleted)
 
 	cashInSub := r.DB.Table("shift_expenses").
+		Joins("JOIN chart_of_accounts ON shift_expenses.coa_id = chart_of_accounts.id").
 		Select("SUM(amount)").
-		Where("shift_id = shifts.id AND type = ?", domain.CashIn)
+		Where("shift_id = shifts.id AND chart_of_accounts.type = ?", domain.COATypeIn)
 
 	cashOutSub := r.DB.Table("shift_expenses").
+		Joins("JOIN chart_of_accounts ON shift_expenses.coa_id = chart_of_accounts.id").
 		Select("SUM(amount)").
-		Where("shift_id = shifts.id AND type = ?", domain.CashOut)
+		Where("shift_id = shifts.id AND chart_of_accounts.type = ?", domain.COATypeOut)
 
 	shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
 	err := q.

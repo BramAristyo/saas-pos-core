@@ -8,24 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type ExpenseCategory string
-
-const (
-	ExpenseCategoryUtilities ExpenseCategory = "utilities"
-	ExpenseCategorySalary    ExpenseCategory = "salary"
-	ExpenseCategoryRaw       ExpenseCategory = "raw_material"
-	ExpenseCategoryRent      ExpenseCategory = "rent"
-	ExpenseCategoryMarketing ExpenseCategory = "marketing"
-	ExpenseCategoryOther     ExpenseCategory = "other"
-)
-
 type Expense struct {
 	ID          uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
-	Category    ExpenseCategory
+	COAID       uuid.UUID `gorm:"column:coa_id;not null"`
 	Amount      decimal.Decimal
 	Description string
 	Date        time.Time
 	CreatedAt   time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
+
+	COA ChartOfAccount `gorm:"foreignKey:COAID"`
 }

@@ -28,7 +28,7 @@ func (r *ExpenseRepository) Paginate(ctx context.Context, req filter.PaginationW
 	allowedFields := map[string]string{
 		"date":        "date",
 		"description": "description",
-		"category":    "category",
+		"coa_id":      "coa_id",
 		"amount":       "amount",
 		"created_at":  "created_at",
 	}
@@ -43,7 +43,7 @@ func (r *ExpenseRepository) Paginate(ctx context.Context, req filter.PaginationW
 		return 0, []domain.Expense{}, nil
 	}
 
-	if err := q.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&expenses).Error; err != nil {
+	if err := q.Preload("COA").Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&expenses).Error; err != nil {
 		return 0, []domain.Expense{}, err
 	}
 
@@ -53,7 +53,7 @@ func (r *ExpenseRepository) Paginate(ctx context.Context, req filter.PaginationW
 func (r *ExpenseRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Expense, error) {
 	var expense domain.Expense
 
-	if err := r.DB.WithContext(ctx).Where("id = ?", id).First(&expense).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Preload("COA").Where("id = ?", id).First(&expense).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return domain.Expense{}, usecase_errors.NotFound
 		}
@@ -68,7 +68,7 @@ func (r *ExpenseRepository) Store(ctx context.Context, expense *domain.Expense) 
 		return domain.Expense{}, err
 	}
 
-	return *expense, nil
+	return r.FindById(ctx, expense.ID)
 }
 
 func (r *ExpenseRepository) Update(ctx context.Context, id uuid.UUID, expense *domain.Expense) (domain.Expense, error) {
@@ -81,7 +81,7 @@ func (r *ExpenseRepository) Update(ctx context.Context, id uuid.UUID, expense *d
 	}
 
 	updateData := map[string]any{
-		"category":    expense.Category,
+		"coa_id":      expense.COAID,
 		"amount":      expense.Amount,
 		"description": expense.Description,
 		"date":        expense.Date,

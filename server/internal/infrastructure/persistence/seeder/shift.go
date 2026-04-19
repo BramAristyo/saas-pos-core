@@ -17,6 +17,12 @@ func SeedShiftData(db *gorm.DB) {
 		return
 	}
 
+	var utilitiesCOA domain.ChartOfAccount
+	db.Where("name = ?", "Utilities").First(&utilitiesCOA)
+
+	var incomeCOA domain.ChartOfAccount
+	db.Where("name = ?", "Other Income").First(&incomeCOA)
+
 	openedBy := users[0].ID
 	var closedBy *uuid.UUID
 	if len(users) > 1 {
@@ -43,17 +49,17 @@ func SeedShiftData(db *gorm.DB) {
 			ClosedAt:    &closedAt,
 			ShiftExpenses: []domain.ShiftExpenses{
 				{
-					Type:        domain.CashOut,
+					COAID:       utilitiesCOA.ID,
 					Amount:      decimal.NewFromFloat(50000),
 					Description: &desc1,
 				},
 				{
-					Type:        domain.CashIn,
+					COAID:       incomeCOA.ID,
 					Amount:      decimal.NewFromFloat(20000),
 					Description: &desc2,
 				},
 				{
-					Type:        domain.CashOut,
+					COAID:       utilitiesCOA.ID,
 					Amount:      decimal.NewFromFloat(15000),
 					Description: &desc3,
 				},
@@ -65,12 +71,12 @@ func SeedShiftData(db *gorm.DB) {
 			OpenedAt:    time.Now().Add(-2 * time.Hour),
 			ShiftExpenses: []domain.ShiftExpenses{
 				{
-					Type:        domain.CashOut,
+					COAID:       utilitiesCOA.ID,
 					Amount:      decimal.NewFromFloat(30000),
 					Description: &desc1,
 				},
 				{
-					Type:        domain.CashIn,
+					COAID:       incomeCOA.ID,
 					Amount:      decimal.NewFromFloat(10000),
 					Description: &desc2,
 				},

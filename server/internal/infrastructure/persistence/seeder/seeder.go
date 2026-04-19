@@ -8,6 +8,7 @@ import (
 
 func SeedAll(db *gorm.DB) {
 	SeedUserData(db)
+	SeedCOAData(db)
 
 	var wg sync.WaitGroup
 	wg.Add(5)

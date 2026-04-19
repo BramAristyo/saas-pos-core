@@ -154,7 +154,7 @@ func (u *ShiftUseCase) UpsertExpenses(ctx context.Context, req dto.UpsertShiftEx
 		expenses = append(expenses, domain.ShiftExpenses{
 			ID:          id,
 			ShiftID:     shift.ID,
-			Type:        e.Type,
+			COAID:       e.COAID,
 			Amount:      e.Amount,
 			Description: e.Description,
 		})

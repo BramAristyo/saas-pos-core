@@ -27,7 +27,7 @@ func (r *ShiftExpensesRepository) Paginate(ctx context.Context, req filter.Pagin
 
 	allowedFields := map[string]string{
 		"shift_id":    "shift_id",
-		"type":        "type",
+		"coa_id":      "coa_id",
 		"amount":      "amount",
 		"created_at":  "created_at",
 	}
@@ -42,7 +42,7 @@ func (r *ShiftExpensesRepository) Paginate(ctx context.Context, req filter.Pagin
 		return 0, []domain.ShiftExpenses{}, nil
 	}
 
-	if err := q.Preload("Shift").Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&expenses).Error; err != nil {
+	if err := q.Preload("Shift").Preload("COA").Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&expenses).Error; err != nil {
 		return 0, []domain.ShiftExpenses{}, err
 	}
 
@@ -52,7 +52,7 @@ func (r *ShiftExpensesRepository) Paginate(ctx context.Context, req filter.Pagin
 func (r *ShiftExpensesRepository) FindById(ctx context.Context, id uuid.UUID) (domain.ShiftExpenses, error) {
 	var expense domain.ShiftExpenses
 
-	if err := r.DB.WithContext(ctx).Preload("Shift").Where("id = ?", id).First(&expense).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Preload("Shift").Preload("COA").Where("id = ?", id).First(&expense).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return domain.ShiftExpenses{}, usecase_errors.NotFound
 		}
