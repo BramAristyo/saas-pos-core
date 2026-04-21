@@ -30,3 +30,15 @@ type Ledger struct {
 	COA   ChartOfAccount `gorm:"foreignKey:COAID"`
 	Shift *Shift         `gorm:"foreignKey:ShiftID"`
 }
+
+type LedgerWithBalance struct {
+	Ledger
+	RunningBalance decimal.Decimal `gorm:"column:running_balance"`
+}
+
+type TransactionSummary struct {
+	OpeningBalance decimal.Decimal `gorm:"column:opening_balance"`
+	TotalIncome    decimal.Decimal `gorm:"column:total_income"`
+	TotalExpense   decimal.Decimal `gorm:"column:total_expenses"`
+	Total          decimal.Decimal `gorm:"column:total"`
+}

@@ -19,10 +19,26 @@ type LedgerResponse struct {
 	CreatedAt       time.Time            `json:"createdAt"`
 }
 
-type TransactionSummaryResponse struct {
+type TransactionResponse struct {
 	TransactionDate time.Time            `json:"transactionDate"`
 	ReferenceType   domain.ReferenceType `json:"referenceType"`
 	COAName         string               `json:"coaName"`
 	COAType         domain.COAType       `json:"coaType"`
-	
+	RunningBalance  decimal.Decimal      `json:"runningBalance"`
+}
+
+type TransactionSummaryResponse struct {
+	OpeningBalance decimal.Decimal       `json:"openingBalance"`
+	TotalIncome    decimal.Decimal       `json:"totalIncome"`
+	TotalExpense   decimal.Decimal       `json:"totalExpense"`
+	Total          decimal.Decimal       `json:"total"`
+	Transactions   []TransactionResponse `json:"transactions"`
+}
+
+type CashFlowReportResponse struct {
+	OpeningBalance decimal.Decimal `json:"openingBalance"`
+	TotalIncome    decimal.Decimal `json:"totalIncome"`
+	TotalExpense   decimal.Decimal `json:"totalExpense"`
+	NetCashFlow    decimal.Decimal `json:"netCashFlow"`
+	EndingBalance  decimal.Decimal `json:"endingBalance"`
 }
