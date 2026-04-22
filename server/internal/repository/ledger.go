@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 )
@@ -105,6 +106,7 @@ func (r *LedgerRepository) TransactionSummary(ctx context.Context, startDate str
 }
 
 func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate string, endDate string) (domain.CashFlowReport, []domain.Ledger, []domain.Ledger, error) {
+
 	var summary domain.CashFlowReport
 	var incomes []domain.Ledger
 	var expenses []domain.Ledger
@@ -155,3 +157,14 @@ func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate stri
 
 	return summary, incomes, expenses, nil
 }
+
+// for returning to method, not for API endpoint
+func (r *LedgerRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Ledger, error)
+
+func (r *LedgerRepository) Store(ctx context.Context, ledger domain.Ledger) (domain.Ledger, error)
+
+// ledger with RefType LedgerExpense
+func (r *LedgerRepository) ExpenseUpdate(ctx context.Context, id uuid.UUID, ledger domain.Ledger) (domain.Ledger, error)
+
+// ledger with RefType LedgerExpense
+func (r *LedgerRepository) ExpenseDelete(ctx context.Context, id uuid.UUID) error

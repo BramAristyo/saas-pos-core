@@ -105,5 +105,5 @@ func (h *ReportHandler) ShiftReconciliation(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "Shift reconciliation retrieved successfully")
+	response.OKPaginate(c, res.Data, res.Meta)
 }
