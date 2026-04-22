@@ -36,9 +36,11 @@ type TransactionSummaryResponse struct {
 }
 
 type CashFlowReportResponse struct {
-	OpeningBalance decimal.Decimal `json:"openingBalance"`
-	TotalIncome    decimal.Decimal `json:"totalIncome"`
-	TotalExpense   decimal.Decimal `json:"totalExpense"`
-	NetCashFlow    decimal.Decimal `json:"netCashFlow"`
-	EndingBalance  decimal.Decimal `json:"endingBalance"`
+	OpeningBalance decimal.Decimal  `json:"openingBalance"`
+	TotalIncome    decimal.Decimal  `json:"totalIncome"`
+	TotalExpense   decimal.Decimal  `json:"totalExpense"`
+	CashFlowAmount decimal.Decimal  `json:"cashFlowAmount"`
+	EndingBalance  decimal.Decimal  `json:"endingBalance"`
+	Incomes        []LedgerResponse `json:"incomes"`
+	Expenses       []LedgerResponse `json:"expenses"`
 }

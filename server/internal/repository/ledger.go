@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
-	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
+	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 )
 
@@ -29,40 +29,29 @@ func (r *LedgerRepository) Paginate(ctx context.Context, startDate string, endDa
 	}
 
 	q := `
-		WITH GlobalOpening AS (
-			SELECT COALESCE(SUM(
-				CASE
-					WHEN ca.type = 'in' THEN l.amount
-					WHEN ca.type = 'out' THEN -l.amount
-					ELSE 0
-				END
-			),0) AS balance
-			FROM ledgers l
-			JOIN chart_of_accounts ca ON ca.id = l.coa_id
-			WHERE l.transaction_date < ?
-		),
-		RunningData AS (
-		SELECT
+		WITH RunningData AS (
+			SELECT
 				l.*,
-				(SELECT balance FROM GlobalOpening) +
 				SUM(
 					CASE
 						WHEN ca.type = 'in' THEN l.amount
-						WHEN ca.type = 'out' THEN -l.amount
+						WHEN ca.type = 'out' THEM -l.amount
 						ELSE 0
 					END
 				) OVER (ORDER BY l.transaction_date ASC, l.created_at ASC) AS running_balance
-			FROM ledgers l
-			JOIN chart_of_accounts ca ON ca.id = l.coa_id
-			WHERE l.transaction_date BETWEEN ? AND ?
+				FROM ledgers l
+				JOIN chart_of_accounts ca ON ca.id = l.coa_id
+				WHERE l.transaction_date BETWEEN ? AND ?
+		),
+		PaginatedData AS (
+			SELECT * FROM RunningData
+			ORDER BY transaction_date ASC, created_at ASC
+			LIMIT ? OFFSET ?
 		)
-		SELECT * FROM RunningData
-		ORDER BY transaction_date ASC, created_at ASC
-		LIMIT ? OFFSET ?
+		SELECT * FROM PaginatedData
 	`
 
 	err := r.DB.WithContext(ctx).Raw(q,
-		startDate,
 		startDate,
 		endDate,
 		limit,
@@ -75,7 +64,94 @@ func (r *LedgerRepository) Paginate(ctx context.Context, startDate string, endDa
 
 	return totalRows, results, nil
 }
-func (r *LedgerRepository) TransactionSummary(ctx context.Context, req filter.DynamicFilter) (domain.TransactionSummary, error) {
+
+func (r *LedgerRepository) TransactionSummary(ctx context.Context, startDate string, endDate string) (domain.TransactionSummary, error) {
+	q := `
+		SELECT
+			COALESCE(SUM(
+				CASE
+					WHEN ca.type = 'in' THEN l.amount
+					WHEN ca.type = 'out' THEN -l.amount
+				END
+			) FILTER (WHERE l.transaction_date < ?), 0) AS opening_balance,
+
+			COALESCE(SUM(l.amount) FILTER (where ca.type = 'in' AND l.transaction_date BETWEEN ? AND ?), 0) AS total_income,
+			COALESCE(SUM(l.amount) FILTER (where ca.type = 'out' AND l.transaction_date BETWEEN ? AND ?), 0) AS total_expense,
+
+			COALESCE(SUM(
+				CASE
+					WHEN ca.type = 'in' THEN l.amount
+					WHEN ca.type = 'out' THEN -l.amount
+				END
+			) FILTER (WHERE l.transaction_date BETWEEN ? AND ?), 0) as total
+
+			FROM ledgers
+			JOIN chart_of_accounts ca ON ca.id = l.coa_id
+	`
+	var summary domain.TransactionSummary
+	err := r.DB.WithContext(ctx).Raw(q,
+		startDate,
+		startDate, endDate,
+		startDate, endDate,
+		startDate, endDate,
+	).Scan(&summary).Error
+
+	if err != nil {
+		return domain.TransactionSummary{}, err
+	}
+
+	return summary, nil
 
 }
-func (r *LedgerRepository) CashFlowStatement(ctx context.Context, req filter.DynamicFilter)
+
+func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate string, endDate string) (domain.CashFlowReport, []domain.Ledger, []domain.Ledger, error) {
+	var summary domain.CashFlowReport
+	var incomes []domain.Ledger
+	var expenses []domain.Ledger
+
+	g, gctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		summaryQ := `
+			SELECT
+				COALESCE(SUM(
+					CASE
+						WHEN ca.type = 'in' THEN l.amount
+						WHEN ca.type = 'out' THEN -l.amount
+						ELSE 0
+					END
+				) FILTER (WHERE l.transaction_date < ?), 0) AS opening_balance,
+				COALESCE(SUM(l.amount) FILTER (WHERE ca.type = 'in' AND l.transaction_date BETWEEN ? AND ?), 0) AS total_income,
+				COALESCE(SUM(l.amount) FILTER (WHERE ca.type = 'out' AND l.transaction_date BETWEEN ? AND ?), 0) AS total_expense
+			FROM ledgers l
+			JOIN chart_of_accounts ca ON ca.id = l.coa_id
+		`
+
+		return r.DB.WithContext(gctx).Raw(summaryQ,
+			startDate,
+			startDate, endDate,
+			startDate, endDate,
+		).Scan(&summary).Error
+	})
+
+	g.Go(func() error {
+		detailQ := `
+				SELECT l.*, ca.type
+				FROM ledgers l
+				JOIN chart_of_accounts ca ON ca.id = l.coa_id
+				WHERE l.transaction_date BETWEEN ? AND ?
+				AND ca.type = ?
+				ORDER BY l.transaction_date ASC, l.created_at ASC
+			`
+		if err := r.DB.WithContext(gctx).Raw(detailQ, startDate, endDate, "in").Scan(&incomes).Error; err != nil {
+			return err
+		}
+		return r.DB.WithContext(gctx).Raw(detailQ, startDate, endDate, "out").Scan(&expenses).Error
+	})
+
+	if err := g.Wait(); err != nil {
+		return domain.CashFlowReport{}, nil, nil, err
+	}
+
+	return summary, incomes, expenses, nil
+}

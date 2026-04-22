@@ -39,6 +39,19 @@ type LedgerWithBalance struct {
 type TransactionSummary struct {
 	OpeningBalance decimal.Decimal `gorm:"column:opening_balance"`
 	TotalIncome    decimal.Decimal `gorm:"column:total_income"`
-	TotalExpense   decimal.Decimal `gorm:"column:total_expenses"`
+	TotalExpense   decimal.Decimal `gorm:"column:total_expense"`
 	Total          decimal.Decimal `gorm:"column:total"`
+}
+
+type CashFlowReport struct {
+	OpeningBalance decimal.Decimal `gorm:"column:opening_balance"`
+	TotalIncome    decimal.Decimal `gorm:"column:total_income"`
+	TotalExpense   decimal.Decimal `gorm:"column:total_expense"`
+	CashFlowAmount decimal.Decimal
+	Total          decimal.Decimal
+}
+
+func (cfr *CashFlowReport) Calculate() {
+	cfr.CashFlowAmount = cfr.TotalIncome.Sub(cfr.TotalExpense)
+	cfr.Total = cfr.OpeningBalance.Add(cfr.CashFlowAmount)
 }
