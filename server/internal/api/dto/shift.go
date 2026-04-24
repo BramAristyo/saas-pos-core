@@ -58,18 +58,6 @@ type UpsertShiftExpensesRequest struct {
 	Expenses []ShiftExpenseRequest `json:"expenses" binding:"required,min=1,dive"`
 }
 
-func ToShiftExpenseResponse(se *domain.ShiftExpenses) ShiftExpenseResponse {
-	return ShiftExpenseResponse{
-		ID:          se.ID,
-		ShiftID:     se.ShiftID,
-		COAID:       se.COAID,
-		COA:         ToCOAResponse(&se.COA),
-		Amount:      se.Amount,
-		Description: se.Description,
-		CreatedAt:   se.CreatedAt.Format("2006-01-02 15:04:05"),
-	}
-}
-
 func ToShiftResponse(s *domain.Shift) ShiftResponse {
 	var closedAt *string
 	if s.ClosedAt != nil {
@@ -83,24 +71,18 @@ func ToShiftResponse(s *domain.Shift) ShiftResponse {
 		closedByUser = &res
 	}
 
-	expenses := make([]ShiftExpenseResponse, 0, len(s.ShiftExpenses))
-	for _, e := range s.ShiftExpenses {
-		expenses = append(expenses, ToShiftExpenseResponse(&e))
-	}
-
 	return ShiftResponse{
-		ID:            s.ID,
-		OpenedBy:      s.OpenedBy,
-		OpenedByUser:  ToUserResponse(&s.OpenedByUser),
-		ClosedBy:      s.ClosedBy,
-		ClosedByUser:  closedByUser,
-		OpeningCash:   s.OpeningCash,
-		ClosingCash:   s.ClosingCash,
-		Notes:         s.Notes,
-		OpenedAt:      s.OpenedAt.Format("2006-01-02 15:04:05"),
-		ClosedAt:      closedAt,
-		CreatedAt:     s.CreatedAt.Format("2006-01-02 15:04:05"),
-		ShiftExpenses: expenses,
+		ID:           s.ID,
+		OpenedBy:     s.OpenedBy,
+		OpenedByUser: ToUserResponse(&s.OpenedByUser),
+		ClosedBy:     s.ClosedBy,
+		ClosedByUser: closedByUser,
+		OpeningCash:  s.OpeningCash,
+		ClosingCash:  s.ClosingCash,
+		Notes:        s.Notes,
+		OpenedAt:     s.OpenedAt.Format("2006-01-02 15:04:05"),
+		ClosedAt:     closedAt,
+		CreatedAt:    s.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
 

@@ -14,11 +14,6 @@ func ExpenseRoutes(r *gin.RouterGroup, h *handler.ExpenseHandler) {
 	r.PATCH("/:id/restore", h.Restore)
 }
 
-func ShiftExpensesRoutes(r *gin.RouterGroup, h *handler.ShiftExpensesHandler) {
-	r.GET("", h.Paginate)
-	r.GET("/:id", h.FindById)
-}
-
 func COARoutes(r *gin.RouterGroup, h *handler.COAHandler) {
 	r.GET("get-all", h.GetAll)
 	r.GET("", h.Paginate)

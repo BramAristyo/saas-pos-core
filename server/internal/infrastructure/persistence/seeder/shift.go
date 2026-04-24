@@ -34,10 +34,6 @@ func SeedShiftData(db *gorm.DB) {
 	closingCash := decimal.NewFromFloat(1500000)
 	notes := "Shift pagi"
 
-	desc1 := "Beli bahan baku"
-	desc2 := "Tip dari pelanggan"
-	desc3 := "Beli plastik"
-
 	shifts := []domain.Shift{
 		{
 			OpenedBy:    openedBy,
@@ -47,40 +43,11 @@ func SeedShiftData(db *gorm.DB) {
 			Notes:       &notes,
 			OpenedAt:    time.Now().Add(-8 * time.Hour),
 			ClosedAt:    &closedAt,
-			ShiftExpenses: []domain.ShiftExpenses{
-				{
-					COAID:       utilitiesCOA.ID,
-					Amount:      decimal.NewFromFloat(50000),
-					Description: &desc1,
-				},
-				{
-					COAID:       incomeCOA.ID,
-					Amount:      decimal.NewFromFloat(20000),
-					Description: &desc2,
-				},
-				{
-					COAID:       utilitiesCOA.ID,
-					Amount:      decimal.NewFromFloat(15000),
-					Description: &desc3,
-				},
-			},
 		},
 		{
 			OpenedBy:    openedBy,
 			OpeningCash: decimal.NewFromFloat(300000),
 			OpenedAt:    time.Now().Add(-2 * time.Hour),
-			ShiftExpenses: []domain.ShiftExpenses{
-				{
-					COAID:       utilitiesCOA.ID,
-					Amount:      decimal.NewFromFloat(30000),
-					Description: &desc1,
-				},
-				{
-					COAID:       incomeCOA.ID,
-					Amount:      decimal.NewFromFloat(10000),
-					Description: &desc2,
-				},
-			},
 		},
 	}
 

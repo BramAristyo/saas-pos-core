@@ -10,12 +10,12 @@ type AuditAction string
 type AuditEntity string
 
 const (
-	ActionCreate     AuditAction = "CREATE"
-	ActionUpdate     AuditAction = "UPDATE"
-	ActionDelete     AuditAction = "DELETE"
-	ActionRestore    AuditAction = "RESTORE"
-	ActionLogin      AuditAction = "LOGIN"
-	ActionVoid       AuditAction = "VOID"
+	ActionCreate  AuditAction = "CREATE"
+	ActionUpdate  AuditAction = "UPDATE"
+	ActionDelete  AuditAction = "DELETE"
+	ActionRestore AuditAction = "RESTORE"
+	ActionLogin   AuditAction = "LOGIN"
+	ActionVoid    AuditAction = "VOID"
 )
 
 const (
@@ -31,7 +31,6 @@ const (
 	EntityDiscount       AuditEntity = "discounts"
 	EntitySalesType      AuditEntity = "sales_types"
 	EntityExpense        AuditEntity = "expenses"
-	EntityShiftExpense   AuditEntity = "shift_expenses"
 )
 
 type AuditLog struct {

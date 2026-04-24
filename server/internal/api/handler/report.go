@@ -89,21 +89,21 @@ func (h *ReportHandler) DiscountUsage(c *gin.Context) {
 	response.OK(c, res, "successfully get discounts Report")
 }
 
-func (h *ReportHandler) ShiftReconciliation(c *gin.Context) {
-	var req filter.PaginationWithInputFilter
-	if err := c.ShouldBindQuery(&req); err != nil {
-		c.Error(err)
-		return
-	}
+// func (h *ReportHandler) ShiftReconciliation(c *gin.Context) {
+// 	var req filter.PaginationWithInputFilter
+// 	if err := c.ShouldBindQuery(&req); err != nil {
+// 		c.Error(err)
+// 		return
+// 	}
 
-	req.DynamicFilter.WithDefaultSort()
-	req.DynamicFilter.WithDefaultDateRange()
+// 	req.DynamicFilter.WithDefaultSort()
+// 	req.DynamicFilter.WithDefaultDateRange()
 
-	res, err := h.usecase.ShiftReconciliation(c.Request.Context(), req)
-	if err != nil {
-		c.Error(err)
-		return
-	}
+// 	res, err := h.usecase.ShiftReconciliation(c.Request.Context(), req)
+// 	if err != nil {
+// 		c.Error(err)
+// 		return
+// 	}
 
-	response.OKPaginate(c, res.Data, res.Meta)
-}
+// 	response.OKPaginate(c, res.Data, res.Meta)
+// }

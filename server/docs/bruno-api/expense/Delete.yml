@@ -1,0 +1,38 @@
+info:
+  name: Delete
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{url}}/expenses/:id"
+  auth: inherit
+  body:
+    type: none
+
+examples:
+  - name: success delete expense
+    request:
+      url: "{{url}}/expenses/d98569cc-27d1-42fb-8ad2-98aab03e9401"
+      method: DELETE
+      body:
+        type: none
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success delete expense",
+            "data": {
+              "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+              "coaId": "e1234567-b890-427d-9880-839004aa21c0",
+              "amount": "250000.00",
+              "description": "Electricity Bill - March",
+              "date": "2026-03-17",
+              "deletedAt": "2026-03-18 10:00:00",
+              "createdAt": "2026-03-17 14:41:45"
+            }
+          }

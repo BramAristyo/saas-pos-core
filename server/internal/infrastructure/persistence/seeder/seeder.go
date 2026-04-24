@@ -1,8 +1,6 @@
 package seeder
 
 import (
-	"sync"
-
 	"gorm.io/gorm"
 )
 
@@ -10,14 +8,11 @@ func SeedAll(db *gorm.DB) {
 	SeedUserData(db)
 	SeedCOAData(db)
 
-	var wg sync.WaitGroup
-	wg.Add(5)
-	go func() { defer wg.Done(); SeedCategoryData(db) }()
-	go func() { defer wg.Done(); SeedModifierGroupData(db) }()
-	go func() { defer wg.Done(); SeedTaxData(db) }()
-	go func() { defer wg.Done(); SeedDiscountData(db) }()
-	go func() { defer wg.Done(); SeedSalesTypeData(db) }()
-	wg.Wait()
+	SeedCategoryData(db)
+	SeedModifierGroupData(db)
+	SeedTaxData(db)
+	SeedDiscountData(db)
+	SeedSalesTypeData(db)
 
 	SeedProductData(db)
 	SeedProductModifierData(db)
@@ -25,4 +20,7 @@ func SeedAll(db *gorm.DB) {
 
 	SeedShiftData(db)
 	SeedOrderData(db)
+
+	SeedExpenseData(db)
+	SeedLedgerData(db)
 }

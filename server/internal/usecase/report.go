@@ -100,24 +100,24 @@ func (u *ReportUseCase) DiscountUsage(ctx context.Context, req filter.Pagination
 
 }
 
-func (u *ReportUseCase) ShiftReconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ShiftReconciliationtResponsePagination, error) {
-	totalRows, srs, err := u.ShiftRepo.Reconciliation(ctx, req)
-	if err != nil {
-		return dto.ShiftReconciliationtResponsePagination{}, err
-	}
+// func (u *ReportUseCase) ShiftReconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ShiftReconciliationtResponsePagination, error) {
+// 	totalRows, srs, err := u.ShiftRepo.Reconciliation(ctx, req)
+// 	if err != nil {
+// 		return dto.ShiftReconciliationtResponsePagination{}, err
+// 	}
 
-	shiftResponses := make([]dto.ShiftReconciliationResponse, 0, len(srs))
-	for _, sr := range srs {
-		sr.CalculateDiff()
-		shiftResponses = append(shiftResponses, dto.ShiftReconciliationResponse{
-			CashierName:   sr.CashierName,
-			StartTime:     sr.StartTime,
-			EndTime:       sr.EndTime,
-			TotalExpected: sr.TotalExpected,
-			TotalActual:   sr.TotalActual,
-			Difference:    sr.Difference,
-		})
-	}
+// 	shiftResponses := make([]dto.ShiftReconciliationResponse, 0, len(srs))
+// 	for _, sr := range srs {
+// 		sr.CalculateDiff()
+// 		shiftResponses = append(shiftResponses, dto.ShiftReconciliationResponse{
+// 			CashierName:   sr.CashierName,
+// 			StartTime:     sr.StartTime,
+// 			EndTime:       sr.EndTime,
+// 			TotalExpected: sr.TotalExpected,
+// 			TotalActual:   sr.TotalActual,
+// 			Difference:    sr.Difference,
+// 		})
+// 	}
 
-	return dto.ShiftReconciliationtResponsePagination{Data: shiftResponses, Meta: req.ToMeta(totalRows)}, nil
-}
+// 	return dto.ShiftReconciliationtResponsePagination{Data: shiftResponses, Meta: req.ToMeta(totalRows)}, nil
+// }

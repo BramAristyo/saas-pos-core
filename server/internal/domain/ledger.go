@@ -18,7 +18,7 @@ const (
 type Ledger struct {
 	ID              uuid.UUID `gorm:"primaryKey"`
 	COAID           uuid.UUID
-	ShiftID         uuid.UUID
+	ShiftID         *uuid.UUID
 	Amount          decimal.Decimal
 	Notes           *string
 	ReferenceID     uuid.UUID

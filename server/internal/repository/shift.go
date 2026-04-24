@@ -101,21 +101,6 @@ func (r *ShiftRepository) Update(ctx context.Context, id uuid.UUID, s *domain.Sh
 			return err
 		}
 
-		var toCreate []domain.ShiftExpenses
-
-		for _, se := range s.ShiftExpenses {
-			if se.ID == uuid.Nil {
-				se.ShiftID = id
-				toCreate = append(toCreate, se)
-			}
-		}
-
-		if len(toCreate) > 0 {
-			if err := tx.Create(&toCreate).Error; err != nil {
-				return err
-			}
-		}
-
 		return nil
 	})
 
@@ -166,61 +151,51 @@ func (r *ShiftRepository) FindOpenShiftByUserId(ctx context.Context, userId uuid
 	return shift, nil
 }
 
-func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error) {
-	var totalRows int64
+// func (r *ShiftRepository) Reconciliation(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ShiftReconciliaton, error) {
+// 	// var totalRows int64
 
-	allowedFields := map[string]string{
-		"opened_at": "shifts.opened_at",
-	}
+// 	// allowedFields := map[string]string{
+// 	// 	"opened_at": "shifts.opened_at",
+// 	// }
 
-	q := database.BuildQuery(r.DB.WithContext(ctx).Table("shifts"), req.DynamicFilter, nil, allowedFields)
+// 	// q := database.BuildQuery(r.DB.WithContext(ctx).Table("shifts"), req.DynamicFilter, nil, allowedFields)
 
-	q = q.Joins("JOIN users ON shifts.opened_by = users.id")
+// 	// q = q.Joins("JOIN users ON shifts.opened_by = users.id")
 
-	if err := q.Count(&totalRows).Error; err != nil {
-		return 0, nil, err
-	}
+// 	// if err := q.Count(&totalRows).Error; err != nil {
+// 	// 	return 0, nil, err
+// 	// }
 
-	if totalRows == 0 {
-		return 0, nil, nil
-	}
+// 	// if totalRows == 0 {
+// 	// 	return 0, nil, nil
+// 	// }
 
-	cashPaymentsSub := r.DB.Table("payments").
-		Select("SUM(payments.amount)").
-		Joins("JOIN orders ON orders.id = payments.order_id").
-		Where("orders.shift_id = shifts.id AND payments.method = 'cash' AND orders.status = ?", domain.OrderCompleted)
+// 	// cashPaymentsSub := r.DB.Table("payments").
+// 	// 	Select("SUM(payments.amount)").
+// 	// 	Joins("JOIN orders ON orders.id = payments.order_id").
+// 	// 	Where("orders.shift_id = shifts.id AND payments.method = 'cash' AND orders.status = ?", domain.OrderCompleted)
 
-	cashInSub := r.DB.Table("shift_expenses").
-		Joins("JOIN chart_of_accounts ON shift_expenses.coa_id = chart_of_accounts.id").
-		Select("SUM(amount)").
-		Where("shift_id = shifts.id AND chart_of_accounts.type = ?", domain.COATypeIn)
+// 	// shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
+// 	// err := q.
+// 	// 	Select(`
+// 	// 		users.name as cashier_name,
+// 	// 		TO_CHAR(shifts.opened_at, 'YYYY-MM-DD HH24:MI:SS') as start_time,
+// 	// 		TO_CHAR(shifts.closed_at, 'YYYY-MM-DD HH24:MI:SS') as end_time,
+// 	// 		(
+// 	// 			shifts.opening_cash
+// 	// 			+ COALESCE((?), 0)
+// 	// 			+ COALESCE((?), 0)
+// 	// 			- COALESCE((?), 0)
+// 	// 		) as total_expected,
+// 	// 		COALESCE(shifts.closing_cash, 0) as total_actual
+// 	// 	`, cashPaymentsSub, cashInSub, cashOutSub).
+// 	// 	Offset(req.Offset()).
+// 	// 	Limit(req.PaginationInput.PageSize).
+// 	// 	Scan(&shiftRecs).Error
 
-	cashOutSub := r.DB.Table("shift_expenses").
-		Joins("JOIN chart_of_accounts ON shift_expenses.coa_id = chart_of_accounts.id").
-		Select("SUM(amount)").
-		Where("shift_id = shifts.id AND chart_of_accounts.type = ?", domain.COATypeOut)
+// 	// if err != nil {
+// 	// 	return 0, nil, err
+// 	// }
 
-	shiftRecs := make([]domain.ShiftReconciliaton, 0, req.PaginationInput.PageSize)
-	err := q.
-		Select(`
-			users.name as cashier_name,
-			TO_CHAR(shifts.opened_at, 'YYYY-MM-DD HH24:MI:SS') as start_time,
-			TO_CHAR(shifts.closed_at, 'YYYY-MM-DD HH24:MI:SS') as end_time,
-			(
-				shifts.opening_cash
-				+ COALESCE((?), 0)
-				+ COALESCE((?), 0)
-				- COALESCE((?), 0)
-			) as total_expected,
-			COALESCE(shifts.closing_cash, 0) as total_actual
-		`, cashPaymentsSub, cashInSub, cashOutSub).
-		Offset(req.Offset()).
-		Limit(req.PaginationInput.PageSize).
-		Scan(&shiftRecs).Error
-
-	if err != nil {
-		return 0, nil, err
-	}
-
-	return totalRows, shiftRecs, nil
-}
+// 	// return totalRows, shiftRecs, nil
+// }

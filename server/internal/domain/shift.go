@@ -19,7 +19,6 @@ type Shift struct {
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 
-	ShiftExpenses []ShiftExpenses `gorm:"foreignKey:ShiftID"`
-	OpenedByUser  User            `gorm:"foreignKey:OpenedBy"`
-	ClosedByUser  *User           `gorm:"foreignKey:ClosedBy"`
+	OpenedByUser User  `gorm:"foreignKey:OpenedBy"`
+	ClosedByUser *User `gorm:"foreignKey:ClosedBy"`
 }

@@ -1,0 +1,46 @@
+info:
+  name: Store
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{url}}/coa"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "New COA",
+        "type": "out"
+      }
+
+examples:
+  - name: success create coa
+    request:
+      url: "{{url}}/coa"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "New COA",
+            "type": "out"
+          }
+    response:
+      status: 201
+      statusText: Created
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success create coa",
+            "data": {
+              "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+              "name": "New COA",
+              "type": "out",
+              "isSystem": false,
+              "createdAt": "2026-03-18 10:30:00"
+            }
+          }

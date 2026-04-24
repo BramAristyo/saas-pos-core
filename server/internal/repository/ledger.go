@@ -20,7 +20,7 @@ func NewLedgerRepository(db *gorm.DB) *LedgerRepository {
 	}
 }
 
-func (r *LedgerRepository) Paginate(ctx context.Context, startDate string, endDate string, limit int, offset int) (int64, []domain.LedgerWithBalance, error) {
+func (r *LedgerRepository) ReportPaginate(ctx context.Context, startDate string, endDate string, limit int, offset int) (int64, []domain.LedgerWithBalance, error) {
 	var totalRows int64
 	var results []domain.LedgerWithBalance
 

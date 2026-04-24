@@ -53,8 +53,10 @@ func SeedOrderData(db *gorm.DB) {
 		discountID = &dID
 	}
 
-	dateStr := time.Now().Format("20060102")
-	orderNumber := fmt.Sprintf("MW/%s/00001", dateStr)
+	now := time.Now()
+	dateStr := now.Format("20060102")
+	timestamp := now.UnixNano() / int64(time.Millisecond) % 100000
+	orderNumber := fmt.Sprintf("MW/%s/%05d-1", dateStr, timestamp)
 
 	order := domain.Order{
 		ShiftID:     shift.ID,
@@ -92,7 +94,7 @@ func SeedOrderData(db *gorm.DB) {
 	db.Create(&order)
 
 	// Create a voided order
-	orderNumber2 := fmt.Sprintf("MW/%s/00002", dateStr)
+	orderNumber2 := fmt.Sprintf("MW/%s/%05d-2", dateStr, timestamp)
 	voidReason := "Wrong items"
 	voidedAt := time.Now()
 	order2 := domain.Order{

@@ -1,0 +1,46 @@
+info:
+  name: Update
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{url}}/coa/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated COA",
+        "type": "in"
+      }
+
+examples:
+  - name: success update coa
+    request:
+      url: "{{url}}/coa/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated COA",
+            "type": "in"
+          }
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success update coa",
+            "data": {
+              "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+              "name": "Updated COA",
+              "type": "in",
+              "isSystem": false,
+              "createdAt": "2026-03-18 10:30:00"
+            }
+          }

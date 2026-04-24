@@ -1,0 +1,51 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/expenses/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "coaId": "e1234567-b890-427d-9880-839004aa21c0",
+        "amount": "120000",
+        "description": "Water Bill Updated",
+        "date": "2026-03-18"
+      }
+
+examples:
+  - name: success update expense
+    request:
+      url: "{{url}}/expenses/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "coaId": "e1234567-b890-427d-9880-839004aa21c0",
+            "amount": "120000",
+            "description": "Water Bill Updated",
+            "date": "2026-03-18"
+          }
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success update expense",
+            "data": {
+              "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+              "coaId": "e1234567-b890-427d-9880-839004aa21c0",
+              "amount": "120000.00",
+              "description": "Water Bill Updated",
+              "date": "2026-03-18",
+              "createdAt": "2026-03-18 10:30:00"
+            }
+          }

@@ -1,0 +1,49 @@
+info:
+  name: Paginate
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{url}}/expenses"
+  auth: inherit
+
+examples:
+  - name: success paginate expense
+    request:
+      url: "{{url}}/expenses"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": [
+              {
+                "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+                "coaId": "e1234567-b890-427d-9880-839004aa21c0",
+                "coa": {
+                  "id": "e1234567-b890-427d-9880-839004aa21c0",
+                  "name": "Utilities",
+                  "type": "out",
+                  "isSystem": false,
+                  "createdAt": "2026-03-17 14:41:45"
+                },
+                "amount": "250000.00",
+                "description": "Electricity Bill - March",
+                "date": "2026-03-17",
+                "createdAt": "2026-03-17 14:41:45"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "pageSize": 10,
+              "totalRows": 1,
+              "totalPages": 1,
+              "hasNext": false,
+              "hasPrev": false
+            }
+          }
