@@ -78,6 +78,7 @@ func main() {
 
 	r.StaticFile("/health", "./static/health.html")
 
+	// DEPLOY VUE
 	r.Static("/assets", "./static/dist/assets")
 	r.StaticFile("/favicon.ico", "./static/dist/favicon.ico")
 	r.NoRoute(func(c *gin.Context) {

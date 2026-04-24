@@ -9,17 +9,20 @@ import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/repository"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/helper"
+	"github.com/BramAristyo/saas-pos-core/server/pkg/usecase_errors"
 	"github.com/google/uuid"
 )
 
 type ExpenseUseCase struct {
 	Repo       *repository.ExpenseRepository
+	LedgerRepo *repository.LedgerRepository
 	LogUseCase *AuditLogUseCase
 }
 
-func NewExpenseUseCase(repo *repository.ExpenseRepository, log *AuditLogUseCase) *ExpenseUseCase {
+func NewExpenseUseCase(repo *repository.ExpenseRepository, ledgerRepo *repository.LedgerRepository, log *AuditLogUseCase) *ExpenseUseCase {
 	return &ExpenseUseCase{
 		Repo:       repo,
+		LedgerRepo: ledgerRepo,
 		LogUseCase: log,
 	}
 }
@@ -63,6 +66,11 @@ func (u *ExpenseUseCase) Store(ctx context.Context, req dto.CreateExpenseRequest
 		return dto.ExpenseResponse{}, err
 	}
 
+	_, err = u.LedgerRepo.Store(ctx, domain.ToLedgerModel(stored))
+	if err != nil {
+		return dto.ExpenseResponse{}, usecase_errors.LedgerRecordFailed
+	}
+
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
 		Action:      domain.ActionCreate,
@@ -90,6 +98,11 @@ func (u *ExpenseUseCase) Update(ctx context.Context, id uuid.UUID, req dto.Updat
 		return dto.ExpenseResponse{}, err
 	}
 
+	_, err = u.LedgerRepo.ExpenseUpdate(ctx, id, domain.ToLedgerModel(updated))
+	if err != nil {
+		return dto.ExpenseResponse{}, usecase_errors.LedgerRecordFailed
+	}
+
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
 		UserID:      userId,
 		Action:      domain.ActionUpdate,
@@ -114,6 +127,11 @@ func (u *ExpenseUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 
 	if err := u.Repo.Delete(ctx, id); err != nil {
 		return err
+	}
+
+	err = u.LedgerRepo.ExpenseDelete(ctx, id)
+	if err != nil {
+		return usecase_errors.LedgerRecordFailed
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{

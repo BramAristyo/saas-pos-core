@@ -20,3 +20,14 @@ type Expense struct {
 
 	COA ChartOfAccount `gorm:"foreignKey:COAID"`
 }
+
+func ToLedgerModel(l Expense) Ledger {
+	return Ledger{
+		COAID:           l.COAID,
+		Amount:          l.Amount,
+		Notes:           &l.Description,
+		ReferenceID:     l.ID,
+		ReferenceType:   LedgerExpense,
+		TransactionDate: l.Date,
+	}
+}

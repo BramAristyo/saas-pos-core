@@ -46,4 +46,5 @@ var (
 	EmptyOrderItems    = &UseCaseError{http.StatusBadRequest, "order must contain at least one item"}
 	OrderAlreadyVoided = &UseCaseError{http.StatusBadRequest, "order already voided"}
 	DateFilterRequired = &UseCaseError{http.StatusBadRequest, "transaction date filter (from/to) is required"}
+	LedgerRecordFailed = &UseCaseError{http.StatusInternalServerError, "transaction saved but failed to record ledger entry"}
 )

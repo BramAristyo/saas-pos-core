@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/BramAristyo/saas-pos-core/server/pkg/usecase_errors"
 	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
@@ -159,12 +160,65 @@ func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate stri
 }
 
 // for returning to method, not for API endpoint
-func (r *LedgerRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Ledger, error)
+func (r *LedgerRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Ledger, error) {
+	var l domain.Ledger
 
-func (r *LedgerRepository) Store(ctx context.Context, ledger domain.Ledger) (domain.Ledger, error)
+	if err := r.DB.WithContext(ctx).First(&l, "id = ?", id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return domain.Ledger{}, usecase_errors.NotFound
+		}
+		return domain.Ledger{}, err
+	}
+
+	return l, nil
+}
+
+func (r *LedgerRepository) Store(ctx context.Context, ledger domain.Ledger) (domain.Ledger, error) {
+	if err := r.DB.WithContext(ctx).Create(ledger).Error; err != nil {
+		return domain.Ledger{}, err
+	}
+
+	return ledger, nil
+}
+
+// // ledger with RefType LedgerExpense
+func (r *LedgerRepository) ExpenseUpdate(ctx context.Context, expenseId uuid.UUID, ledger domain.Ledger) (domain.Ledger, error) {
+	var existing domain.Ledger
+
+	if err := r.DB.WithContext(ctx).
+		Where("reference_id = ?", expenseId).
+		Where("reference_type = ?", domain.LedgerExpense).
+		First(&existing).Error; err != nil {
+		return domain.Ledger{}, err
+	}
+
+	updateData := map[string]any{
+		"coaId":  ledger.COAID,
+		"amount": ledger.Amount,
+		"notes":  *ledger.Notes,
+	}
+
+	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
+		return domain.Ledger{}, err
+	}
+
+	return existing, nil
+}
 
 // ledger with RefType LedgerExpense
-func (r *LedgerRepository) ExpenseUpdate(ctx context.Context, id uuid.UUID, ledger domain.Ledger) (domain.Ledger, error)
+func (r *LedgerRepository) ExpenseDelete(ctx context.Context, expenseID uuid.UUID) error {
+	result := r.DB.WithContext(ctx).
+		Where("reference_id = ?", expenseID).
+		Where("reference_type = ?", domain.LedgerExpense).
+		Delete(&domain.Ledger{})
 
-// ledger with RefType LedgerExpense
-func (r *LedgerRepository) ExpenseDelete(ctx context.Context, id uuid.UUID) error
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return usecase_errors.NotFound
+	}
+
+	return nil
+}

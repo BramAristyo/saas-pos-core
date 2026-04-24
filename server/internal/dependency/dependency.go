@@ -64,8 +64,10 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	salesTypeRepository := repository.NewSalesTypeRepository(db)
 	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository, auditLogUseCase)
 
+	ledgerRepository := repository.NewLedgerRepository(db)
+
 	expenseRepository := repository.NewExpenseRepository(db)
-	expenseUseCase := usecase.NewExpenseUseCase(expenseRepository, auditLogUseCase)
+	expenseUseCase := usecase.NewExpenseUseCase(expenseRepository, ledgerRepository, auditLogUseCase)
 
 	shiftExpensesRepository := repository.NewShiftExpensesRepository(db)
 	shiftExpensesUseCase := usecase.NewShiftExpensesUseCase(shiftExpensesRepository)
