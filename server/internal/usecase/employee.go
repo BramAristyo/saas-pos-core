@@ -53,9 +53,9 @@ func (u *EmployeeUseCase) GetAll(ctx context.Context) ([]dto.EmployeeResponse, e
 		return []dto.EmployeeResponse{}, err
 	}
 
-	res := make([]dto.EmployeeResponse, len(employees))
-	for i := range employees {
-		res[i] = dto.ToEmployeeResponse(&employees[i])
+	res := make([]dto.EmployeeResponse, 0, len(employees))
+	for _, e := range employees {
+		res = append(res, dto.ToEmployeeResponse(&e))
 	}
 
 	return res, nil
@@ -68,8 +68,8 @@ func (u *EmployeeUseCase) Paginate(ctx context.Context, req filter.PaginationWit
 	}
 
 	res := make([]dto.EmployeeResponse, 0, len(employees))
-	for i := range employees {
-		res[i] = dto.ToEmployeeResponse(&employees[i])
+	for _, e := range employees {
+		res = append(res, dto.ToEmployeeResponse(&e))
 	}
 
 	return dto.ToEmployeeResponsePagination(res, req, totalRows), nil

@@ -42,7 +42,7 @@ func (h *EmployeeHandler) Paginate(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, res, "Success fetch employees")
+	response.OKPaginate(c, res.Data, res.Meta)
 }
 
 func (h *EmployeeHandler) FindById(c *gin.Context) {
