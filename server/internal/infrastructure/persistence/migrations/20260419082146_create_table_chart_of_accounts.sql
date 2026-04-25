@@ -20,4 +20,4 @@ ALTER TABLE expenses
     DROP COLUMN coa_id,
     ADD COLUMN category VARCHAR(100) NOT NULL DEFAULT 'other';
 
-DROP TABLE IF EXISTS chart_of_accounts;
+DROP TABLE IF EXISTS chart_of_accounts CASCADE;

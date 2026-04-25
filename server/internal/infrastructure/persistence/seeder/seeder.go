@@ -18,6 +18,8 @@ func SeedAll(db *gorm.DB) {
 	SeedProductModifierData(db)
 	SeedBundlingData(db)
 
+	SeedEmployeeData(db)
+
 	SeedShiftData(db)
 	SeedOrderData(db)
 

@@ -1,7 +1,7 @@
 info:
   name: coa
   type: folder
-  seq: 13
+  seq: 14
 
 request:
   auth: inherit

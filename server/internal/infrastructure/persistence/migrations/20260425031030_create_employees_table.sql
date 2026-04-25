@@ -8,10 +8,13 @@ CREATE TABLE employees (
 
     pin_hash VARCHAR(255) NOT NULL,
 
-    is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL
 );
 
+CREATE INDEX idx_employees_deleted_at ON employees(deleted_at);
+
 -- +goose Down
+DROP INDEX IF EXISTS idx_employees_deleted_at;
 DROP TABLE IF EXISTS employees;

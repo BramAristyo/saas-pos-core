@@ -1,0 +1,38 @@
+info:
+  name: Delete
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{url}}/employees/:id"
+  auth: inherit
+
+vars:
+  pre-request:
+    id: d98569cc-27d1-42fb-8ad2-98aab03e9401
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/employees/d98569cc-27d1-42fb-8ad2-98aab03e9401"
+      method: DELETE
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "deleted successfully"
+          }

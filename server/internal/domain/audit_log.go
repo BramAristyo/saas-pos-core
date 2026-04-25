@@ -31,6 +31,7 @@ const (
 	EntityDiscount       AuditEntity = "discounts"
 	EntitySalesType      AuditEntity = "sales_types"
 	EntityExpense        AuditEntity = "expenses"
+	EntityEmployee       AuditEntity = "employees"
 )
 
 type AuditLog struct {

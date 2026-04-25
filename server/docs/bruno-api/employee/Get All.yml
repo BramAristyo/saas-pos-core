@@ -1,0 +1,45 @@
+info:
+  name: Get All
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{url}}/employees/all"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/employees/all"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": [
+              {
+                "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+                "code": "EMP001",
+                "name": "John Doe",
+                "phone": "08123456789",
+                "baseSalary": 5000000,
+                "hasChangedPin": true,
+                "createdAt": "2026-04-25 10:00:00",
+                "updatedAt": "2026-04-25 10:00:00"
+              }
+            ]
+          }

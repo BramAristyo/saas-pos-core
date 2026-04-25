@@ -1,0 +1,16 @@
+package router
+
+import (
+	"github.com/BramAristyo/saas-pos-core/server/internal/api/handler"
+	"github.com/gin-gonic/gin"
+)
+
+func EmployeeRoutes(r *gin.RouterGroup, h *handler.EmployeeHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/all", h.GetAll)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.PUT("/:id", h.Update)
+	r.DELETE("/:id", h.Delete)
+	r.PATCH("/:id/restore", h.Restore)
+}

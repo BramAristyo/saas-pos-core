@@ -10,9 +10,6 @@ func SeedLedgerData(db *gorm.DB) {
 	var coas []domain.ChartOfAccount
 	db.Find(&coas)
 
-	var shifts []domain.Shift
-	db.Preload("ShiftExpenses").Find(&shifts)
-
 	var expenses []domain.Expense
 	db.Find(&expenses)
 

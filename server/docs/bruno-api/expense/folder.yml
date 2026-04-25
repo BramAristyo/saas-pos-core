@@ -1,7 +1,7 @@
 info:
   name: expense
   type: folder
-  seq: 15
+  seq: 16
 
 request:
   auth: inherit
