@@ -29,9 +29,18 @@ func (a *Attendance) CalculateLateness(policy ShiftSchedule) {
 		return
 	}
 
+	startTime, err := time.Parse("15:04:05", policy.StartTime)
+	if err != nil {
+		// fallback to without seconds if needed, or just return
+		startTime, err = time.Parse("15:04", policy.StartTime)
+		if err != nil {
+			return
+		}
+	}
+
 	deadline := time.Date(
 		a.Date.Year(), a.Date.Month(), a.Date.Day(),
-		policy.StartTime.Hour(), policy.StartTime.Minute(), 0, 0,
+		startTime.Hour(), startTime.Minute(), 0, 0,
 		a.CheckIn.Location(),
 	).Add(time.Duration(policy.ToleranceMinutes) * time.Minute)
 

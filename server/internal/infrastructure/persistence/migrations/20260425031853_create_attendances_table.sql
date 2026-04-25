@@ -11,8 +11,11 @@ CREATE TABLE attendances (
     notes TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
+    deleted_at TIMESTAMP DEFAULT NULL,
     UNIQUE(employee_id, date, shift_schedule_id)               -- record
 );
+
+CREATE INDEX idx_attendances_deleted_at ON attendances(deleted_at);
 
 -- +goose Down
 DROP TABLE IF EXISTS attendances;

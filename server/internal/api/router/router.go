@@ -38,6 +38,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		expenses := v1.Group("/expenses", middleware.Authentication(cfg))
 		coa := v1.Group("/coa", middleware.Authentication(cfg))
 		employees := v1.Group("/employees", middleware.Authentication(cfg))
+		attendances := v1.Group("/attendances", middleware.Authentication(cfg))
 
 		v1.POST("/", h.Auth.Login)
 		v1.GET("/me", middleware.Authentication(cfg), h.Auth.Me)
@@ -57,5 +58,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		ExpenseRoutes(expenses, h.Expense)
 		COARoutes(coa, h.COA)
 		EmployeeRoutes(employees, h.Employee)
+		AttendanceRoutes(attendances, h.Attendance)
 	}
 }
