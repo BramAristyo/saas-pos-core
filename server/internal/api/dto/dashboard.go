@@ -6,8 +6,8 @@ import (
 )
 
 type SalesSummaryDashboardResponse struct {
-	GrossSales       decimal.Decimal `json:"grossSales"`
-	NetSales         decimal.Decimal `json:"netSales"`
+	GrossSales       decimal.Decimal `json:"grossSales"` // penjualan bersih
+	NetSales         decimal.Decimal `json:"netSales"`   //
 	GrossProfit      decimal.Decimal `json:"grossProfit"`
 	TransactionCount int64           `json:"transactionCount"`
 	AverageSales     decimal.Decimal `json:"averageSales"`
