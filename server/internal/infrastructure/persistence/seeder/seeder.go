@@ -27,6 +27,5 @@ func SeedAll(db *gorm.DB) {
 	SeedShiftData(db)
 	SeedOrderData(db)
 
-	SeedExpenseData(db)
 	SeedLedgerData(db)
 }
