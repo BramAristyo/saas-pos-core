@@ -1,7 +1,7 @@
 info:
   name: payroll
   type: folder
-  seq: 19
+  seq: 18
 
 request:
   auth: inherit
