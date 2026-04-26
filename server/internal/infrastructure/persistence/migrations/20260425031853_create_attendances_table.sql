@@ -7,7 +7,7 @@ CREATE TABLE attendances (
     check_out TIMESTAMP,
     late_minutes INT DEFAULT 0,             -- calculate
     deduction_amount DECIMAL(12,2) DEFAULT 0, -- calculate
-    shift_schedule_id INT REFERENCES shift_schedules(id),
+    shift_schedule_id UUID REFERENCES shift_schedules(id),
     notes TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),

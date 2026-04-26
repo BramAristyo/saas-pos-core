@@ -2,12 +2,15 @@ package seeder
 
 import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func SeedShiftScheduleData(db *gorm.DB) {
 	schedules := []domain.ShiftSchedule{
 		{
+			ID:                  uuid.MustParse("00000000-0000-0000-0000-000000000901"),
 			Name:                "Pagi",
 			StartTime:           "08:00:00",
 			EndTime:             "16:00:00",
@@ -16,6 +19,7 @@ func SeedShiftScheduleData(db *gorm.DB) {
 			LateDeductionAmount: 5000,
 		},
 		{
+			ID:                  uuid.MustParse("00000000-0000-0000-0000-000000000902"),
 			Name:                "Sore",
 			StartTime:           "14:00:00",
 			EndTime:             "22:00:00",
@@ -24,13 +28,5 @@ func SeedShiftScheduleData(db *gorm.DB) {
 			LateDeductionAmount: 5000,
 		},
 	}
-
-	for _, s := range schedules {
-		var existing domain.ShiftSchedule
-		if err := db.Where("name = ?", s.Name).First(&existing).Error; err != nil {
-			if err == gorm.ErrRecordNotFound {
-				db.Create(&s)
-			}
-		}
-	}
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&schedules)
 }

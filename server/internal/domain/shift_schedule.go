@@ -3,11 +3,12 @@ package domain
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type ShiftSchedule struct {
-	ID                  uint           `gorm:"primaryKey;autoIncrement"`
+	ID                  uuid.UUID      `gorm:"primaryKey;default:gen_random_uuid()"`
 	Name                string         `gorm:"type:varchar(50);not null"`
 	StartTime           string         `gorm:"type:time;not null"`
 	EndTime             string         `gorm:"type:time;not null"`

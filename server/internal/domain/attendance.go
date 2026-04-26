@@ -16,7 +16,7 @@ type Attendance struct {
 	CheckOut        *time.Time
 	LateMinutes     int     `gorm:"default:0"`
 	DeductionAmount float64 `gorm:"type:decimal(12,2);default:0"`
-	ShiftScheduleID *uint
+	ShiftScheduleID *uuid.UUID
 	ShiftSchedule   *ShiftSchedule `gorm:"foreignKey:ShiftScheduleID"`
 	Notes           *string        `gorm:"type:text"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`

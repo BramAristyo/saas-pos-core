@@ -5,6 +5,7 @@ import (
 )
 
 func SeedAll(db *gorm.DB) {
+	// Refactored with hardcoded UUIDs and deterministic logic
 	SeedUserData(db)
 	SeedCOAData(db)
 

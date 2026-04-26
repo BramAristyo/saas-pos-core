@@ -1,127 +1,64 @@
 package seeder
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func SeedOrderData(db *gorm.DB) {
-	var shifts []domain.Shift
-	db.Limit(1).Find(&shifts)
-	if len(shifts) == 0 {
-		return
-	}
-	shift := shifts[0]
+	adminID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	shiftID := uuid.MustParse("00000000-0000-0000-0000-000000001101")
+	salesTypeID := uuid.MustParse("00000000-0000-0000-0000-000000000501")
+	taxID := uuid.MustParse("00000000-0000-0000-0000-000000000301")
+	prodID := uuid.MustParse("00000000-0000-0000-0000-000000000601")
 
-	var users []domain.User
-	db.Limit(1).Find(&users)
-	if len(users) == 0 {
-		return
-	}
-	user := users[0]
-
-	var salesTypes []domain.SalesType
-	db.Limit(1).Find(&salesTypes)
-	if len(salesTypes) == 0 {
-		return
-	}
-	salesType := salesTypes[0]
-
-	var products []domain.Product
-	db.Limit(2).Find(&products)
-	if len(products) == 0 {
-		return
-	}
-
-	var taxes []domain.Tax
-	db.Limit(1).Find(&taxes)
-	var taxID *string
-	if len(taxes) > 0 {
-		tID := taxes[0].ID.String()
-		taxID = &tID
-	}
-
-	var discounts []domain.Discount
-	db.Limit(1).Find(&discounts)
-	var discountID *string
-	if len(discounts) > 0 {
-		dID := discounts[0].ID.String()
-		discountID = &dID
-	}
-
-	now := time.Now()
-	dateStr := now.Format("20060102")
-	timestamp := now.UnixNano() / int64(time.Millisecond) % 100000
-	orderNumber := fmt.Sprintf("MW/%s/%05d-1", dateStr, timestamp)
-
-	order := domain.Order{
-		ShiftID:     shift.ID,
-		CashierID:   user.ID,
-		SalesTypeID: salesType.ID,
-		OrderNumber: orderNumber,
+	order1 := domain.Order{
+		ID:          uuid.MustParse("00000000-0000-0000-0000-000000001201"),
+		ShiftID:     shiftID,
+		CashierID:   adminID,
+		SalesTypeID: salesTypeID,
+		TaxID:       &taxID,
+		OrderNumber: "MW/20240101/00001",
 		Status:      domain.OrderCompleted,
 		Items: []domain.OrderItem{
 			{
-				ProductID:    &products[0].ID,
-				ProductName:  products[0].Name,
-				ProductPrice: products[0].Price,
-				ProductCogs:  products[0].Cogs,
+				ID:           uuid.MustParse("00000000-0000-0000-0000-000000001211"),
+				ProductID:    &prodID,
+				ProductName:  "Espresso",
+				ProductPrice: decimal.NewFromInt(20000),
+				ProductCogs:  decimal.NewFromInt(8000),
 				Quantity:     2,
 			},
 		},
 		Payments: []domain.Payment{
 			{
+				ID:     uuid.MustParse("00000000-0000-0000-0000-000000001301"),
 				Method: domain.Cash,
-				Amount: products[0].Price.Mul(decimal.NewFromInt(2)),
+				Amount: decimal.NewFromInt(44400), // (20000*2) * 1.11
 			},
 		},
 	}
+	order1.CalculateAll()
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&order1)
 
-	if taxID != nil {
-		order.TaxID = &taxes[0].ID
-		order.Tax = &taxes[0]
-	}
-	if discountID != nil {
-		order.DiscountID = &discounts[0].ID
-		order.Discount = &discounts[0]
-	}
-
-	order.CalculateAll()
-	db.Create(&order)
-
-	// Create a voided order
-	orderNumber2 := fmt.Sprintf("MW/%s/%05d-2", dateStr, timestamp)
 	voidReason := "Wrong items"
-	voidedAt := time.Now()
+	voidTime := time.Date(2024, 1, 1, 10, 0, 0, 0, time.Local)
 	order2 := domain.Order{
-		ShiftID:     shift.ID,
-		CashierID:   user.ID,
-		SalesTypeID: salesType.ID,
-		OrderNumber: orderNumber2,
+		ID:          uuid.MustParse("00000000-0000-0000-0000-000000001202"),
+		ShiftID:     shiftID,
+		CashierID:   adminID,
+		SalesTypeID: salesTypeID,
+		OrderNumber: "MW/20240101/00002",
 		Status:      domain.OrderVoided,
 		VoidReason:  &voidReason,
-		VoidedBy:    &user.ID,
-		VoidedAt:    &voidedAt,
-		Items: []domain.OrderItem{
-			{
-				ProductID:    &products[0].ID,
-				ProductName:  products[0].Name,
-				ProductPrice: products[0].Price,
-				ProductCogs:  products[0].Cogs,
-				Quantity:     1,
-			},
-		},
-		Payments: []domain.Payment{
-			{
-				Method: domain.Cash,
-				Amount: products[0].Price,
-			},
-		},
+		VoidedBy:    &adminID,
+		VoidedAt:    &voidTime,
 	}
 	order2.CalculateAll()
-	db.Create(&order2)
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&order2)
 }

@@ -1,10 +1,16 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/BramAristyo/saas-pos-core/server/internal/infrastructure/config"
 	"github.com/BramAristyo/saas-pos-core/server/internal/infrastructure/persistence/database"
 	"github.com/BramAristyo/saas-pos-core/server/internal/infrastructure/persistence/seeder"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/logger"
+	"github.com/pressly/goose/v3"
 )
 
 func main() {
@@ -19,5 +25,25 @@ func main() {
 	defer database.CloseDb()
 
 	db := database.GetDb()
-	seeder.SeedAll(db)
+	sqlDb, _ := database.GetDb().DB()
+
+	if len(os.Args) < 2 {
+		log.Fatal("usage: seeder [development|production]")
+	}
+
+	if os.Args[1] == "development" {
+		err = goose.RunContext(context.Background(), "reset", sqlDb, "internal/infrastructure/persistence/migrations")
+		if err != nil {
+			log.Fatalf("Migration failed: %v", err)
+		}
+
+		err = goose.RunContext(context.Background(), "up", sqlDb, "internal/infrastructure/persistence/migrations")
+		if err != nil {
+			log.Fatalf("Migration failed: %v", err)
+		}
+
+		seeder.SeedAll(db)
+		fmt.Println("reset database schema and seed development successfully!")
+		return
+	}
 }
