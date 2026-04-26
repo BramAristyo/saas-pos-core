@@ -1,5 +1,6 @@
 -- +goose Up
 DROP TABLE IF EXISTS expenses;
+
 CREATE TABLE cash_transactions (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     coa_id      UUID NOT NULL,
