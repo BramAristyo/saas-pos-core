@@ -27,6 +27,7 @@ type Handlers struct {
 	COA           *handler.COAHandler
 	Employee      *handler.EmployeeHandler
 	Attendance    *handler.AttendanceHandler
+	Payroll       *handler.PayrollHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -79,6 +80,9 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	attendanceRepository := repository.NewAttendanceRepository(db)
 	attendanceUseCase := usecase.NewAttendanceUseCase(attendanceRepository)
 
+	payrollRepository := repository.NewPayrollRepository(db)
+	payrollUseCase := usecase.NewPayrollUseCase(payrollRepository)
+
 	orderRepository := repository.NewOrderRepository(db)
 	orderUseCase := usecase.NewOrderUseCase(
 		orderRepository,
@@ -113,5 +117,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		COA:           handler.NewCOAHandler(coaUseCase),
 		Employee:      handler.NewEmployeeHandler(employeeUseCase),
 		Attendance:    handler.NewAttendanceHandler(attendanceUseCase),
+		Payroll:       handler.NewPayrollHandler(payrollUseCase),
 	}
 }

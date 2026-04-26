@@ -14,3 +14,12 @@ func EmployeeRoutes(r *gin.RouterGroup, h *handler.EmployeeHandler) {
 	r.DELETE("/:id", h.Delete)
 	r.PATCH("/:id/restore", h.Restore)
 }
+
+func AttendanceRoutes(r *gin.RouterGroup, h *handler.AttendanceHandler) {
+	r.GET("", h.Paginate)
+}
+
+func PayrollRoutes(r *gin.RouterGroup, h *handler.PayrollHandler) {
+	r.GET("", h.Paginate)
+	r.POST("", h.Store)
+}

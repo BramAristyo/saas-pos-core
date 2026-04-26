@@ -15,13 +15,17 @@ type PayrollRepository struct {
 	DB *gorm.DB
 }
 
+func NewPayrollRepository(db *gorm.DB) *PayrollRepository {
+	return &PayrollRepository{DB: db}
+}
+
 func (r *PayrollRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Payroll, error) {
 	var p []domain.Payroll
 	var totalRows int64
 
 	allowedFields := map[string]string{
 		"employee_name": "employee.name",
-		"created_at":    "created_at",
+		"created_at":    "payrolls.created_at",
 	}
 
 	baseQ := r.DB.Model(&domain.Payroll{}).

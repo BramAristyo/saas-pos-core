@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
-	"gorm.io/gorm"
 )
 
 type Payroll struct {
@@ -19,8 +18,8 @@ type Payroll struct {
 	NetSalary      decimal.Decimal `gorm:"type:decimal(12,2);not null"`  // calc by method receiver
 	Notes          *string         `gorm:"type:text"`
 	CreatedAt      time.Time       `gorm:"autoCreateTime"`
-	UpdatedAt      time.Time       `gorm:"autoUpdateTime"`
-	DeletedAt      gorm.DeletedAt  `gorm:"index"`
+	// UpdatedAt      time.Time       `gorm:"autoUpdateTime"`
+	// DeletedAt      gorm.DeletedAt  `gorm:"index"`
 }
 
 func (p *Payroll) Calculate(as []Attendance) {
