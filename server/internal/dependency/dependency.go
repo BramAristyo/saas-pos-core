@@ -81,7 +81,7 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	attendanceUseCase := usecase.NewAttendanceUseCase(attendanceRepository)
 
 	payrollRepository := repository.NewPayrollRepository(db)
-	payrollUseCase := usecase.NewPayrollUseCase(payrollRepository)
+	payrollUseCase := usecase.NewPayrollUseCase(payrollRepository, attendanceRepository, employeeRepository, auditLogUseCase)
 
 	orderRepository := repository.NewOrderRepository(db)
 	orderUseCase := usecase.NewOrderUseCase(

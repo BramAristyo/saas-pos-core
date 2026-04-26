@@ -24,7 +24,7 @@ type Payroll struct {
 
 func (p *Payroll) Calculate(as []Attendance) {
 	for _, a := range as {
-		p.TotalDeduction.Add(decimal.NewFromFloat(a.DeductionAmount))
+		p.TotalDeduction = p.TotalDeduction.Add(decimal.NewFromFloat(a.DeductionAmount))
 	}
 
 	p.NetSalary = p.BaseSalary.Sub(p.TotalDeduction)

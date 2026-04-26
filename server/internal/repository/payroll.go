@@ -59,7 +59,7 @@ func (r *PayrollRepository) FindById(ctx context.Context, id uuid.UUID) (domain.
 }
 
 func (r *PayrollRepository) Store(ctx context.Context, p domain.Payroll) (domain.Payroll, error) {
-	if err := r.DB.WithContext(ctx).Create(p).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Create(&p).Error; err != nil {
 		return domain.Payroll{}, err
 	}
 
