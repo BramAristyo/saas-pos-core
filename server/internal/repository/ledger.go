@@ -181,7 +181,7 @@ func (r *LedgerRepository) Store(ctx context.Context, ledger domain.Ledger) (dom
 	return ledger, nil
 }
 
-// // ledger with RefType LedgerExpense
+// ledger with RefType LedgerExpense
 func (r *LedgerRepository) ExpenseUpdate(ctx context.Context, expenseId uuid.UUID, ledger domain.Ledger) (domain.Ledger, error) {
 	var existing domain.Ledger
 

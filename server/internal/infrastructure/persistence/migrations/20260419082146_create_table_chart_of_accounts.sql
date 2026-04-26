@@ -4,6 +4,7 @@ CREATE TABLE chart_of_accounts (
     name VARCHAR(100) NOT NULL,
     type VARCHAR(10) NOT NULL CHECK (type IN ('in', 'out')),
     is_system BOOLEAN DEFAULT false,
+    is_operational BOOLEAN DEFAULT true,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMP DEFAULT NULL
