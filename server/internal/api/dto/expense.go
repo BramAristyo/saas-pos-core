@@ -10,14 +10,16 @@ import (
 )
 
 type ExpenseResponse struct {
-	ID          uuid.UUID              `json:"id"`
-	COAID       uuid.UUID              `json:"coaId"`
-	COA         ChartOfAccountResponse `json:"coa"`
-	Amount      decimal.Decimal        `json:"amount"`
-	Description string                 `json:"description"`
-	Date        string                 `json:"date"`
-	DeletedAt   *string                `json:"deletedAt,omitempty"`
-	CreatedAt   string                 `json:"createdAt"`
+	ID    uuid.UUID `json:"id"`
+	COAID uuid.UUID `json:"coaId"`
+	// COA         ChartOfAccountResponse `json:"coa"`
+	COAName     string          `json:"coaName"`
+	COAType     domain.COAType  `json:"coaType"`
+	Amount      decimal.Decimal `json:"amount"`
+	Description string          `json:"description"`
+	Date        string          `json:"date"`
+	DeletedAt   *string         `json:"deletedAt,omitempty"`
+	CreatedAt   string          `json:"createdAt"`
 }
 
 type ExpenseResponsePagination struct {
@@ -67,9 +69,11 @@ func ToUpdateExpenseModel(req *UpdateExpenseRequest) (domain.Expense, error) {
 
 func ToExpenseResponse(e *domain.Expense) ExpenseResponse {
 	resp := ExpenseResponse{
-		ID:          e.ID,
-		COAID:       e.COAID,
-		COA:         ToCOAResponse(&e.COA),
+		ID:      e.ID,
+		COAID:   e.COAID,
+		COAName: e.COA.Name,
+		COAType: e.COA.Type,
+		// COA:         ToCOAResponse(&e.COA),
 		Amount:      e.Amount,
 		Description: e.Description,
 		Date:        e.Date.Format("2006-01-02"),

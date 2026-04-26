@@ -26,7 +26,7 @@ type BundlingPackageResponse struct {
 	DeletedAt     *string                `json:"deletedAt,omitempty"`
 	UpdatedAt     string                 `json:"updatedAt"`
 	CreatedAt     string                 `json:"createdAt"`
-	BundlingItems []BundlingItemResponse `json:"bundlingItems,omitempty"`
+	BundlingItems []BundlingItemResponse `json:"items,omitempty"`
 }
 
 type BundlingPackagePaginationResponse struct {

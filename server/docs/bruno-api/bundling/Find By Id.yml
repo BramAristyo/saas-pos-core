@@ -11,7 +11,7 @@ http:
 runtime:
   variables:
     - name: bundling_id
-      value: 7af5a0fe-9989-43d0-937b-7a4952b6fe2d
+      value: 8d8e8652-5f7b-4b4e-888c-48dd1f403f81
 
 settings:
   encodeUrl: true

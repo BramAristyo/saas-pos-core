@@ -8,6 +8,12 @@ http:
   url: "{{url}}/coa/:id"
   auth: inherit
 
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
 examples:
   - name: success find by id
     request:
