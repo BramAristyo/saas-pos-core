@@ -29,6 +29,16 @@ func (h *COAHandler) GetAll(c *gin.Context) {
 	response.OK(c, res, "success get all coa")
 }
 
+func (h *COAHandler) GetAllOperational(c *gin.Context) {
+	res, err := h.UseCase.GetAllOperational(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success get all coa")
+}
+
 func (h *COAHandler) Paginate(c *gin.Context) {
 	var req filter.PaginationWithInputFilter
 	if err := c.ShouldBindQuery(&req); err != nil {

@@ -32,6 +32,14 @@ func (u *COAUseCase) GetAll(ctx context.Context) ([]dto.ChartOfAccountResponse, 
 	return dto.ToCOAResponses(coas), nil
 }
 
+func (u *COAUseCase) GetAllOperational(ctx context.Context) ([]dto.ChartOfAccountResponse, error) {
+	coas, err := u.Repo.GetlAllOperational(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return dto.ToCOAResponses(coas), nil
+}
+
 func (u *COAUseCase) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (dto.ChartOfAccountResponsePagination, error) {
 	totalRows, coas, err := u.Repo.Paginate(ctx, req)
 	if err != nil {

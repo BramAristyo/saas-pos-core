@@ -29,6 +29,14 @@ func (r *COARepository) GetAll(ctx context.Context) ([]domain.ChartOfAccount, er
 	return coas, nil
 }
 
+func (r *COARepository) GetlAllOperational(ctx context.Context) ([]domain.ChartOfAccount, error) {
+	var coas []domain.ChartOfAccount
+	if err := r.DB.WithContext(ctx).Order("name ASC").Where("is_operational = ?", true).Find(&coas).Error; err != nil {
+		return nil, err
+	}
+	return coas, nil
+}
+
 func (r *COARepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.ChartOfAccount, error) {
 	var totalRows int64
 	coas := make([]domain.ChartOfAccount, 0, req.PaginationInput.PageSize)

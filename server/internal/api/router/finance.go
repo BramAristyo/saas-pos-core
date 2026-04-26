@@ -16,6 +16,7 @@ func ExpenseRoutes(r *gin.RouterGroup, h *handler.ExpenseHandler) {
 
 func COARoutes(r *gin.RouterGroup, h *handler.COAHandler) {
 	r.GET("get-all", h.GetAll)
+	r.GET("get-all/operational", h.GetAllOperational)
 	r.GET("", h.Paginate)
 	r.GET("/:id", h.FindById)
 	r.POST("", h.Store)
