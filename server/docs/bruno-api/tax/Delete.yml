@@ -11,7 +11,7 @@ http:
 examples:
   - name: success delete tax
     request:
-      url: "{{url}}/taxes/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2"
+      url: "{{url}}/taxes/00000000-0000-0000-0000-000000000602"
       method: DELETE
     response:
       status: 200

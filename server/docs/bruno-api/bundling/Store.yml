@@ -17,11 +17,11 @@ http:
         "cogs": 15000,
         "bundlingItems": [
           {
-            "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f1",
+            "productId": "00000000-0000-0000-0000-000000000601",
             "qty": 1
           },
           {
-            "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+            "productId": "00000000-0000-0000-0000-000000000602",
             "qty": 1
           }
         ]
@@ -42,11 +42,11 @@ examples:
             "cogs": 15000,
             "bundlingItems": [
               {
-                "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f1",
+                "productId": "00000000-0000-0000-0000-000000000601",
                 "qty": 1
               },
               {
-                "productId": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+                "productId": "00000000-0000-0000-0000-000000000602",
                 "qty": 1
               }
             ]

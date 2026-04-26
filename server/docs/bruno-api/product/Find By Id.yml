@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/products/01bf6eff-aca4-4a13-af84-94ef96c9f447"
+  url: "{{url}}/products/00000000-0000-0000-0000-000000000601"
   auth: inherit
 
 settings:
@@ -17,7 +17,7 @@ settings:
 examples:
   - name: success get product by id
     request:
-      url: "{{url}}/products/e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1"
+      url: "{{url}}/products/00000000-0000-0000-0000-000000000601"
       method: GET
     response:
       status: 200
@@ -32,10 +32,10 @@ examples:
             "success": true,
             "message": "success get product",
             "data": {
-              "id": "e3056a20-411a-4c2d-94d3-c3c2e6d6c3e1",
-              "category_id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+              "id": "00000000-0000-0000-0000-000000000601",
+              "category_id": "00000000-0000-0000-0000-000000000101",
               "category": {
-                "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+                "id": "00000000-0000-0000-0000-000000000101",
                 "name": "Coffee",
                 "description": "Espresso, brewed, and specialty coffee drinks",
                 "deleted_at": null,

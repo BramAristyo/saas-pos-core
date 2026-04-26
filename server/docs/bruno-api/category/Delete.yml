@@ -13,7 +13,7 @@ http:
 examples:
   - name: success delete
     request:
-      url: "{{url}}/categories/d98569cc-27d1-42fb-8ad2-98aab03e9401"
+      url: "{{url}}/categories/00000000-0000-0000-0000-000000000101"
       method: DELETE
       body:
         type: none
@@ -30,7 +30,7 @@ examples:
             "success": true,
             "message": "success delete category",
             "data": {
-              "id": "d98569cc-27d1-42fb-8ad2-98aab03e9401",
+              "id": "00000000-0000-0000-0000-000000000101",
               "name": "Coffee",
               "description": "All coffee based drinks",
               "deleted_at": "2026-03-10 10:00:00",

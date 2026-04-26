@@ -19,7 +19,7 @@ http:
 examples:
   - name: success update category
     request:
-      url: "{{url}}/categories/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2"
+      url: "{{url}}/categories/00000000-0000-0000-0000-000000000602"
       method: PUT
       body:
         type: json
@@ -42,7 +42,7 @@ examples:
             "success": true,
             "message": "success update category",
             "data": {
-              "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+              "id": "00000000-0000-0000-0000-000000000602",
               "name": "Updated Category",
               "description": "Updated description",
               "deleted_at": null,

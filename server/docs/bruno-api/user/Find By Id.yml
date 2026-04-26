@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/users/b5630983-c284-4859-8928-3e963d6d467b"
+  url: "{{url}}/users/00000000-0000-0000-0000-000000000001"
   auth: inherit
 
 settings:
@@ -17,7 +17,7 @@ settings:
 examples:
   - name: example
     request:
-      url: "{{url}}/users/b5630983-c284-4859-8928-3e963d6d467b"
+      url: "{{url}}/users/00000000-0000-0000-0000-000000000001"
       method: GET
     response:
       status: 200
@@ -36,7 +36,7 @@ examples:
             "success": true,
             "message": "success get user",
             "data": {
-              "id": "b5630983-c284-4859-8928-3e963d6d467b",
+              "id": "00000000-0000-0000-0000-000000000001",
               "name": "Alice Admin",
               "role": "admin",
               "email": "alice.admin@example.com",

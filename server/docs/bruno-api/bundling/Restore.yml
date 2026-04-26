@@ -11,7 +11,7 @@ http:
 examples:
   - name: success restore bundling
     request:
-      url: "{{url}}/bundling/f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2/restore"
+      url: "{{url}}/bundling/00000000-0000-0000-0000-000000000602/restore"
       method: PATCH
     response:
       status: 200

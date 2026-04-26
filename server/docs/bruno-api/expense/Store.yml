@@ -41,7 +41,7 @@ examples:
             "success": true,
             "message": "success create expense",
             "data": {
-              "id": "f4067b21-522b-5d3e-05e4-d4d3f7e7d4f2",
+              "id": "00000000-0000-0000-0000-000000000602",
               "coaId": "e1234567-b890-427d-9880-839004aa21c0",
               "amount": "100000.00",
               "description": "Water Bill",

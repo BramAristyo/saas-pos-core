@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{url}}/modifier-groups/80d3737d-3485-4933-9eeb-cd4ace472dc2"
+  url: "{{url}}/modifier-groups/00000000-0000-0000-0000-000000000201"
   auth: inherit
 
 settings:
