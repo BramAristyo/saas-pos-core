@@ -22,6 +22,7 @@ func SeedAll(db *gorm.DB) {
 	SeedEmployeeData(db)
 	SeedShiftScheduleData(db)
 	SeedAttendanceData(db)
+	SeedPayrollData(db)
 
 	SeedShiftData(db)
 	SeedOrderData(db)
