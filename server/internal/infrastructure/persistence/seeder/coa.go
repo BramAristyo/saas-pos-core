@@ -10,6 +10,12 @@ import (
 func SeedCOAData(db *gorm.DB) {
 	coas := []*domain.ChartOfAccount{
 		{
+			ID:       uuid.MustParse("11111111-1111-1111-1111-111111111110"),
+			Name:     "Sales",
+			Type:     domain.COATypeIn,
+			IsSystem: true,
+		},
+		{
 			ID:       uuid.MustParse("11111111-1111-1111-1111-111111111111"),
 			Name:     "Utilities",
 			Type:     domain.COATypeOut,
