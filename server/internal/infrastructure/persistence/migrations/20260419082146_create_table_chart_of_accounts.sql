@@ -10,15 +10,7 @@ CREATE TABLE chart_of_accounts (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
-ALTER TABLE expenses
-    DROP COLUMN category,
-    ADD COLUMN coa_id UUID NOT NULL REFERENCES chart_of_accounts(id);
-
 INSERT INTO chart_of_accounts (name, type, is_system) VALUES ('Sales', 'in', true);
 
 -- +goose Down
-ALTER TABLE expenses
-    DROP COLUMN coa_id,
-    ADD COLUMN category VARCHAR(100) NOT NULL DEFAULT 'other';
-
 DROP TABLE IF EXISTS chart_of_accounts CASCADE;

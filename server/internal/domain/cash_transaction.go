@@ -27,5 +27,6 @@ type CashTransaction struct {
 	CreatedAt   time.Time      `gorm:"autoCreateTime"`
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 
-	COA ChartOfAccount `gorm:"foreignKey:COAID"`
+	COA   ChartOfAccount `gorm:"foreignKey:COAID"`
+	Shift *Shift         `gorm:"foreignKey:ShiftID"`
 }
