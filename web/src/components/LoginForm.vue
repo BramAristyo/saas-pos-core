@@ -36,7 +36,6 @@ watch([email, password], () => {
 async function handleSubmit() {
   try {
     await authStore.login({ email: email.value, password: password.value })
-    toast.success('Login successful!')
     router.push('/dashboard')
   } catch (err: any) {
     console.error('Login failed:', err)
@@ -61,33 +60,15 @@ async function handleSubmit() {
         </div>
 
         <Field>
-          <FieldLabel for="email" :class="cn(authStore.error && 'text-destructive')"
-            >Email</FieldLabel
-          >
-          <Input
-            id="email"
-            v-model="email"
-            type="email"
-            placeholder="cameliawhite@gmail.com"
-            required
-            :disabled="authStore.loading"
-            :aria-invalid="!!authStore.error"
-          />
+          <FieldLabel for="email" :class="cn(authStore.error && 'text-destructive')">Email</FieldLabel>
+          <Input id="email" v-model="email" type="email" placeholder="cameliawhite@gmail.com" required
+            :disabled="authStore.loading" :aria-invalid="!!authStore.error" />
         </Field>
 
         <Field>
-          <FieldLabel for="password" :class="cn(authStore.error && 'text-destructive')"
-            >Password</FieldLabel
-          >
-          <Input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="••••••••"
-            required
-            :disabled="authStore.loading"
-            :aria-invalid="!!authStore.error"
-          />
+          <FieldLabel for="password" :class="cn(authStore.error && 'text-destructive')">Password</FieldLabel>
+          <Input id="password" v-model="password" type="password" placeholder="••••••••" required
+            :disabled="authStore.loading" :aria-invalid="!!authStore.error" />
         </Field>
 
         <Field>
