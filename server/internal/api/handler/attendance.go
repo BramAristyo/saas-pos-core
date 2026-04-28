@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/BramAristyo/saas-pos-core/server/internal/api/dto"
 	"github.com/BramAristyo/saas-pos-core/server/internal/usecase"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/response"
@@ -31,4 +32,20 @@ func (h *AttendanceHandler) Paginate(c *gin.Context) {
 	}
 
 	response.OKPaginate(c, res.Data, res.Meta)
+}
+
+func (h *AttendanceHandler) Store(c *gin.Context) {
+	var req dto.AttendanceRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(err)
+		return
+	}
+
+	res, err := h.usecase.Store(c.Request.Context(), req)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.Created(c, res, "success create attendance")
 }

@@ -52,6 +52,13 @@ func SeedDiscountData(db *gorm.DB) {
 			Type:  domain.Percentage,
 			Value: decimal.NewFromFloat(25),
 		},
+		{
+			ID:             uuid.MustParse("00000000-0000-0000-0000-000000000408"),
+			Name:           "Happy Custom Discount",
+			Type:           domain.Fixed,
+			Value:          decimal.NewFromFloat(0.0),
+			IsCustomAmount: true,
+		},
 	}
 
 	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&discounts)

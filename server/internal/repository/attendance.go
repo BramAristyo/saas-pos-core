@@ -59,3 +59,10 @@ func (r *AttendanceRepository) GetByEmployeeID(ctx context.Context, employeeId u
 
 	return attendance, nil
 }
+
+func (r *AttendanceRepository) Store(ctx context.Context, a *domain.Attendance) (domain.Attendance, error) {
+	if err := r.DB.WithContext(ctx).Create(a).Error; err != nil {
+		return domain.Attendance{}, err
+	}
+	return *a, nil
+}

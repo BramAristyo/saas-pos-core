@@ -25,5 +25,5 @@ type Product struct {
 
 	Category         *Category         `gorm:"foreignKey:CategoryID"`
 	ProductModifiers []ProductModifier `gorm:"foreignKey:ProductID"`
-	BundlingItems    []BundlingItem    `gorm:"foreignKey:ProductID"`
+	// BundlingItems    []BundlingItem    `gorm:"foreignKey:ProductID"`
 }

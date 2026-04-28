@@ -17,6 +17,17 @@ func EmployeeRoutes(r *gin.RouterGroup, h *handler.EmployeeHandler) {
 
 func AttendanceRoutes(r *gin.RouterGroup, h *handler.AttendanceHandler) {
 	r.GET("", h.Paginate)
+	r.POST("", h.Store)
+}
+
+func ShiftScheduleRoutes(r *gin.RouterGroup, h *handler.ShiftScheduleHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/all", h.GetAll)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.PUT("/:id", h.Update)
+	r.DELETE("/:id", h.Delete)
+	r.PATCH("/:id/restore", h.Restore)
 }
 
 func PayrollRoutes(r *gin.RouterGroup, h *handler.PayrollHandler) {

@@ -39,6 +39,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		employees := v1.Group("/employees", middleware.Authentication(cfg))
 		attendances := v1.Group("/attendances", middleware.Authentication(cfg))
 		payrolls := v1.Group("/payrolls", middleware.Authentication(cfg))
+		shiftSchedules := v1.Group("/shift-schedules", middleware.Authentication(cfg))
 
 		v1.POST("/", h.Auth.Login)
 		v1.GET("/me", middleware.Authentication(cfg), h.Auth.Me)
@@ -59,5 +60,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		EmployeeRoutes(employees, h.Employee)
 		AttendanceRoutes(attendances, h.Attendance)
 		PayrollRoutes(payrolls, h.Payroll)
+		ShiftScheduleRoutes(shiftSchedules, h.ShiftSchedule)
 	}
 }

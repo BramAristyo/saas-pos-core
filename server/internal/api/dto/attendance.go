@@ -2,6 +2,7 @@ package dto
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
 	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
@@ -21,11 +22,69 @@ type AttendanceResponse struct {
 	Notes             *string         `json:"notes"`
 	LateMinutes       int             `json:"lateMinutes"`
 	DeductionAmount   decimal.Decimal `json:"deductionAmount"`
+	DeletedAt         *string         `json:"deletedAt,omitempty"`
 }
 
 type AttendanceResponsePagination struct {
 	Data []AttendanceResponse `json:"data"`
 	Meta filter.Meta          `json:"meta"`
+}
+
+type AttendanceRequest struct {
+	EmployeeID      string  `json:"employeeId" binding:"required,uuid"`
+	Date            string  `json:"date" binding:"required"`
+	CheckIn         *string `json:"checkIn"`
+	CheckOut        *string `json:"checkOut"`
+	ShiftScheduleID *string `json:"shiftScheduleId" binding:"omitempty,uuid"`
+	Notes           *string `json:"notes"`
+}
+
+func ToAttendanceDomain(req AttendanceRequest) (domain.Attendance, error) {
+	empID, _ := uuid.Parse(req.EmployeeID)
+
+	var shiftID *uuid.UUID
+	if req.ShiftScheduleID != nil {
+		id, _ := uuid.Parse(*req.ShiftScheduleID)
+		shiftID = &id
+	}
+
+	date, err := time.Parse("2006-01-02", req.Date)
+	if err != nil {
+		return domain.Attendance{}, fmt.Errorf("invalid date format: %w", err)
+	}
+
+	var checkIn *time.Time
+	if req.CheckIn != nil {
+		t, err := time.Parse("2006-01-02 15:04:05", *req.CheckIn)
+		if err != nil {
+			t, err = time.Parse("2006-01-02 15:04", *req.CheckIn)
+			if err != nil {
+				return domain.Attendance{}, fmt.Errorf("invalid checkIn format: %w", err)
+			}
+		}
+		checkIn = &t
+	}
+
+	var checkOut *time.Time
+	if req.CheckOut != nil {
+		t, err := time.Parse("2006-01-02 15:04:05", *req.CheckOut)
+		if err != nil {
+			t, err = time.Parse("2006-01-02 15:04", *req.CheckOut)
+			if err != nil {
+				return domain.Attendance{}, fmt.Errorf("invalid checkOut format: %w", err)
+			}
+		}
+		checkOut = &t
+	}
+
+	return domain.Attendance{
+		EmployeeID:      empID,
+		Date:            date,
+		CheckIn:         checkIn,
+		CheckOut:        checkOut,
+		ShiftScheduleID: shiftID,
+		Notes:           req.Notes,
+	}, nil
 }
 
 func ToAttendanceResponses(as []domain.Attendance) []AttendanceResponse {
@@ -64,6 +123,12 @@ func ToAttendanceResponses(as []domain.Attendance) []AttendanceResponse {
 			shiftName = a.ShiftSchedule.Name
 		}
 
+		var delAt *string
+		if a.DeletedAt.Valid {
+			t := a.DeletedAt.Time.Format("2006-01-02 15:04:05")
+			delAt = &t
+		}
+
 		res = append(res, AttendanceResponse{
 			ID:                a.ID,
 			EmployeeCode:      empCode,
@@ -76,6 +141,7 @@ func ToAttendanceResponses(as []domain.Attendance) []AttendanceResponse {
 			Notes:             a.Notes,
 			LateMinutes:       a.LateMinutes,
 			DeductionAmount:   decimal.NewFromFloat(a.DeductionAmount),
+			DeletedAt:         delAt,
 		})
 	}
 

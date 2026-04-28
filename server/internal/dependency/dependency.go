@@ -27,6 +27,7 @@ type Handlers struct {
 	Employee      *handler.EmployeeHandler
 	Attendance    *handler.AttendanceHandler
 	Payroll       *handler.PayrollHandler
+	ShiftSchedule *handler.ShiftScheduleHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -74,7 +75,10 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	employeeUseCase := usecase.NewEmployeeUseCase(employeeRepository, auditLogUseCase)
 
 	attendanceRepository := repository.NewAttendanceRepository(db)
-	attendanceUseCase := usecase.NewAttendanceUseCase(attendanceRepository)
+	shiftScheduleRepository := repository.NewShiftScheduleRepository(db)
+	attendanceUseCase := usecase.NewAttendanceUseCase(attendanceRepository, shiftScheduleRepository)
+
+	shiftScheduleUseCase := usecase.NewShiftScheduleUseCase(shiftScheduleRepository)
 
 	payrollRepository := repository.NewPayrollRepository(db)
 	payrollUseCase := usecase.NewPayrollUseCase(payrollRepository, attendanceRepository, employeeRepository, auditLogUseCase)
@@ -113,5 +117,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		Employee:      handler.NewEmployeeHandler(employeeUseCase),
 		Attendance:    handler.NewAttendanceHandler(attendanceUseCase),
 		Payroll:       handler.NewPayrollHandler(payrollUseCase),
+		ShiftSchedule: handler.NewShiftScheduleHandler(shiftScheduleUseCase),
 	}
 }
