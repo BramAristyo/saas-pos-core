@@ -1,0 +1,19 @@
+info:
+  name: Paginate
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{url}}/shift-schedules"
+  auth: inherit
+  body:
+    type: none
+    data: ""
+
+query:
+  ~page: 1
+  ~pageSize: 10
+  ~search: Morning
+  ~sortBy: name
+  ~sortOrder: asc

@@ -1,0 +1,15 @@
+info:
+  name: Delete
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{url}}/shift-schedules/:id"
+  auth: inherit
+  body:
+    type: none
+    data: ""
+
+params:path:
+  id: 00000000-0000-0000-0000-000000000901

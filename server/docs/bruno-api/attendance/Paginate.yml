@@ -1,7 +1,7 @@
 info:
   name: Paginate
   type: http
-  seq: 1
+  seq: 2
 
 http:
   method: GET
@@ -18,44 +18,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-
-examples:
-  - name: example
-    request:
-      url: "{{url}}/attendances"
-      method: GET
-    response:
-      status: 200
-      statusText: OK
-      headers:
-        - name: content-type
-          value: application/json; charset=utf-8
-      body:
-        type: json
-        data: |-
-          {
-            "success": true,
-            "data": [
-              {
-                "id": "a1b2c3d4-e5f6-4a5b-bcde-f1e2d3c4b5a6",
-                "employeeCode": "EMP-001",
-                "employeeName": "John Doe",
-                "date": "2026-04-25",
-                "checkIn": "04:20",
-                "checkOut": "12:20",
-                "totalWorkMinutes": "480",
-                "shiftScheduleName": "Pagi",
-                "notes": null,
-                "lateMinutes": 0,
-                "deductionAmount": "0"
-              }
-            ],
-            "meta": {
-              "page": 1,
-              "pageSize": 10,
-              "totalRows": 2,
-              "totalPages": 1,
-              "hasNext": false,
-              "hasPrev": false
-            }
-          }
