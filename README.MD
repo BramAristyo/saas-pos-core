@@ -1,10 +1,10 @@
 # Point of Sales Core
 
-This repository contains the core components of the Mawish Software-as-a-Service (SaaS) Point of Sale (POS) system. The project is engineered with a primary focus on backend stability and scalability using Go, complemented by a modern web interface built with Vue.
+This repository contains the core components of a customized Point of Sale (POS) system specifically developed for **Mawish Coffee**, Semarang. The project is engineered with a primary focus on backend stability and scalability using Go, complemented by a modern web interface built with Vue.
 
 ## Project Overview
 
-The Mawish POS ecosystem is divided into two primary modules:
+The Mawish POS ecosystem is a tailored solution for coffee shop operations, divided into two primary modules:
 - **Server:** A high-performance RESTful API implementation developed in Go, following strict architectural standards.
 - **Web:** A responsive administrative dashboard built with Vue 3 and Tailwind CSS. The frontend development process was significantly accelerated through collaborative implementation with Gemini Agentic.
 
