@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from '@/components/ui/sidebar'
-import { LucideFlower, ChevronDown, ChevronUp, LayoutDashboard, Settings2 } from 'lucide-vue-next'
+import { Store, ChevronDown, ChevronUp, LayoutDashboard, Package, Receipt } from 'lucide-vue-next'
 import SearchForm from '@/components/SearchForm.vue'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import NavUser from '@/components/NavUser.vue'
@@ -35,7 +35,7 @@ const route = useRoute()
 const data = {
   navMain: [
     {
-      title: 'Getting Started',
+      title: 'Overview',
       url: '#',
       icon: LayoutDashboard,
       items: [
@@ -46,32 +46,35 @@ const data = {
       ],
     },
     {
-      title: 'Master Data',
+      title: 'Catalog',
       url: '#',
-      icon: Settings2,
+      icon: Package,
       items: [
-        // {
-        //   title: 'Product',
-        //   url: '/products',
-        // },
         {
-          title: 'Category',
+          title: 'Categories',
           url: '/categories',
         },
         {
-          title: 'Modifier',
+          title: 'Modifiers',
           url: '/modifiers',
         },
+      ],
+    },
+    {
+      title: 'Transactions',
+      url: '#',
+      icon: Receipt,
+      items: [
         {
-          title: 'Tax',
+          title: 'Taxes',
           url: '/taxes',
         },
         {
-          title: 'Sales Type',
+          title: 'Sales Types',
           url: '/sales-types',
         },
         {
-          title: 'Promo',
+          title: 'Discounts',
           url: '/discounts',
         },
       ],
@@ -146,9 +149,8 @@ watch(
           <SidebarMenuButton size="lg" as-child>
             <a href="#">
               <div
-                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
-              >
-                <LucideFlower class="size-4" />
+                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Store class="size-4" />
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
                 <span class="font-medium">Point of Sales</span>
@@ -163,29 +165,16 @@ watch(
     <SidebarContent>
       <SidebarGroup>
         <SidebarMenu>
-          <Collapsible
-            v-for="item in filteredNavMain"
-            :key="item.title"
+          <Collapsible v-for="item in filteredNavMain" :key="item.title"
             :open="searchQuery ? true : openSectionTitle === item.title"
-            @update:open="(val) => handleToggle(item.title, val)"
-            class="group/collapsible"
-          >
+            @update:open="(val) => handleToggle(item.title, val)" class="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>
-                <SidebarMenuButton
-                  :is-active="isParentActive(item)"
-                  :class="{ 'font-bold': isParentActive(item) }"
-                >
+                <SidebarMenuButton :is-active="isParentActive(item)" :class="{ 'font-bold': isParentActive(item) }">
                   <component :is="item.icon" v-if="item.icon" class="size-4 mr-2" />
                   {{ item.title }}
-                  <ChevronDown
-                    v-if="!searchQuery"
-                    class="ml-auto group-data-[state=open]/collapsible:hidden"
-                  />
-                  <ChevronUp
-                    v-if="!searchQuery"
-                    class="ml-auto group-data-[state=closed]/collapsible:hidden"
-                  />
+                  <ChevronDown v-if="!searchQuery" class="ml-auto group-data-[state=open]/collapsible:hidden" />
+                  <ChevronUp v-if="!searchQuery" class="ml-auto group-data-[state=closed]/collapsible:hidden" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent v-if="item.items.length">
