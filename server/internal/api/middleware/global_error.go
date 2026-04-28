@@ -39,6 +39,7 @@ func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 				return
 			}
 
+			// validation
 			var ve validator.ValidationErrors
 			if errors.As(err, &ve) {
 				log.Warn("Validation Failed", "path", c.Request.URL.Path, "fields", ve.Error())
@@ -47,6 +48,7 @@ func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 				return
 			}
 
+			// validation custom
 			var customFieldErrs *usecase_errors.CustomFieldErrors
 			if errors.As(err, &customFieldErrs) {
 				log.Warn("Unique/Custom Field Violation", "path", c.Request.URL.Path)
@@ -75,12 +77,14 @@ func ErrorHandler(log *logger.ZapLogger) gin.HandlerFunc {
 				return
 			}
 
+			// resource not found
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				log.Warn("Resource Not Found", "path", c.Request.URL.Path, "error", err.Error())
 				response.Error(c, http.StatusNotFound, "resource not found", err)
 				return
 			}
 
+			// error duplicate
 			if usecase_errors.IsUniqueViolation(err) {
 				log.Warn("Duplicate Key Violation", "path", c.Request.URL.Path, "error", err.Error())
 				response.Error(c, http.StatusConflict, "data already exists", err)

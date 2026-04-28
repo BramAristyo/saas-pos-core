@@ -1,0 +1,20 @@
+info:
+  name: Store
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{url}}/shift-schedules"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Morning Shift",
+        "startTime": "08:00",
+        "endTime": "17:00",
+        "toleranceMinutes": 15,
+        "lateIntervalMinutes": 15,
+        "lateDeductionAmount": 5000
+      }

@@ -1,0 +1,30 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/taxes/{{tax_id}}"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated Tax",
+        "percentage": 12}
+
+examples:
+  - name: success update tax
+    request:
+      url: "{{url}}/taxes/00000000-0000-0000-0000-000000000602"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Tax",
+            "percentage": 12}
+    response:
+      status: 200
+      statusText: OK

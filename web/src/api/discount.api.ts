@@ -6,6 +6,8 @@ export const discountApi = {
   paginate: (params: BaseFilterRequest) =>
     http.get<any, BaseResponse<Discount[]>>('/discounts', { params }),
 
+  getAll: () => http.get<any, BaseResponse<Discount[]>>('/discounts/get-all'),
+
   getById: (id: string) => http.get<any, BaseResponse<Discount>>(`/discounts/${id}`),
 
   create: (payload: CreateDiscountRequest) =>

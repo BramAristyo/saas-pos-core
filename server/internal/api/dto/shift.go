@@ -8,12 +8,13 @@ import (
 )
 
 type ShiftExpenseResponse struct {
-	ID          uuid.UUID                `json:"id"`
-	ShiftID     uuid.UUID                `json:"shiftId"`
-	Type        domain.ShiftExpensesType `json:"type"`
-	Amount      decimal.Decimal          `json:"amount"`
-	Description *string                  `json:"description"`
-	CreatedAt   string                   `json:"createdAt"`
+	ID          uuid.UUID              `json:"id"`
+	ShiftID     uuid.UUID              `json:"shiftId"`
+	COAID       uuid.UUID              `json:"coaId"`
+	COA         ChartOfAccountResponse `json:"coa"`
+	Amount      decimal.Decimal        `json:"amount"`
+	Description *string                `json:"description"`
+	CreatedAt   string                 `json:"createdAt"`
 }
 
 type ShiftResponse struct {
@@ -47,25 +48,14 @@ type CloseShiftRequest struct {
 }
 
 type ShiftExpenseRequest struct {
-	ID          *string                  `json:"id" binding:"omitempty,uuid"`
-	Type        domain.ShiftExpensesType `json:"type" binding:"required,oneof=in out"`
-	Amount      decimal.Decimal          `json:"amount" binding:"required,gt=0"`
-	Description *string                  `json:"description" binding:"omitempty,max=255"`
+	ID          *string         `json:"id" binding:"omitempty,uuid"`
+	COAID       uuid.UUID       `json:"coaId" binding:"required"`
+	Amount      decimal.Decimal `json:"amount" binding:"required,gt=0"`
+	Description *string         `json:"description" binding:"omitempty,max=255"`
 }
 
 type UpsertShiftExpensesRequest struct {
 	Expenses []ShiftExpenseRequest `json:"expenses" binding:"required,min=1,dive"`
-}
-
-func ToShiftExpenseResponse(se *domain.ShiftExpenses) ShiftExpenseResponse {
-	return ShiftExpenseResponse{
-		ID:          se.ID,
-		ShiftID:     se.ShiftID,
-		Type:        se.Type,
-		Amount:      se.Amount,
-		Description: se.Description,
-		CreatedAt:   se.CreatedAt.Format("2006-01-02 15:04:05"),
-	}
 }
 
 func ToShiftResponse(s *domain.Shift) ShiftResponse {
@@ -81,24 +71,18 @@ func ToShiftResponse(s *domain.Shift) ShiftResponse {
 		closedByUser = &res
 	}
 
-	expenses := make([]ShiftExpenseResponse, 0, len(s.ShiftExpenses))
-	for _, e := range s.ShiftExpenses {
-		expenses = append(expenses, ToShiftExpenseResponse(&e))
-	}
-
 	return ShiftResponse{
-		ID:            s.ID,
-		OpenedBy:      s.OpenedBy,
-		OpenedByUser:  ToUserResponse(&s.OpenedByUser),
-		ClosedBy:      s.ClosedBy,
-		ClosedByUser:  closedByUser,
-		OpeningCash:   s.OpeningCash,
-		ClosingCash:   s.ClosingCash,
-		Notes:         s.Notes,
-		OpenedAt:      s.OpenedAt.Format("2006-01-02 15:04:05"),
-		ClosedAt:      closedAt,
-		CreatedAt:     s.CreatedAt.Format("2006-01-02 15:04:05"),
-		ShiftExpenses: expenses,
+		ID:           s.ID,
+		OpenedBy:     s.OpenedBy,
+		OpenedByUser: ToUserResponse(&s.OpenedByUser),
+		ClosedBy:     s.ClosedBy,
+		ClosedByUser: closedByUser,
+		OpeningCash:  s.OpeningCash,
+		ClosingCash:  s.ClosingCash,
+		Notes:        s.Notes,
+		OpenedAt:     s.OpenedAt.Format("2006-01-02 15:04:05"),
+		ClosedAt:     closedAt,
+		CreatedAt:    s.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
 

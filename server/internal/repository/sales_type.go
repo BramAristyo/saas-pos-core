@@ -49,6 +49,16 @@ func (r *SalesTypeRepository) Paginate(ctx context.Context, req filter.Paginatio
 	return totalRows, salesTypes, nil
 }
 
+func (r *SalesTypeRepository) GetAll(ctx context.Context) ([]domain.SalesType, error) {
+	var salesTypes []domain.SalesType
+
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&salesTypes).Error; err != nil {
+		return []domain.SalesType{}, err
+	}
+
+	return salesTypes, nil
+}
+
 func (r *SalesTypeRepository) FindById(ctx context.Context, id uuid.UUID) (domain.SalesType, error) {
 	var existing domain.SalesType
 	if err := r.DB.WithContext(ctx).

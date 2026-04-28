@@ -11,6 +11,7 @@ type TaxResponse struct {
 	ID         uuid.UUID       `json:"id"`
 	Name       string          `json:"name"`
 	Percentage decimal.Decimal `json:"percentage"`
+	Status     bool            `json:"status"`
 	DeletedAt  *string         `json:"deletedAt,omitempty"`
 	CreatedAt  string          `json:"createdAt"`
 }
@@ -49,6 +50,7 @@ func ToTaxResponse(t *domain.Tax) TaxResponse {
 		ID:         t.ID,
 		Name:       t.Name,
 		Percentage: t.Percentage,
+		Status:     t.Status,
 		CreatedAt:  t.CreatedAt.Format("2006-01-02 15:04:05"),
 	}
 

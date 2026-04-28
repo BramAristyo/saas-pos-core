@@ -1,0 +1,46 @@
+info:
+  name: Delete
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{url}}/products/b8022c1d-a2fa-4331-987e-ea049f6c46a7"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: success delete
+    request:
+      url: "{{url}}/products/00000000-0000-0000-0000-000000000601"
+      method: DELETE
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success deactivate product",
+            "data": {
+              "id": "00000000-0000-0000-0000-000000000601",
+              "category_id": "00000000-0000-0000-0000-000000000101",
+              "name": "Espresso",
+              "description": "Double shot of rich, smooth espresso",
+              "price": "3.5",
+              "cogs": "0.5",
+              "image_url": "https://example.com/espresso.jpg",
+              "deleted_at": "2026-03-10 10:00:00",
+              "created_at": "2026-03-18 10:00:00",
+              "updated_at": "2026-03-18 10:20:00"
+            }
+          }

@@ -1,0 +1,15 @@
+info:
+  name: Restore
+  type: http
+  seq: 7
+
+http:
+  method: PATCH
+  url: "{{url}}/shift-schedules/:id/restore"
+  auth: inherit
+  body:
+    type: none
+    data: ""
+
+params:path:
+  id: 00000000-0000-0000-0000-000000000901

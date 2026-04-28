@@ -17,26 +17,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Plus, Search } from 'lucide-vue-next'
+import { MoreHorizontal, Plus, Search, Tag } from 'lucide-vue-next'
 import type { Category } from '@/types/category.types'
 import CategoryFormDialog from './CategoryFormDialog.vue'
 import CategoryDeleteDialog from './CategoryDeleteDialog.vue'
 import { useSearch } from '@/composables/common/useSearch'
 import { usePagination } from '@/composables/common/usePagination'
+import { useFormatter } from '@/composables/common/useFormatter'
 import { Input } from '@/components/ui/input'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationItem,
-  PaginationLast,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
+import { CommonPagination } from '@/components/common/pagination'
 import { SMALL_SIZE } from '@/constant/pagination.constant'
+import { CommonEmpty } from '@/components/common/empty'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const categoryStore = useCategoryStore()
+const { formatDate } = useFormatter()
 
 const isFormOpen = ref(false)
 const isDeleteOpen = ref(false)
@@ -99,25 +94,18 @@ function handleDelete(category: Category) {
       </div>
     </div>
 
-    <div
-      v-if="categoryStore.loading && categoryStore.categories.length === 0"
-      class="flex justify-center py-8"
-    >
-      <p>Loading...</p>
-    </div>
+    <TableSkeleton v-if="true && categoryStore.categories.length === 0" :column-count="4" />
 
-    <div
+    <CommonEmpty
       v-else-if="categoryStore.categories.length === 0"
-      class="flex flex-col items-center justify-center py-12 border rounded-lg bg-muted/20"
-    >
-      <p class="text-muted-foreground mb-4">
-        {{ search ? 'No categories match your search' : 'No categories found' }}
-      </p>
-      <Button v-if="!search" variant="outline" @click="handleAdd"
-        >Create your first category</Button
-      >
-      <Button v-else variant="outline" @click="search = ''">Clear search</Button>
-    </div>
+      title="Categories"
+      description="Start by creating your first category to organize your products."
+      :icon="Tag"
+      :search="search"
+      add-button-text="Create Category"
+      @add="handleAdd"
+      @clear-search="search = ''"
+    />
 
     <div v-else class="space-y-4">
       <div class="overflow-hidden">
@@ -134,7 +122,7 @@ function handleDelete(category: Category) {
             <TableRow v-for="category in categoryStore.categories" :key="category.id">
               <TableCell class="font-medium">{{ category.name }}</TableCell>
               <TableCell>{{ category.description }}</TableCell>
-              <TableCell>{{ category.createdAt }}</TableCell>
+              <TableCell>{{ formatDate(category.createdAt) }}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
@@ -158,41 +146,14 @@ function handleDelete(category: Category) {
         </Table>
       </div>
 
-      <div
-        v-if="categoryStore.meta && categoryStore.meta.totalPages > 1"
-        class="flex items-center justify-between w-full mt-4"
-      >
-        <div></div>
-        <Pagination
-          v-slot="{ page: currentPage }"
-          :total="categoryStore.meta.totalRows"
-          :sibling-count="1"
-          :items-per-page="pageSize"
-          show-edges
-          :page="page"
-          @update:page="goToPage"
-        >
-          <PaginationContent v-slot="{ items }">
-            <PaginationFirst />
-            <PaginationPrevious />
-
-            <template v-for="(item, index) in items">
-              <PaginationItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                <Button
-                  class="w-8 h-8 p-0"
-                  :variant="item.value === currentPage ? 'default' : 'outline'"
-                >
-                  {{ item.value }}
-                </Button>
-              </PaginationItem>
-              <PaginationEllipsis v-else :key="item.type" :index="index" />
-            </template>
-
-            <PaginationNext />
-            <PaginationLast />
-          </PaginationContent>
-        </Pagination>
-      </div>
+      <CommonPagination
+        v-if="categoryStore.meta"
+        :page="page"
+        :page-size="pageSize"
+        :total-rows="categoryStore.meta.totalRows"
+        :total-pages="categoryStore.meta.totalPages"
+        @update:page="goToPage"
+      />
     </div>
 
     <CategoryFormDialog

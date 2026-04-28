@@ -1,0 +1,33 @@
+info:
+  name: Store
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{url}}/sales-types"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Dine In",
+        "charges": [
+          {
+            "name": "Service Charge",
+            "type": "percentage",
+            "amount": -800
+          },
+          {
+            "name": "PB1",
+            "type": "percentage",
+            "amount": 10
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

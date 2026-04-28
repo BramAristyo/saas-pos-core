@@ -1,0 +1,34 @@
+info:
+  name: Login
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{url}}/"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "camelia@cameliawhite.my.id",
+        "password": "password"
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: url
+      value: http://localhost:9000/api/v1
+  scripts:
+    - type: after-response
+      code: |-
+        const data = res.getBody();
+        if (data && data.data && data.data.token) {
+          bru.setEnvVar("token", data.data.token);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,63 @@
+info:
+  name: Update
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{url}}/employees/:id"
+  body: json
+  auth: inherit
+
+body:json:
+  {
+    "name": "Jane Doe Updated",
+    "phone": "08123456780",
+    "baseSalary": 5500000,
+    "pin": "4321"
+  }
+
+vars:
+  pre-request:
+    id: 00000000-0000-0000-0000-000000000801
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/employees/00000000-0000-0000-0000-000000000801"
+      method: PUT
+      body:
+        {
+          "name": "Jane Doe Updated",
+          "phone": "08123456780",
+          "baseSalary": 5500000,
+          "pin": "4321"
+        }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": {
+              "id": "00000000-0000-0000-0000-000000000801",
+              "code": "EMP001",
+              "name": "Jane Doe Updated",
+              "phone": "08123456780",
+              "baseSalary": 5500000,
+              "hasChangedPin": true,
+              "createdAt": "2026-04-25 10:00:00",
+              "updatedAt": "2026-04-25 12:00:00"
+            }
+          }

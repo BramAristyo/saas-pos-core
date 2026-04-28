@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"sync"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
 	"github.com/BramAristyo/saas-pos-core/server/internal/infrastructure/persistence/database"
@@ -43,6 +44,16 @@ func (r *DiscountRepository) Paginate(ctx context.Context, req filter.Pagination
 	}
 
 	return totalRows, d, nil
+}
+
+func (r *DiscountRepository) GetAll(ctx context.Context) ([]domain.Discount, error) {
+	var discounts []domain.Discount
+
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&discounts).Error; err != nil {
+		return []domain.Discount{}, err
+	}
+
+	return discounts, nil
 }
 
 func (r *DiscountRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Discount, error) {
@@ -110,32 +121,59 @@ func (r *DiscountRepository) Restore(ctx context.Context, id uuid.UUID) error {
 	return result.Error
 }
 
-func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.DiscountReport, error) {
-	var totalRows int64
-
+func (r *DiscountRepository) Usage(ctx context.Context, req filter.PaginationWithInputFilter) ([]domain.DiscountReport, error) {
 	allowedFields := map[string]string{
-		"created_at": "o.created_at",
+		"created_at": "d.created_at",
 	}
 
 	q := database.BuildQuery(r.DB.WithContext(ctx).Table("discounts d"), req.DynamicFilter, nil, allowedFields)
 
-	q = q.
-		Select("d.name, COUNT(o.id) as count, COALESCE(SUM(o.subtotal), 0) as gross_discount, COALESCE(SUM(o.discount_amount), 0) as discount").
-		Joins("LEFT JOIN orders o ON o.discount_id = d.id AND o.status = ?", domain.OrderCompleted).
-		Group("d.name")
+	var (
+		orderLevelResults []domain.DiscountReport
+		itemLevelResults  []domain.DiscountReport
+		errOrder          error
+		errItem           error
+		wg                sync.WaitGroup
+	)
 
-	if err := q.Count(&totalRows).Error; err != nil {
-		return 0, nil, err
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		errOrder = q.Session(&gorm.Session{}).
+			Select("d.name, COUNT(o.id) as count, COALESCE(SUM(o.subtotal), 0) as gross_discount, COALESCE(SUM(o.discount_amount), 0) as discount").
+			Joins("LEFT JOIN orders o ON o.discount_id = d.id AND o.status = ?", domain.OrderCompleted).
+			// Where("d.level = ?", "order").
+			Group("d.id, d.name").
+			Scan(&orderLevelResults).Error
+	}()
+
+	go func() {
+		defer wg.Done()
+		errItem = q.Session(&gorm.Session{}).
+			Select("d.name, COUNT(oi.id) as count, COALESCE(SUM(oi.subtotal + oi.discount_amount), 0) as gross_discount, COALESCE(SUM(oi.discount_amount), 0) as discount").
+			Joins("LEFT JOIN order_items oi ON oi.discount_id = d.id").
+			Joins("LEFT JOIN orders o ON oi.order_id = o.id AND o.status = ?", domain.OrderCompleted).
+			// Where("d.level = ?", "item").
+			Group("d.id, d.name").
+			Scan(&itemLevelResults).Error
+	}()
+
+	wg.Wait()
+
+	if errOrder != nil {
+		return nil, errOrder
+	}
+	if errItem != nil {
+		return nil, errItem
 	}
 
-	if totalRows == 0 {
-		return 0, nil, nil
-	}
+	var mergedResults []domain.DiscountReport
 
-	var results []domain.DiscountReport
-	if err := q.Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Scan(&results).Error; err != nil {
-		return 0, nil, err
-	}
+	mergedResults = make([]domain.DiscountReport, 0, len(orderLevelResults)+len(itemLevelResults))
 
-	return totalRows, results, nil
+	mergedResults = append(mergedResults, orderLevelResults...)
+	mergedResults = append(mergedResults, itemLevelResults...)
+
+	return mergedResults, nil
 }

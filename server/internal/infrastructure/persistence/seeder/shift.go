@@ -2,81 +2,39 @@ package seeder
 
 import (
 	"time"
-
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func SeedShiftData(db *gorm.DB) {
-	var users []domain.User
-	db.Limit(2).Find(&users)
-
-	if len(users) < 1 {
-		return
-	}
-
-	openedBy := users[0].ID
-	var closedBy *uuid.UUID
-	if len(users) > 1 {
-		closedBy = &users[1].ID
-	}
-
-	closedAt := time.Now()
-	openingCash := decimal.NewFromFloat(500000)
-	closingCash := decimal.NewFromFloat(1500000)
-	notes := "Shift pagi"
-
-	desc1 := "Beli bahan baku"
-	desc2 := "Tip dari pelanggan"
-	desc3 := "Beli plastik"
+	adminID := uuid.MustParse("00000000-0000-0000-0000-000000000001")
+	openAt1 := time.Date(2024, 1, 1, 8, 0, 0, 0, time.Local)
+	closeAt1 := time.Date(2024, 1, 1, 16, 0, 0, 0, time.Local)
+	openAt2 := time.Date(2024, 1, 1, 16, 0, 0, 0, time.Local)
+	
+	notes := "Shift Pagi"
+	cash1 := decimal.NewFromInt(1500000)
 
 	shifts := []domain.Shift{
 		{
-			OpenedBy:    openedBy,
-			ClosedBy:    closedBy,
-			OpeningCash: openingCash,
-			ClosingCash: &closingCash,
+			ID:          uuid.MustParse("00000000-0000-0000-0000-000000001101"),
+			OpenedBy:    adminID,
+			ClosedBy:    &adminID,
+			OpeningCash: decimal.NewFromInt(500000),
+			ClosingCash: &cash1,
 			Notes:       &notes,
-			OpenedAt:    time.Now().Add(-8 * time.Hour),
-			ClosedAt:    &closedAt,
-			ShiftExpenses: []domain.ShiftExpenses{
-				{
-					Type:        domain.CashOut,
-					Amount:      decimal.NewFromFloat(50000),
-					Description: &desc1,
-				},
-				{
-					Type:        domain.CashIn,
-					Amount:      decimal.NewFromFloat(20000),
-					Description: &desc2,
-				},
-				{
-					Type:        domain.CashOut,
-					Amount:      decimal.NewFromFloat(15000),
-					Description: &desc3,
-				},
-			},
+			OpenedAt:    openAt1,
+			ClosedAt:    &closeAt1,
 		},
 		{
-			OpenedBy:    openedBy,
-			OpeningCash: decimal.NewFromFloat(300000),
-			OpenedAt:    time.Now().Add(-2 * time.Hour),
-			ShiftExpenses: []domain.ShiftExpenses{
-				{
-					Type:        domain.CashOut,
-					Amount:      decimal.NewFromFloat(30000),
-					Description: &desc1,
-				},
-				{
-					Type:        domain.CashIn,
-					Amount:      decimal.NewFromFloat(10000),
-					Description: &desc2,
-				},
-			},
+			ID:          uuid.MustParse("00000000-0000-0000-0000-000000001102"),
+			OpenedBy:    adminID,
+			OpeningCash: decimal.NewFromInt(1500000),
+			OpenedAt:    openAt2,
 		},
 	}
-
-	db.Create(&shifts)
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&shifts)
 }

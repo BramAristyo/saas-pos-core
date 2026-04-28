@@ -1,0 +1,35 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/discounts/{{discount_id}}"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated Discount",
+        "type": "fixed",
+        "value": 10,
+        "startDate": "2026-07-01",
+        "endDate": "2026-07-31"}
+
+examples:
+  - name: success update discount
+    request:
+      url: "{{url}}/discounts/00000000-0000-0000-0000-000000000602"
+      method: PUT
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Updated Discount",
+            "type": "fixed",
+            "value": 10,
+            "startDate": "2026-07-01",
+            "endDate": "2026-07-31"}
+    response:
+      status: 200

@@ -1,0 +1,43 @@
+info:
+  name: Find By Id
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{url}}/employees/:id"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/employees/00000000-0000-0000-0000-000000000801"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": {
+              "id": "00000000-0000-0000-0000-000000000801",
+              "code": "EMP001",
+              "name": "John Doe",
+              "phone": "08123456789",
+              "baseSalary": 5000000,
+              "hasChangedPin": true,
+              "createdAt": "2026-04-25 10:00:00",
+              "updatedAt": "2026-04-25 10:00:00"
+            }
+          }

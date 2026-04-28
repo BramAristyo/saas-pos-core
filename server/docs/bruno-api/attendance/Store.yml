@@ -1,0 +1,25 @@
+info:
+  name: Store
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{url}}/attendances"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "employeeId": "00000000-0000-0000-0000-000000000801",
+        "date": "2024-05-21",
+        "checkIn": "2024-05-21 07:05:00",
+        "shiftScheduleId": "00000000-0000-0000-0000-000000000901",
+        "notes": "Arrived slightly late due to traffic"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

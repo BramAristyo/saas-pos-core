@@ -1,0 +1,43 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{url}}/modifier-groups/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated Drink Modifier Group",
+        "isRequired": true,
+        "options": [
+          {
+            "id": "e4f8a3c1-b2d3-4e5f-a6b7-c8d9e0f1a2b3",
+            "name": "Less Ice",
+            "priceAdjustment": "0",
+            "cogsAdjustment": "0"
+          },
+          {
+            "name": "Extra Ice",
+            "priceAdjustment": "1000",
+            "cogsAdjustment": "200"
+          }
+        ],
+        "productModifiers": [
+          "550e8400-e29b-41d4-a716-446655440000",
+          "6789abcd-ef01-2345-6789-abcdef012345"
+        ]
+      }
+
+params:
+  path:
+    id: 12345678-1234-1234-1234-123456789012
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

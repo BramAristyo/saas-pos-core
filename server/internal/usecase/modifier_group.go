@@ -38,26 +38,40 @@ func (u *ModifierGroupUseCase) Paginate(ctx context.Context, req filter.Paginati
 	return dto.ToModifierGroupResponsePagination(modifierGroups, req, totalRows), nil
 }
 
-func (u *ModifierGroupUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierGroupResponse, error) {
-	mg, err := u.Repo.FindById(ctx, id)
+func (u *ModifierGroupUseCase) GetAll(ctx context.Context) ([]dto.ModifierGroupResponse, error) {
+	mgs, err := u.Repo.GetAll(ctx)
 	if err != nil {
-		return dto.ModifierGroupResponse{}, err
+		return []dto.ModifierGroupResponse{}, err
 	}
 
-	return dto.ToModifierGroupResponse(&mg), nil
+	res := make([]dto.ModifierGroupResponse, 0, len(mgs))
+	for i := range mgs {
+		res = append(res, dto.ToModifierGroupResponse(&mgs[i]))
+	}
+
+	return res, nil
 }
 
-func (u *ModifierGroupUseCase) Store(ctx context.Context, req dto.CreateModifierGroupRequest) (dto.ModifierGroupResponse, error) {
+func (u *ModifierGroupUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.ModifierGroupDetailResponse, error) {
+	mg, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.ModifierGroupDetailResponse{}, err
+	}
+
+	return dto.ToModifierGroupDetailResponse(&mg), nil
+}
+
+func (u *ModifierGroupUseCase) Store(ctx context.Context, req dto.CreateModifierGroupRequest) (dto.ModifierGroupDetailResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	mg := dto.ToModifierGroupModel(&req)
 	stored, err := u.Repo.Store(ctx, &mg)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.ModifierGroupResponse{}, &usecase_errors.CustomFieldErrors{
+			return dto.ModifierGroupDetailResponse{}, &usecase_errors.CustomFieldErrors{
 				{
 					Property: "Name",
 					Tag:      "unique",
@@ -66,7 +80,13 @@ func (u *ModifierGroupUseCase) Store(ctx context.Context, req dto.CreateModifier
 				},
 			}
 		}
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
+	}
+
+	// Fetch detail for response
+	detail, err := u.Repo.FindById(ctx, stored.ID)
+	if err != nil {
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
@@ -77,20 +97,20 @@ func (u *ModifierGroupUseCase) Store(ctx context.Context, req dto.CreateModifier
 		Description: "User created a new modifier group: " + stored.Name,
 	})
 
-	return dto.ToModifierGroupResponse(&stored), nil
+	return dto.ToModifierGroupDetailResponse(&detail), nil
 }
 
-func (u *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierGroupRequest) (dto.ModifierGroupResponse, error) {
+func (u *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto.UpdateModifierGroupRequest) (dto.ModifierGroupDetailResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	mg := dto.ToUpdateModifierGroupModel(&req)
 	updated, err := u.Repo.Update(ctx, id, &mg)
 	if err != nil {
 		if usecase_errors.IsUniqueViolation(err) {
-			return dto.ModifierGroupResponse{}, &usecase_errors.CustomFieldErrors{
+			return dto.ModifierGroupDetailResponse{}, &usecase_errors.CustomFieldErrors{
 				{
 					Property: "Name",
 					Tag:      "unique",
@@ -99,7 +119,7 @@ func (u *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto
 				},
 			}
 		}
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
@@ -110,7 +130,7 @@ func (u *ModifierGroupUseCase) Update(ctx context.Context, id uuid.UUID, req dto
 		Description: "User updated modifier group: " + updated.Name,
 	})
 
-	return dto.ToModifierGroupResponse(&updated), nil
+	return dto.ToModifierGroupDetailResponse(&updated), nil
 }
 
 func (u *ModifierGroupUseCase) Delete(ctx context.Context, id uuid.UUID) error {
@@ -119,6 +139,7 @@ func (u *ModifierGroupUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
+	// Fetch before delete to get name for log
 	mg, err := u.Repo.FindById(ctx, id)
 	if err != nil {
 		return err
@@ -139,19 +160,19 @@ func (u *ModifierGroupUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (u *ModifierGroupUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.ModifierGroupResponse, error) {
+func (u *ModifierGroupUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.ModifierGroupDetailResponse, error) {
 	userId, err := helper.ExtractUserID(ctx)
 	if err != nil {
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	if err := u.Repo.Restore(ctx, id); err != nil {
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	mg, err := u.Repo.FindById(ctx, id)
 	if err != nil {
-		return dto.ModifierGroupResponse{}, err
+		return dto.ModifierGroupDetailResponse{}, err
 	}
 
 	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
@@ -162,5 +183,5 @@ func (u *ModifierGroupUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.M
 		Description: "User restored modifier group: " + mg.Name,
 	})
 
-	return dto.ToModifierGroupResponse(&mg), nil
+	return dto.ToModifierGroupDetailResponse(&mg), nil
 }

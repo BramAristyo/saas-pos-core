@@ -13,4 +13,4 @@ CREATE TABLE shifts (
 );
 
 -- +goose Down
-DROP TABLE IF EXISTS shifts;
+DROP TABLE IF EXISTS shifts CASCADE;

@@ -12,6 +12,7 @@ type Tax struct {
 	ID         uuid.UUID `gorm:"primaryKey;default:gen_random_uuid()"`
 	Name       string
 	Percentage decimal.Decimal
+	Status     bool
 	CreatedAt  time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt  time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt  gorm.DeletedAt `gorm:"index"`

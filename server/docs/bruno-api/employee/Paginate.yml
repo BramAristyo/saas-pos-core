@@ -1,0 +1,58 @@
+info:
+  name: Paginate
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{url}}/employees"
+  auth: inherit
+
+query:
+  ~page: 1
+  ~pageSize: 10
+  ~search: 
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/employees"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "data": [
+              {
+                "id": "00000000-0000-0000-0000-000000000801",
+                "code": "EMP001",
+                "name": "John Doe",
+                "phone": "08123456789",
+                "baseSalary": 5000000,
+                "hasChangedPin": true,
+                "createdAt": "2026-04-25 10:00:00",
+                "updatedAt": "2026-04-25 10:00:00"
+              }
+            ],
+            "meta": {
+              "page": 1,
+              "pageSize": 10,
+              "totalRows": 1,
+              "totalPages": 1,
+              "hasNext": false,
+              "hasPrev": false
+            }
+          }

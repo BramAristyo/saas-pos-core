@@ -1,0 +1,17 @@
+info:
+  name: Delete
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{url}}/discounts/{{discount_id}}"
+  auth: inherit
+
+examples:
+  - name: success delete discount
+    request:
+      url: "{{url}}/discounts/00000000-0000-0000-0000-000000000602"
+      method: DELETE
+    response:
+      status: 200

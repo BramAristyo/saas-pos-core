@@ -37,6 +37,16 @@ func (h *ModifierGroupHandler) Paginate(c *gin.Context) {
 	response.OKPaginate(c, res.Data, res.Meta)
 }
 
+func (h *ModifierGroupHandler) GetAll(c *gin.Context) {
+	res, err := h.UseCase.GetAll(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success get all modifier groups")
+}
+
 func (h *ModifierGroupHandler) FindById(c *gin.Context) {
 	id, err := helper.ParseUUID(c)
 	if err != nil {

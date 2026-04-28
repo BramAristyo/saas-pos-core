@@ -38,6 +38,15 @@ func (u *SalesTypeUseCase) Paginate(ctx context.Context, req filter.PaginationWi
 	return dto.ToSalesTypeResponsePagination(responses, req, totalRows), nil
 }
 
+func (u *SalesTypeUseCase) GetAll(ctx context.Context) ([]dto.SalesTypeResponse, error) {
+	salesTypes, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.SalesTypeResponse{}, err
+	}
+
+	return dto.ToSalesTypeResponses(salesTypes), nil
+}
+
 func (u *SalesTypeUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.SalesTypeResponse, error) {
 	salesType, err := u.Repo.FindById(ctx, id)
 	if err != nil {

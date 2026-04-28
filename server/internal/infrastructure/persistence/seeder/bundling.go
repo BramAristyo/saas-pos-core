@@ -2,47 +2,38 @@ package seeder
 
 import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 func SeedBundlingData(db *gorm.DB) {
-	var products []domain.Product
-	db.Limit(5).Find(&products)
-
-	if len(products) < 2 {
-		return
-	}
-
-	description1 := "Perfect morning combo"
+	pkgID := uuid.MustParse("00000000-0000-0000-0000-000000000701")
+	desc := "Perfect morning combo"
+	
 	bundlingPackage := domain.BundlingPackage{
+		ID:          pkgID,
 		Name:        "Breakfast Bundle",
-		Description: &description1,
+		Description: &desc,
 		Price:       decimal.NewFromInt(35000),
 		Cogs:        decimal.NewFromInt(15000),
 	}
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&bundlingPackage)
 
-	if err := db.Where(domain.BundlingPackage{Name: "Breakfast Bundle"}).FirstOrCreate(&bundlingPackage).Error; err != nil {
-		return
-	}
-
-	bundlingItems := []domain.BundlingItem{
+	items := []domain.BundlingItem{
 		{
-			BundlingPackageID: bundlingPackage.ID,
-			ProductID:         products[0].ID,
+			ID:                uuid.MustParse("00000000-0000-0000-0000-000000000711"),
+			BundlingPackageID: pkgID,
+			ProductID:         uuid.MustParse("00000000-0000-0000-0000-000000000601"), // Espresso
 			Qty:               1,
 		},
 		{
-			BundlingPackageID: bundlingPackage.ID,
-			ProductID:         products[1].ID,
+			ID:                uuid.MustParse("00000000-0000-0000-0000-000000000712"),
+			BundlingPackageID: pkgID,
+			ProductID:         uuid.MustParse("00000000-0000-0000-0000-000000000604"), // Croissant
 			Qty:               1,
 		},
 	}
-
-	for _, item := range bundlingItems {
-		db.Where(domain.BundlingItem{
-			BundlingPackageID: item.BundlingPackageID,
-			ProductID:         item.ProductID,
-		}).FirstOrCreate(&item)
-	}
+	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&items)
 }

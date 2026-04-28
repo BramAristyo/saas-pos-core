@@ -12,15 +12,49 @@ type SalesSummary struct {
 }
 
 type GrossProfit struct {
-	GrossSales  decimal.Decimal
-	Discounts   decimal.Decimal
-	NetSales    decimal.Decimal
-	Cogs        decimal.Decimal
-	GrossProfit decimal.Decimal
+	GrossSales            decimal.Decimal
+	Discounts             decimal.Decimal
+	NetSales              decimal.Decimal
+	NetSalesPercentage    decimal.Decimal
+	Cogs                  decimal.Decimal
+	CogsPercentage        decimal.Decimal
+	GrossProfit           decimal.Decimal
+	GrossProfitPercentage decimal.Decimal
 }
 
 func (gp *GrossProfit) CalculateGrossProfit() {
 	gp.GrossProfit = gp.NetSales.Sub(gp.Cogs)
+}
+
+func (gp *GrossProfit) PercentageCalculation() {
+	if gp.GrossSales.IsZero() {
+		return
+	}
+
+	hundred := decimal.NewFromInt(100)
+
+	gp.NetSalesPercentage = gp.NetSales.Div(gp.GrossSales).Mul(hundred)
+	gp.CogsPercentage = gp.Cogs.Div(gp.GrossSales).Mul(hundred)
+	gp.GrossProfitPercentage = gp.GrossProfit.Div(gp.GrossSales).Mul(hundred)
+}
+
+type DiscountReportWihFooter struct {
+	TotalCount         int64
+	TotalGrossDiscount decimal.Decimal
+	Discounts          []DiscountReport
+}
+
+func (dr *DiscountReportWihFooter) CalculateTotal() {
+	totalCount := int64(0)
+	totalGrossDiscount := decimal.NewFromInt(0)
+
+	for _, disc := range dr.Discounts {
+		totalCount = totalCount + disc.Count
+		totalGrossDiscount = totalGrossDiscount.Add(disc.GrossDiscount)
+	}
+
+	dr.TotalCount = totalCount
+	dr.TotalGrossDiscount = totalGrossDiscount
 }
 
 type DiscountReport struct {

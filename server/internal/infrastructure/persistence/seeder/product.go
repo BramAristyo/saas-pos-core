@@ -1,21 +1,16 @@
 package seeder
 
 import (
-	"math/rand"
-
+	"fmt"
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 func SeedProductData(db *gorm.DB) {
-	var categories []domain.Category
-	db.Find(&categories)
-
-	if len(categories) == 0 {
-		return
-	}
+	categoryCoffeeID := uuid.MustParse("00000000-0000-0000-0000-000000000101")
 
 	productNames := []string{
 		"Espresso", "Latte", "Green Tea", "Croissant", "Turkey Sandwich",
@@ -25,42 +20,18 @@ func SeedProductData(db *gorm.DB) {
 		"Club Sandwich", "Beef Burger", "Margherita Pizza", "Pasta Carbonara", "Lemonade",
 		"Smoothies", "Hot Chocolate", "Scone", "Quiche", "Chicken Caesar Wrap",
 	}
-	productDescriptions := []string{
-		"Strong coffee", "Milk coffee", "Refreshing tea", "Buttery pastry", "Hearty sandwich",
-		"Rich and creamy coffee", "Classic black coffee", "Chocolate-flavored latte", "Velvety smooth coffee", "Slow-steeped iced coffee",
-		"Bergamot-infused black tea", "Calming herbal tea", "Sweet and refreshing", "Freshly baked with real berries", "Gooey and sweet",
-		"Toasted and savory", "Healthy and delicious", "Fresh greens and parmesan", "Comforting and melty", "Nutritious and flavorful",
-		"Classic triple-decker", "Juicy beef patty", "Simple and authentic", "Creamy and savory", "Zesty and tart",
-		"Mixed berry blend", "Rich and warming", "Classic English pastry", "Savory custard tart", "Fresh and filling",
-	}
-
-	productPrices := []decimal.Decimal{
-		decimal.NewFromInt(20000), decimal.NewFromInt(28000), decimal.NewFromInt(22000), decimal.NewFromInt(18000), decimal.NewFromInt(45000),
-		decimal.NewFromInt(32000), decimal.NewFromInt(22000), decimal.NewFromInt(38000), decimal.NewFromInt(35000), decimal.NewFromInt(30000),
-		decimal.NewFromInt(25000), decimal.NewFromInt(25000), decimal.NewFromInt(28000), decimal.NewFromInt(22000), decimal.NewFromInt(15000),
-		decimal.NewFromInt(32000), decimal.NewFromInt(55000), decimal.NewFromInt(48000), decimal.NewFromInt(42000), decimal.NewFromInt(45000),
-		decimal.NewFromInt(65000), decimal.NewFromInt(85000), decimal.NewFromInt(95000), decimal.NewFromInt(88000), decimal.NewFromInt(20000),
-		decimal.NewFromInt(35000), decimal.NewFromInt(30000), decimal.NewFromInt(18000), decimal.NewFromInt(45000), decimal.NewFromInt(42000),
-	}
-
-	productCogs := []decimal.Decimal{
-		decimal.NewFromInt(8000), decimal.NewFromInt(12000), decimal.NewFromInt(9000), decimal.NewFromInt(7000), decimal.NewFromInt(18000),
-		decimal.NewFromInt(14000), decimal.NewFromInt(9000), decimal.NewFromInt(16000), decimal.NewFromInt(15000), decimal.NewFromInt(12000),
-		decimal.NewFromInt(10000), decimal.NewFromInt(10000), decimal.NewFromInt(12000), decimal.NewFromInt(9000), decimal.NewFromInt(6000),
-		decimal.NewFromInt(14000), decimal.NewFromInt(22000), decimal.NewFromInt(20000), decimal.NewFromInt(18000), decimal.NewFromInt(20000),
-		decimal.NewFromInt(28000), decimal.NewFromInt(40000), decimal.NewFromInt(45000), decimal.NewFromInt(42000), decimal.NewFromInt(8000),
-		decimal.NewFromInt(15000), decimal.NewFromInt(12000), decimal.NewFromInt(7000), decimal.NewFromInt(20000), decimal.NewFromInt(18000),
-	}
 
 	products := make([]domain.Product, len(productNames))
-	for i := range productNames {
-		category := categories[rand.Intn(len(categories))]
+	for i, name := range productNames {
+		idStr := fmt.Sprintf("00000000-0000-0000-0000-0000000006%02d", i+1)
+		desc := "Description for " + name
 		products[i] = domain.Product{
-			Name:        productNames[i],
-			Description: &productDescriptions[i],
-			Price:       productPrices[i],
-			Cogs:        productCogs[i],
-			CategoryID:  category.ID,
+			ID:          uuid.MustParse(idStr),
+			Name:        name,
+			Description: &desc,
+			Price:       decimal.NewFromInt(int64(20000 + (i * 1000))),
+			Cogs:        decimal.NewFromInt(int64(8000 + (i * 500))),
+			CategoryID:  categoryCoffeeID,
 		}
 	}
 	db.Clauses(clause.OnConflict{DoNothing: true}).Create(&products)

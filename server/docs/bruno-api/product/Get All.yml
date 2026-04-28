@@ -1,0 +1,370 @@
+info:
+  name: Get All
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{url}}/products/get-all"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/products/get-all"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+        - name: date
+          value: Fri, 17 Apr 2026 04:34:36 GMT
+        - name: transfer-encoding
+          value: chunked
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "successfully get products",
+            "data": [
+              {
+                "id": "96bf2507-4a70-4187-8d84-121ec7c72161",
+                "categoryId": "4853a6e3-3cfa-4edd-8513-fb9868e4993a",
+                "name": "Espresso",
+                "description": "Strong coffee",
+                "price": "20000",
+                "cogs": "8000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "2dce448b-0bfb-408d-b45e-ae988a0a6856",
+                "categoryId": "99199874-e518-4912-82ce-884146a2b1ca",
+                "name": "Latte",
+                "description": "Milk coffee",
+                "price": "28000",
+                "cogs": "12000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "296fd972-f8c6-4018-ad6d-19c3aa1bfbd3",
+                "categoryId": "8c1e5a97-dd0c-44d2-8c28-c8c046cdfffb",
+                "name": "Green Tea",
+                "description": "Refreshing tea",
+                "price": "22000",
+                "cogs": "9000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "3975a60d-2d74-423d-ad81-4c4859942c1c",
+                "categoryId": "7f2079f6-dc8f-4c0b-8f41-3f76493198d5",
+                "name": "Croissant",
+                "description": "Buttery pastry",
+                "price": "18000",
+                "cogs": "7000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "21080ef6-49e6-43d8-bf55-c0b0835c04df",
+                "categoryId": "f141e8b9-2997-456a-9f51-314acfc83448",
+                "name": "Turkey Sandwich",
+                "description": "Hearty sandwich",
+                "price": "45000",
+                "cogs": "18000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "4e3f8ed5-b5f6-4826-a345-cb2bee803921",
+                "categoryId": "8c1e5a97-dd0c-44d2-8c28-c8c046cdfffb",
+                "name": "Cappuccino",
+                "description": "Rich and creamy coffee",
+                "price": "32000",
+                "cogs": "14000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "a9505b90-d09c-48b1-a52e-5266e9b37741",
+                "categoryId": "27e8378b-6494-419d-bd4f-e9ce30e47c0a",
+                "name": "Americano",
+                "description": "Classic black coffee",
+                "price": "22000",
+                "cogs": "9000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "c134544f-a460-4c89-b2ed-8f2d42d15a32",
+                "categoryId": "2d216326-efb2-4717-91d6-ed9ce8cc387a",
+                "name": "Mocha",
+                "description": "Chocolate-flavored latte",
+                "price": "38000",
+                "cogs": "16000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "a78106d0-a7eb-41de-a61a-ec2ad486e734",
+                "categoryId": "50bf1153-4765-4f1e-98fb-a9fa58c86dac",
+                "name": "Flat White",
+                "description": "Velvety smooth coffee",
+                "price": "35000",
+                "cogs": "15000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "4b984ee8-d022-4c3f-ae86-fd58a49da863",
+                "categoryId": "e680bc20-ae9b-4e15-b669-a476fc7e324f",
+                "name": "Cold Brew",
+                "description": "Slow-steeped iced coffee",
+                "price": "30000",
+                "cogs": "12000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "6aa23a95-1533-493f-93f1-ae98194a1c77",
+                "categoryId": "b901f7fc-f9d5-4498-9791-c3eda75cf6c7",
+                "name": "Earl Grey Tea",
+                "description": "Bergamot-infused black tea",
+                "price": "25000",
+                "cogs": "10000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "8a44a18c-ad0f-443d-9282-961010e64952",
+                "categoryId": "2d216326-efb2-4717-91d6-ed9ce8cc387a",
+                "name": "Chamomile Tea",
+                "description": "Calming herbal tea",
+                "price": "25000",
+                "cogs": "10000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "4aa6edc7-2554-42fc-b778-416a9c443b3e",
+                "categoryId": "f141e8b9-2997-456a-9f51-314acfc83448",
+                "name": "Iced Peach Tea",
+                "description": "Sweet and refreshing",
+                "price": "28000",
+                "cogs": "12000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "1e36b736-ac90-4fd6-9105-8b9303fa04cc",
+                "categoryId": "edd3f34a-3475-4739-9f8a-acee24c0cb15",
+                "name": "Blueberry Muffin",
+                "description": "Freshly baked with real berries",
+                "price": "22000",
+                "cogs": "9000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "e41fef92-4a0b-40f8-8e6b-bd00106c44c0",
+                "categoryId": "ecf99ff8-e763-4ee8-9c9f-6f7622da65fa",
+                "name": "Chocolate Chip Cookie",
+                "description": "Gooey and sweet",
+                "price": "15000",
+                "cogs": "6000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "59bc0f84-93e1-444e-9f04-342adaf5a158",
+                "categoryId": "82ab8de1-fa24-4204-9f66-f8f2c83b00e4",
+                "name": "Bagel with Cream Cheese",
+                "description": "Toasted and savory",
+                "price": "32000",
+                "cogs": "14000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "5f75091c-d0df-4fe8-8f36-25bcc838bb62",
+                "categoryId": "27e8378b-6494-419d-bd4f-e9ce30e47c0a",
+                "name": "Avocado Toast",
+                "description": "Healthy and delicious",
+                "price": "55000",
+                "cogs": "22000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "736c00a3-c766-41b0-827b-c6ffb4cc5cfc",
+                "categoryId": "7a9b0d89-8419-4221-99af-28fca1734355",
+                "name": "Caesar Salad",
+                "description": "Fresh greens and parmesan",
+                "price": "48000",
+                "cogs": "20000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "2e04d113-928e-444b-8f59-9801d9ead1cc",
+                "categoryId": "7a9b0d89-8419-4221-99af-28fca1734355",
+                "name": "Grilled Cheese",
+                "description": "Comforting and melty",
+                "price": "42000",
+                "cogs": "18000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "e62ce739-1c02-4cb1-a9bf-20e1de4f232a",
+                "categoryId": "7a9b0d89-8419-4221-99af-28fca1734355",
+                "name": "Veggie Wrap",
+                "description": "Nutritious and flavorful",
+                "price": "45000",
+                "cogs": "20000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "6653d0ce-2ca5-41c0-8eab-09a7f268a5ed",
+                "categoryId": "50bf1153-4765-4f1e-98fb-a9fa58c86dac",
+                "name": "Club Sandwich",
+                "description": "Classic triple-decker",
+                "price": "65000",
+                "cogs": "28000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "cca89f80-aeb0-4dda-861f-7e3d75914535",
+                "categoryId": "6df047ef-7b00-41c6-a980-cc298c0bb834",
+                "name": "Beef Burger",
+                "description": "Juicy beef patty",
+                "price": "85000",
+                "cogs": "40000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "5d9eb395-650f-4bd1-8e1e-224345b03a7f",
+                "categoryId": "27e8378b-6494-419d-bd4f-e9ce30e47c0a",
+                "name": "Margherita Pizza",
+                "description": "Simple and authentic",
+                "price": "95000",
+                "cogs": "45000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "f542a8e2-67e1-4973-bfb1-50917f6e04a1",
+                "categoryId": "c031796c-82ba-47d3-9b65-361889ecf000",
+                "name": "Pasta Carbonara",
+                "description": "Creamy and savory",
+                "price": "88000",
+                "cogs": "42000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "916705f4-31ac-4b37-8707-23f8f993cb7a",
+                "categoryId": "c031796c-82ba-47d3-9b65-361889ecf000",
+                "name": "Lemonade",
+                "description": "Zesty and tart",
+                "price": "20000",
+                "cogs": "8000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "29d8b135-4a42-430e-a877-3afdf08a5847",
+                "categoryId": "99199874-e518-4912-82ce-884146a2b1ca",
+                "name": "Smoothies",
+                "description": "Mixed berry blend",
+                "price": "35000",
+                "cogs": "15000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "92359905-a9b0-41b6-bdc5-a79aa7a52e32",
+                "categoryId": "8c1e5a97-dd0c-44d2-8c28-c8c046cdfffb",
+                "name": "Hot Chocolate",
+                "description": "Rich and warming",
+                "price": "30000",
+                "cogs": "12000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "24ca4c23-37e0-4276-8b32-690ff0dbe385",
+                "categoryId": "4c6dc6bd-6e64-432e-9759-18929b69db46",
+                "name": "Scone",
+                "description": "Classic English pastry",
+                "price": "18000",
+                "cogs": "7000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "d15ea037-b711-4968-ae2f-2e5e949d5c8a",
+                "categoryId": "f141e8b9-2997-456a-9f51-314acfc83448",
+                "name": "Quiche",
+                "description": "Savory custard tart",
+                "price": "45000",
+                "cogs": "20000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              },
+              {
+                "id": "4b79eade-d137-41d2-94cb-18b813b15f7d",
+                "categoryId": "ecf99ff8-e763-4ee8-9c9f-6f7622da65fa",
+                "name": "Chicken Caesar Wrap",
+                "description": "Fresh and filling",
+                "price": "42000",
+                "cogs": "18000",
+                "imageUrl": null,
+                "createdAt": "2026-04-15 11:19:27",
+                "updatedAt": "2026-04-15 11:19:27"
+              }
+            ]
+          }

@@ -1,0 +1,17 @@
+info:
+  name: Restore
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{url}}/discounts/{{discount_id}}/restore"
+  auth: inherit
+
+examples:
+  - name: success restore discount
+    request:
+      url: "{{url}}/discounts/00000000-0000-0000-0000-000000000602/restore"
+      method: PATCH
+    response:
+      status: 200

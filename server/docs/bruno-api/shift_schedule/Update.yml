@@ -1,0 +1,23 @@
+info:
+  name: Update
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{url}}/shift-schedules/:id"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Morning Shift Updated",
+        "startTime": "08:30",
+        "endTime": "17:30",
+        "toleranceMinutes": 10,
+        "lateIntervalMinutes": 10,
+        "lateDeductionAmount": 10000
+      }
+
+params:path:
+  id: 00000000-0000-0000-0000-000000000901

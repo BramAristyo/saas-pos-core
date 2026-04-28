@@ -35,6 +35,15 @@ func (u *DiscountUseCase) Paginate(ctx context.Context, req filter.PaginationWit
 	return dto.ToDiscountResponsePagination(discountResponses, req, totalRows), nil
 }
 
+func (u *DiscountUseCase) GetAll(ctx context.Context) ([]dto.DiscountResponse, error) {
+	discounts, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.DiscountResponse{}, err
+	}
+
+	return dto.ToDiscountResponses(discounts), nil
+}
+
 func (u *DiscountUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.DiscountResponse, error) {
 	discount, err := u.Repo.FindById(ctx, id)
 	if err != nil {

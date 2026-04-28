@@ -1,27 +1,31 @@
 package seeder
 
 import (
-	"sync"
-
 	"gorm.io/gorm"
 )
 
 func SeedAll(db *gorm.DB) {
+	// Refactored with hardcoded UUIDs and deterministic logic
 	SeedUserData(db)
+	SeedCOAData(db)
 
-	var wg sync.WaitGroup
-	wg.Add(5)
-	go func() { defer wg.Done(); SeedCategoryData(db) }()
-	go func() { defer wg.Done(); SeedModifierGroupData(db) }()
-	go func() { defer wg.Done(); SeedTaxData(db) }()
-	go func() { defer wg.Done(); SeedDiscountData(db) }()
-	go func() { defer wg.Done(); SeedSalesTypeData(db) }()
-	wg.Wait()
+	SeedCategoryData(db)
+	SeedModifierGroupData(db)
+	SeedTaxData(db)
+	SeedDiscountData(db)
+	SeedSalesTypeData(db)
 
 	SeedProductData(db)
 	SeedProductModifierData(db)
 	SeedBundlingData(db)
 
+	SeedEmployeeData(db)
+	SeedShiftScheduleData(db)
+	SeedAttendanceData(db)
+	SeedPayrollData(db)
+
 	SeedShiftData(db)
 	SeedOrderData(db)
+
+	SeedLedgerData(db)
 }

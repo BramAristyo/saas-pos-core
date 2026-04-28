@@ -21,6 +21,16 @@ func NewProductRepository(db *gorm.DB) *ProductRepository {
 	}
 }
 
+func (r *ProductRepository) GetAll(ctx context.Context) ([]domain.Product, error) {
+	var products []domain.Product
+
+	if err := r.DB.WithContext(ctx).Order("created_at DESC").Find(&products).Error; err != nil {
+		return []domain.Product{}, err
+	}
+
+	return products, nil
+}
+
 func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationWithInputFilter) (int64, []domain.Product, error) {
 	p := make([]domain.Product, 0, req.PaginationInput.PageSize)
 	var totalRows int64
@@ -41,7 +51,7 @@ func (r *ProductRepository) Paginate(ctx context.Context, req filter.PaginationW
 
 	if err := q.
 		Preload("Category").
-		Preload("ProductModifiers.ModifierGroup.ModifierOptions").
+		// Preload("ProductModifiers.ModifierGroup.ModifierOptions").
 		Offset(req.Offset()).Limit(req.PaginationInput.PageSize).Find(&p).Error; err != nil {
 		return 0, nil, err
 	}

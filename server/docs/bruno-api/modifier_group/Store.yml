@@ -1,0 +1,37 @@
+info:
+  name: Store
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{url}}/modifier-groups"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Drink Ice Level",
+        "isRequired": true,
+        "options": [
+          {
+            "name": "No Ice",
+            "priceAdjustment": "0",
+            "cogsAdjustment": "0"
+          },
+          {
+            "name": "Normal Ice",
+            "priceAdjustment": "0",
+            "cogsAdjustment": "0"
+          }
+        ],
+        "productModifiers": [
+          "550e8400-e29b-41d4-a716-446655440000"
+        ]
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

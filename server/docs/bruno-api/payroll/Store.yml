@@ -1,0 +1,59 @@
+info:
+  name: Store
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{url}}/payrolls"
+  body:
+    type: json
+    data: |-
+      {
+        "employeeID": "00000000-0000-0000-0000-000000000801",
+        "periodStart": "2024-01-01",
+        "periodEnd": "2024-01-31"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: success create payroll
+    request:
+      url: "{{url}}/payrolls"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "employeeID": "00000000-0000-0000-0000-000000000801",
+            "periodStart": "2024-01-01",
+            "periodEnd": "2024-01-31"
+          }
+    response:
+      status: 201
+      statusText: Created
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success create payroll",
+            "data": {
+              "id": "00000000-0000-0000-0000-000000001703",
+              "employeeName": "John Doe",
+              "employeeCode": "EMP-001",
+              "periodStart": "2024-01-01 00:00:00",
+              "periodEnd": "2024-01-31 00:00:00",
+              "baseSalary": "5000000",
+              "totalDeduction": "0",
+              "netSalary": "5000000",
+              "notes": null,
+              "createdAt": "2026-04-26 13:45:00"
+            }
+          }

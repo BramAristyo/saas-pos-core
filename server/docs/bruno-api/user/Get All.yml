@@ -1,0 +1,80 @@
+info:
+  name: "Get All "
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{url}}/users"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: example
+    request:
+      url: "{{url}}/users"
+      method: GET
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: content-type
+          value: application/json; charset=utf-8
+        - name: date
+          value: Wed, 18 Mar 2026 01:35:22 GMT
+        - name: content-length
+          value: "899"
+      body:
+        type: json
+        data: |-
+          {
+            "success": true,
+            "message": "success get users",
+            "data": [
+              {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "name": "Alice Admin",
+                "role": "admin",
+                "email": "alice.admin@example.com",
+                "deletedAt": null,
+                "createdAt": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "b608029a-ad5d-46db-a007-798e0b080e80",
+                "name": "Bob Cashier",
+                "role": "cashier",
+                "email": "bob.cashier@example.com",
+                "deletedAt": null,
+                "createdAt": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "69fb85d9-2489-464d-93b2-dc690a48cc2b",
+                "name": "Charlie Cashier",
+                "role": "cashier",
+                "email": "charlie.cashier@example.com",
+                "deletedAt": null,
+                "createdAt": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "1978e49c-2593-46bf-b3cb-4cb175e3477c",
+                "name": "Diana Admin",
+                "role": "admin",
+                "email": "diana.admin@example.com",
+                "deletedAt": null,
+                "createdAt": "2026-03-17 14:41:45"
+              },
+              {
+                "id": "12117013-1d27-40b1-a109-0dd9bfe6befc",
+                "name": "Eve Cashier",
+                "role": "cashier",
+                "email": "eve.cashier@example.com",
+                "deletedAt": null,
+                "createdAt": "2026-03-17 14:41:45"
+              }
+            ]
+          }

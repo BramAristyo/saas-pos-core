@@ -1,0 +1,15 @@
+info:
+  name: Find By Id
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{url}}/sales-types/f8615cfd-869a-4696-bb4c-5ca5b652d55d"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

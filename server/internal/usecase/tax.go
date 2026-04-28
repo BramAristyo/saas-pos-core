@@ -36,6 +36,15 @@ func (u *TaxUseCase) Paginate(ctx context.Context, req filter.PaginationWithInpu
 	return dto.ToTaxResponsePagination(taxResponses, req, totalRows), nil
 }
 
+func (u *TaxUseCase) GetAll(ctx context.Context) ([]dto.TaxResponse, error) {
+	taxes, err := u.Repo.GetAll(ctx)
+	if err != nil {
+		return []dto.TaxResponse{}, err
+	}
+
+	return dto.ToTaxResponses(taxes), nil
+}
+
 func (u *TaxUseCase) FindById(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
 	tax, err := u.Repo.FindById(ctx, id)
 	if err != nil {
@@ -125,6 +134,52 @@ func (u *TaxUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	})
 
 	return nil
+}
+
+func (u *TaxUseCase) Activate(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Activate(ctx, id); err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	tax, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityTax,
+		EntityID:    &id,
+		Description: fmt.Sprintf("Activated tax %s", tax.Name),
+	})
+
+	return dto.ToTaxResponse(&tax), nil
+}
+
+func (u *TaxUseCase) Deactivate(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {
+	userId, _ := helper.ExtractUserID(ctx)
+
+	if err := u.Repo.Deactivate(ctx, id); err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	tax, err := u.Repo.FindById(ctx, id)
+	if err != nil {
+		return dto.TaxResponse{}, err
+	}
+
+	go u.LogUseCase.Log(context.Background(), domain.AuditLog{
+		UserID:      userId,
+		Action:      domain.ActionUpdate,
+		Entity:      domain.EntityTax,
+		EntityID:    &id,
+		Description: fmt.Sprintf("Deactivated tax %s", tax.Name),
+	})
+
+	return dto.ToTaxResponse(&tax), nil
 }
 
 func (u *TaxUseCase) Restore(ctx context.Context, id uuid.UUID) (dto.TaxResponse, error) {

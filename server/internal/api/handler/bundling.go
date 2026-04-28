@@ -35,6 +35,16 @@ func (h *BundlingHandler) Paginate(c *gin.Context) {
 	response.OKPaginate(c, res.Data, res.Meta)
 }
 
+func (h *BundlingHandler) GetAll(c *gin.Context) {
+	res, err := h.UseCase.GetAll(c.Request.Context())
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	response.OK(c, res, "success get all bundling packages")
+}
+
 func (h *BundlingHandler) FindById(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := uuid.Parse(idStr)

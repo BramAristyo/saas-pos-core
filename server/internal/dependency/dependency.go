@@ -2,6 +2,7 @@ package dependency
 
 import (
 	"github.com/BramAristyo/saas-pos-core/server/internal/api/handler"
+	"github.com/BramAristyo/saas-pos-core/server/internal/api/validation"
 	"github.com/BramAristyo/saas-pos-core/server/internal/infrastructure/config"
 	"github.com/BramAristyo/saas-pos-core/server/internal/repository"
 	"github.com/BramAristyo/saas-pos-core/server/internal/usecase"
@@ -9,23 +10,29 @@ import (
 )
 
 type Handlers struct {
-	Auth           *handler.AuthHandler
-	User           *handler.UserHandler
-	Category       *handler.CategoryHandler
-	Product        *handler.ProductHandler
-	ModifierGroup  *handler.ModifierGroupHandler
-	ModifierOption *handler.ModifierOptionHandler
-	Bundling       *handler.BundlingHandler
-	Tax            *handler.TaxHandler
-	Discount       *handler.DiscountHandler
-	Shift          *handler.ShiftHandler
-	SalesType      *handler.SalesTypeHandler
-	Order          *handler.OrderHandler
-	Report         *handler.ReportHandler
-	Dashboard      *handler.DashboardHandler
+	Auth          *handler.AuthHandler
+	User          *handler.UserHandler
+	Category      *handler.CategoryHandler
+	Product       *handler.ProductHandler
+	ModifierGroup *handler.ModifierGroupHandler
+	Bundling      *handler.BundlingHandler
+	Tax           *handler.TaxHandler
+	Discount      *handler.DiscountHandler
+	Shift         *handler.ShiftHandler
+	SalesType     *handler.SalesTypeHandler
+	Order         *handler.OrderHandler
+	Report        *handler.ReportHandler
+	Dashboard     *handler.DashboardHandler
+	COA           *handler.COAHandler
+	Employee      *handler.EmployeeHandler
+	Attendance    *handler.AttendanceHandler
+	Payroll       *handler.PayrollHandler
+	ShiftSchedule *handler.ShiftScheduleHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
+	validation.RegisterCustomValidators()
+
 	userRepository := repository.NewUserRepository(db)
 	auditLogRepository := repository.NewAuditLogRepository(db)
 
@@ -43,7 +50,6 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	modifierGroupUseCase := usecase.NewModifierGroupUseCase(modifierGroupRepository, auditLogUseCase)
 
 	modifierOptionRepository := repository.NewModifierOptionRepository(db)
-	modifierOptionUseCase := usecase.NewModifierOptionUseCase(modifierOptionRepository, auditLogUseCase)
 
 	bundlingRepository := repository.NewBundlingRepository(db)
 	bundlingUseCase := usecase.NewBundlingUseCase(bundlingRepository, auditLogUseCase)
@@ -59,6 +65,23 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 
 	salesTypeRepository := repository.NewSalesTypeRepository(db)
 	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository, auditLogUseCase)
+
+	// ledgerRepository := repository.NewLedgerRepository(db)
+
+	coaRepository := repository.NewCOARepository(db)
+	coaUseCase := usecase.NewCOAUseCase(coaRepository, auditLogUseCase)
+
+	employeeRepository := repository.NewEmployeeRepository(db)
+	employeeUseCase := usecase.NewEmployeeUseCase(employeeRepository, auditLogUseCase)
+
+	attendanceRepository := repository.NewAttendanceRepository(db)
+	shiftScheduleRepository := repository.NewShiftScheduleRepository(db)
+	attendanceUseCase := usecase.NewAttendanceUseCase(attendanceRepository, shiftScheduleRepository)
+
+	shiftScheduleUseCase := usecase.NewShiftScheduleUseCase(shiftScheduleRepository)
+
+	payrollRepository := repository.NewPayrollRepository(db)
+	payrollUseCase := usecase.NewPayrollUseCase(payrollRepository, attendanceRepository, employeeRepository, auditLogUseCase)
 
 	orderRepository := repository.NewOrderRepository(db)
 	orderUseCase := usecase.NewOrderUseCase(
@@ -77,19 +100,23 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	dashboardUseCase := usecase.NewDashboardUseCase(orderRepository)
 
 	return &Handlers{
-		Auth:           handler.NewAuthHandler(authUseCase),
-		User:           handler.NewUserHandler(userUseCase),
-		Category:       handler.NewCategoryHandler(categoryUseCase),
-		Product:        handler.NewProductHandler(productUseCase),
-		ModifierGroup:  handler.NewModifierGroupHandler(modifierGroupUseCase),
-		ModifierOption: handler.NewModifierOptionHandler(modifierOptionUseCase),
-		Bundling:       handler.NewBundlingHandler(bundlingUseCase),
-		Tax:            handler.NewTaxHandler(taxUseCase),
-		Discount:       handler.NewDiscountHandler(discountUseCase),
-		Shift:          handler.NewShiftHandler(shiftUseCase),
-		SalesType:      handler.NewSalesTypeHandler(salesTypeUseCase),
-		Order:          handler.NewOrderHandler(orderUseCase),
-		Report:         handler.NewReportHandler(reportUseCase),
-		Dashboard:      handler.NewDashboardHandler(dashboardUseCase),
+		Auth:          handler.NewAuthHandler(authUseCase),
+		User:          handler.NewUserHandler(userUseCase),
+		Category:      handler.NewCategoryHandler(categoryUseCase),
+		Product:       handler.NewProductHandler(productUseCase),
+		ModifierGroup: handler.NewModifierGroupHandler(modifierGroupUseCase),
+		Bundling:      handler.NewBundlingHandler(bundlingUseCase),
+		Tax:           handler.NewTaxHandler(taxUseCase),
+		Discount:      handler.NewDiscountHandler(discountUseCase),
+		Shift:         handler.NewShiftHandler(shiftUseCase),
+		SalesType:     handler.NewSalesTypeHandler(salesTypeUseCase),
+		Order:         handler.NewOrderHandler(orderUseCase),
+		Report:        handler.NewReportHandler(reportUseCase),
+		Dashboard:     handler.NewDashboardHandler(dashboardUseCase),
+		COA:           handler.NewCOAHandler(coaUseCase),
+		Employee:      handler.NewEmployeeHandler(employeeUseCase),
+		Attendance:    handler.NewAttendanceHandler(attendanceUseCase),
+		Payroll:       handler.NewPayrollHandler(payrollUseCase),
+		ShiftSchedule: handler.NewShiftScheduleHandler(shiftScheduleUseCase),
 	}
 }

@@ -141,26 +141,6 @@ func (u *ShiftUseCase) UpsertExpenses(ctx context.Context, req dto.UpsertShiftEx
 		return dto.ShiftResponse{}, usecase_errors.NoOpenShift
 	}
 
-	expenses := make([]domain.ShiftExpenses, 0, len(req.Expenses))
-	for _, e := range req.Expenses {
-		var id uuid.UUID
-		if e.ID != nil {
-			parsedID, err := uuid.Parse(*e.ID)
-			if err == nil {
-				id = parsedID
-			}
-		}
-
-		expenses = append(expenses, domain.ShiftExpenses{
-			ID:          id,
-			ShiftID:     shift.ID,
-			Type:        e.Type,
-			Amount:      e.Amount,
-			Description: e.Description,
-		})
-	}
-
-	shift.ShiftExpenses = expenses
 	updated, err := u.Repo.Update(ctx, shift.ID, &shift)
 	if err != nil {
 		return dto.ShiftResponse{}, err

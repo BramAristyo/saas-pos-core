@@ -27,7 +27,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		categories := v1.Group("/categories", middleware.Authentication(cfg))
 		products := v1.Group("/products", middleware.Authentication(cfg))
 		modifierGroups := v1.Group("/modifier-groups", middleware.Authentication(cfg))
-		modifierOptions := v1.Group("/modifier-options", middleware.Authentication(cfg))
 		bundling := v1.Group("/bundling", middleware.Authentication(cfg))
 		taxes := v1.Group("/taxes", middleware.Authentication(cfg))
 		discounts := v1.Group("/discounts", middleware.Authentication(cfg))
@@ -36,6 +35,11 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		orders := v1.Group("/orders", middleware.Authentication(cfg))
 		reports := v1.Group("/reports", middleware.Authentication(cfg))
 		dashboard := v1.Group("/dashboard", middleware.Authentication(cfg))
+		coa := v1.Group("/coa", middleware.Authentication(cfg))
+		employees := v1.Group("/employees", middleware.Authentication(cfg))
+		attendances := v1.Group("/attendances", middleware.Authentication(cfg))
+		payrolls := v1.Group("/payrolls", middleware.Authentication(cfg))
+		shiftSchedules := v1.Group("/shift-schedules", middleware.Authentication(cfg))
 
 		v1.POST("/", h.Auth.Login)
 		v1.GET("/me", middleware.Authentication(cfg), h.Auth.Me)
@@ -44,7 +48,6 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		CategoryRoutes(categories, h.Category)
 		ProductRoutes(products, h.Product)
 		ModifierRoutes(modifierGroups, h.ModifierGroup)
-		ModifierOptionRoutes(modifierOptions, h.ModifierOption)
 		BundlingRoutes(bundling, h.Bundling)
 		TaxRoutes(taxes, h.Tax)
 		DiscountRoutes(discounts, h.Discount)
@@ -53,5 +56,10 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		OrderRoutes(orders, h.Order)
 		ReportRoutes(reports, h.Report)
 		DashboardRoutes(dashboard, h.Dashboard)
+		COARoutes(coa, h.COA)
+		EmployeeRoutes(employees, h.Employee)
+		AttendanceRoutes(attendances, h.Attendance)
+		PayrollRoutes(payrolls, h.Payroll)
+		ShiftScheduleRoutes(shiftSchedules, h.ShiftSchedule)
 	}
 }

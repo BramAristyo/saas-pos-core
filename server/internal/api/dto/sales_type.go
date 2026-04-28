@@ -80,6 +80,15 @@ func ToSalesTypeResponse(s *domain.SalesType) SalesTypeResponse {
 	return resp
 }
 
+func ToSalesTypeResponses(s []domain.SalesType) []SalesTypeResponse {
+	res := make([]SalesTypeResponse, len(s))
+	for i := range s {
+		res[i] = ToSalesTypeResponse(&s[i])
+	}
+
+	return res
+}
+
 func ToSalesTypeResponsePagination(s []SalesTypeResponse, p filter.PaginationWithInputFilter, totalRows int64) SalesTypeResponsePagination {
 	return SalesTypeResponsePagination{
 		Data: s,
