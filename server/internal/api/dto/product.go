@@ -8,18 +8,18 @@ import (
 )
 
 type ProductResponse struct {
-	ID           uuid.UUID       `json:"id"`
-	CategoryID   uuid.UUID       `json:"categoryId"`
-	Name         string          `json:"name"`
-	CategoryName *string         `json:"categoryName"`
-	Description  *string         `json:"description"`
-	Price        decimal.Decimal `json:"price"`
-	Cogs         decimal.Decimal `json:"cogs"`
-	ImageURL     *string         `json:"imageUrl"`
-	DeletedAt    *string         `json:"deletedAt,omitempty"`
-	CreatedAt    string          `json:"createdAt"`
-	UpdatedAt    string          `json:"updatedAt"`
-	// Category       *CategoryResponse       `json:"category,omitempty"`
+	ID             uuid.UUID               `json:"id"`
+	CategoryID     *uuid.UUID              `json:"categoryId"`
+	Name           string                  `json:"name"`
+	CategoryName   *string                 `json:"categoryName"`
+	Description    *string                 `json:"description"`
+	Price          decimal.Decimal         `json:"price"`
+	Cogs           decimal.Decimal         `json:"cogs"`
+	ImageURL       *string                 `json:"imageUrl"`
+	DeletedAt      *string                 `json:"deletedAt,omitempty"`
+	CreatedAt      string                  `json:"createdAt"`
+	UpdatedAt      string                  `json:"updatedAt"`
+	Category       *CategoryResponse       `json:"category,omitempty"`
 	ModifierGroups []ModifierGroupResponse `json:"modifierGroups,omitempty"`
 }
 
@@ -50,9 +50,11 @@ type UpdateProductRequest struct {
 
 func ToProductResponse(p *domain.Product) ProductResponse {
 	var category *CategoryResponse
+	var categoryName *string
 	if p.Category != nil {
 		c := ToCategoryResponse(p.Category)
 		category = &c
+		categoryName = &c.Name
 	}
 
 	var mgs []ModifierGroupResponse
@@ -63,10 +65,10 @@ func ToProductResponse(p *domain.Product) ProductResponse {
 	}
 
 	resp := ProductResponse{
-		ID:           p.ID,
-		CategoryID:   p.CategoryID,
-		CategoryName: &category.Name,
-		// Category:       category,
+		ID:             p.ID,
+		CategoryID:     &p.CategoryID,
+		CategoryName:   categoryName,
+		Category:       category,
 		ModifierGroups: mgs,
 		Name:           p.Name,
 		Description:    p.Description,
