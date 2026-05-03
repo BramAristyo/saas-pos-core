@@ -18,7 +18,11 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    if (error.response?.status === 401) {
+    // Don't redirect if it's a login request (path is '/') or if we're already on the login page
+    // We check error.config.url to see if it's the login endpoint
+    const isLoginRequest = error.config?.url === '/' || error.config?.url === ''
+
+    if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem('token')
       window.location.href = '/'
     }

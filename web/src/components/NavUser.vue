@@ -35,7 +35,6 @@ const router = useRouter()
 function handleLogout() {
   authStore.logout()
   router.push('/')
-  toast.success('Logout successfuly! Goodbye')
 }
 </script>
 
