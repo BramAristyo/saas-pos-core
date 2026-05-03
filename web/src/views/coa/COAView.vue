@@ -136,11 +136,12 @@ function handleDelete(coa: Coa) {
                 </div>
               </TableCell>
               <TableCell>
-                <Badge
-                  :variant="coa.type === 'in' ? 'success' : 'destructive'"
+                <span
+                  :class="coa.type === 'in' ? 'text-success' : 'text-destructive'"
+                  class="font-medium"
                 >
                   {{ coa.type === 'in' ? 'Income' : 'Expenses' }}
-                </Badge>
+                </span>
               </TableCell>
               <TableCell>
                 <Badge :variant="coa.IsOperational ? 'default' : 'outline'">
