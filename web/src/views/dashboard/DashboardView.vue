@@ -218,7 +218,7 @@ const secondaryMetrics = [
       </div>
 
       <!-- Footer/Next Features Placeholder -->
-      <div
+      <!-- <div
         class="mt-4 p-8 rounded-4xl border-2 border-dashed border-muted flex flex-col md:flex-row items-center justify-between gap-6 opacity-80 hover:opacity-100 transition-opacity"
       >
         <div
@@ -226,7 +226,7 @@ const secondaryMetrics = [
         >
           Under Development
         </div>
-      </div>
+      </div> -->
     </div>
   </AppLayout>
 </template>
