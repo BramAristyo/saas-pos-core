@@ -27,14 +27,14 @@ type CreateEmployeeRequest struct {
 	Name       string  `json:"name" binding:"required,min=2,max=100"`
 	Phone      *string `json:"phone"`
 	BaseSalary float64 `json:"baseSalary" binding:"required,min=0"`
-	Pin        string  `json:"pin" binding:"required,min=4"`
+	Pin        string  `json:"pin" binding:"required,min=6"`
 }
 
 type UpdateEmployeeRequest struct {
 	Name       string  `json:"name" binding:"required,min=2,max=100"`
 	Phone      *string `json:"phone"`
 	BaseSalary float64 `json:"baseSalary" binding:"required,min=0"`
-	Pin        *string `json:"pin" binding:"omitempty,min=4"`
+	Pin        *string `json:"pin" binding:"omitempty"`
 }
 
 func ToEmployeeResponse(e *domain.Employee) EmployeeResponse {

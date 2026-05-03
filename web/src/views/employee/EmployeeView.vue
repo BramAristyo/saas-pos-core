@@ -95,7 +95,10 @@ function handleDelete(employee: Employee) {
       </div>
     </div>
 
-    <TableSkeleton v-if="employeeStore.loading && employeeStore.employees.length === 0" :column-count="7" />
+    <TableSkeleton
+      v-if="employeeStore.loading && employeeStore.employees.length === 0"
+      :column-count="7"
+    />
 
     <CommonEmpty
       v-else-if="employeeStore.employees.length === 0"
@@ -109,7 +112,7 @@ function handleDelete(employee: Employee) {
     />
 
     <div v-else class="space-y-4">
-      <div class="overflow-hidden border rounded-md">
+      <div class="overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -117,7 +120,6 @@ function handleDelete(employee: Employee) {
               <TableHead>Name</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Base Salary</TableHead>
-              <TableHead>PIN Changed</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead class="w-12.5"></TableHead>
             </TableRow>
@@ -128,11 +130,6 @@ function handleDelete(employee: Employee) {
               <TableCell>{{ employee.name }}</TableCell>
               <TableCell>{{ employee.phone }}</TableCell>
               <TableCell>{{ formatRupiah(employee.baseSalary) }}</TableCell>
-              <TableCell>
-                <Badge :variant="employee.hasChangedPin ? 'default' : 'secondary'">
-                  {{ employee.hasChangedPin ? 'Yes' : 'No' }}
-                </Badge>
-              </TableCell>
               <TableCell>{{ formatDate(employee.createdAt) }}</TableCell>
               <TableCell>
                 <DropdownMenu>

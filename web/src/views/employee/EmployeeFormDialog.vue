@@ -15,11 +15,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from '@/components/ui/input-otp'
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { toast } from 'vue-sonner'
 import { useFormErrors } from '@/composables/common/useFormErrors'
 
@@ -59,7 +55,7 @@ watch(
       form.name = newEmployee.name
       form.phone = newEmployee.phone
       form.baseSalary = newEmployee.baseSalary
-      form.pin = '' 
+      form.pin = ''
     } else {
       form.name = ''
       form.phone = ''
@@ -110,12 +106,7 @@ async function handleSubmit() {
         <div class="grid gap-4 py-4">
           <div class="grid gap-2">
             <Label for="name">Name</Label>
-            <Input
-              id="name"
-              v-model="form.name"
-              placeholder="Employee name"
-              required
-            />
+            <Input id="name" v-model="form.name" placeholder="Employee name" required />
             <span v-if="hasError('Name')" class="text-xs text-destructive">
               {{ getErrorMessage('Name') }}
             </span>
@@ -123,12 +114,7 @@ async function handleSubmit() {
 
           <div class="grid gap-2">
             <Label for="phone">Phone</Label>
-            <Input
-              id="phone"
-              v-model="form.phone"
-              placeholder="Phone number"
-              required
-            />
+            <Input id="phone" v-model="form.phone" placeholder="Phone number" />
             <span v-if="hasError('Phone')" class="text-xs text-destructive">
               {{ getErrorMessage('Phone') }}
             </span>
@@ -150,12 +136,7 @@ async function handleSubmit() {
 
           <div class="grid gap-2">
             <Label for="pin">PIN (6 Digits)</Label>
-            <InputOTP
-              id="pin"
-              v-model="form.pin"
-              :maxlength="6"
-              class="w-full"
-            >
+            <InputOTP id="pin" v-model="form.pin" :maxlength="6" class="w-full">
               <InputOTPGroup class="w-full flex">
                 <InputOTPSlot :index="0" class="flex-1 h-12" />
                 <InputOTPSlot :index="1" class="flex-1 h-12" />

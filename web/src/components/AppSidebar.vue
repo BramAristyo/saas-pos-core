@@ -88,12 +88,12 @@ const data = {
       ],
     },
     {
-      title: 'Team',
+      title: 'Employees',
       url: '#',
       icon: Users,
       items: [
         {
-          title: 'Employees',
+          title: 'List',
           url: '/employees',
         },
       ],
@@ -164,7 +164,8 @@ watch(
           <SidebarMenuButton size="lg" as-child>
             <a href="#">
               <div
-                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+              >
                 <Store class="size-4" />
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
@@ -180,16 +181,29 @@ watch(
     <SidebarContent>
       <SidebarGroup>
         <SidebarMenu>
-          <Collapsible v-for="item in filteredNavMain" :key="item.title"
+          <Collapsible
+            v-for="item in filteredNavMain"
+            :key="item.title"
             :open="searchQuery ? true : openSectionTitle === item.title"
-            @update:open="(val) => handleToggle(item.title, val)" class="group/collapsible">
+            @update:open="(val) => handleToggle(item.title, val)"
+            class="group/collapsible"
+          >
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>
-                <SidebarMenuButton :is-active="isParentActive(item)" :class="{ 'font-bold': isParentActive(item) }">
+                <SidebarMenuButton
+                  :is-active="isParentActive(item)"
+                  :class="{ 'font-bold': isParentActive(item) }"
+                >
                   <component :is="item.icon" v-if="item.icon" class="size-4 mr-2" />
                   {{ item.title }}
-                  <ChevronDown v-if="!searchQuery" class="ml-auto group-data-[state=open]/collapsible:hidden" />
-                  <ChevronUp v-if="!searchQuery" class="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                  <ChevronDown
+                    v-if="!searchQuery"
+                    class="ml-auto group-data-[state=open]/collapsible:hidden"
+                  />
+                  <ChevronUp
+                    v-if="!searchQuery"
+                    class="ml-auto group-data-[state=closed]/collapsible:hidden"
+                  />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent v-if="item.items.length">
