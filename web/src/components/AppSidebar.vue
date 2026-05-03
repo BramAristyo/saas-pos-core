@@ -3,7 +3,6 @@ import type { SidebarProps } from '@/components/ui/sidebar'
 import {
   Store,
   ChevronDown,
-  ChevronUp,
   LayoutDashboard,
   Package,
   Receipt,
@@ -12,11 +11,9 @@ import {
 } from 'lucide-vue-next'
 import SearchForm from '@/components/SearchForm.vue'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import NavUser from '@/components/NavUser.vue'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -30,15 +27,7 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-interface Props extends SidebarProps {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}
-
-const props = defineProps<Props>()
+const props = defineProps<SidebarProps>()
 
 const route = useRoute()
 const data = {
@@ -181,28 +170,39 @@ watch(
 </script>
 
 <template>
-  <Sidebar v-bind="props">
-    <SidebarHeader>
-      <SidebarMenu>
+  <Sidebar v-bind="props" class="border-r border-border/40 bg-sidebar/80 backdrop-blur-xl">
+    <SidebarHeader class="relative overflow-hidden pb-6 pt-8">
+      <!-- Subtle Decorative background element -->
+      <div class="absolute -right-4 -top-8 size-32 rounded-full bg-primary/5 blur-3xl" />
+
+      <SidebarMenu class="relative z-10">
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" as-child>
-            <a href="#">
+          <SidebarMenuButton size="lg" as-child class="hover:bg-transparent">
+            <a href="#" class="flex items-center gap-3">
               <div
-                class="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground"
+                class="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-transform"
               >
-                <Store class="size-4" />
+                <Store class="size-5" />
               </div>
               <div class="flex flex-col gap-0.5 leading-none">
-                <span class="font-medium">Point of Sales</span>
-                <span class="">v1.0.0</span>
+                <span class="text-lg font-bold tracking-tight text-sidebar-foreground"
+                  >POS System</span
+                >
+                <span
+                  class="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60"
+                  >Enterprise Edition</span
+                >
               </div>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
-      <SearchForm v-model="searchQuery" />
+      <div class="px-2 mt-6 relative z-10">
+        <SearchForm v-model="searchQuery" />
+      </div>
     </SidebarHeader>
-    <SidebarContent>
+
+    <SidebarContent class="px-2">
       <SidebarGroup>
         <SidebarMenu>
           <Collapsible
@@ -210,32 +210,45 @@ watch(
             :key="item.title"
             :open="searchQuery ? true : openSectionTitle === item.title"
             @update:open="(val) => handleToggle(item.title, val)"
-            class="group/collapsible"
+            class="group/collapsible mb-2"
           >
             <SidebarMenuItem>
               <CollapsibleTrigger as-child>
                 <SidebarMenuButton
                   :is-active="isParentActive(item)"
-                  :class="{ 'font-bold': isParentActive(item) }"
+                  class="h-11 rounded-xl px-4 transition-all duration-300 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                 >
-                  <component :is="item.icon" v-if="item.icon" class="size-4 mr-2" />
-                  {{ item.title }}
+                  <component :is="item.icon" v-if="item.icon" class="size-5 opacity-80" />
+                  <span
+                    :class="[
+                      'flex-1 text-sm tracking-tight transition-all',
+                      isParentActive(item) ? 'font-bold' : 'font-medium',
+                    ]"
+                  >
+                    {{ item.title }}
+                  </span>
                   <ChevronDown
                     v-if="!searchQuery"
-                    class="ml-auto group-data-[state=open]/collapsible:hidden"
-                  />
-                  <ChevronUp
-                    v-if="!searchQuery"
-                    class="ml-auto group-data-[state=closed]/collapsible:hidden"
+                    class="ml-auto size-4 opacity-40 transition-transform duration-300 group-data-[state=open]/collapsible:rotate-180"
                   />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent v-if="item.items.length">
-                <SidebarMenuSub>
+              <CollapsibleContent>
+                <SidebarMenuSub class="ml-4 border-l-2 border-primary/10 pl-4 mt-2 space-y-1">
                   <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
-                    <RouterLink :to="childItem.url">
-                      <SidebarMenuSubButton :is-active="isChildActive(childItem.url)">
-                        {{ childItem.title }}
+                    <RouterLink :to="childItem.url" v-slot="{ isActive }">
+                      <SidebarMenuSubButton
+                        :is-active="isActive"
+                        class="h-9 rounded-lg transition-all duration-200 hover:bg-sidebar-accent data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:shadow-sm data-[active=true]:shadow-primary/20"
+                      >
+                        <span
+                          :class="[
+                            'text-sm transition-all',
+                            isActive ? 'font-bold' : 'text-muted-foreground hover:text-foreground',
+                          ]"
+                        >
+                          {{ childItem.title }}
+                        </span>
                       </SidebarMenuSubButton>
                     </RouterLink>
                   </SidebarMenuSubItem>
@@ -246,9 +259,7 @@ watch(
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
-    <SidebarFooter>
-      <NavUser :user="user" />
-    </SidebarFooter>
+
     <SidebarRail />
   </Sidebar>
 </template>

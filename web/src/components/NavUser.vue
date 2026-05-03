@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ChevronsUpDown, LogOut } from 'lucide-vue-next'
-
+import { LogOut, User, Settings, CreditCard, Bell } from 'lucide-vue-next'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -9,16 +8,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuShortcut,
 } from '@/components/ui/dropdown-menu'
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar'
 import { useAuthStore } from '@/stores/auth.stores'
 import { useRouter } from 'vue-router'
-import { toast } from 'vue-sonner'
+import { Button } from '@/components/ui/button'
 
 const props = defineProps<{
   user: {
@@ -28,7 +22,6 @@ const props = defineProps<{
   }
 }>()
 
-const { isMobile } = useSidebar()
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -39,50 +32,48 @@ function handleLogout() {
 </script>
 
 <template>
-  <SidebarMenu>
-    <SidebarMenuItem>
-      <DropdownMenu>
-        <DropdownMenuTrigger as-child>
-          <SidebarMenuButton
-            size="lg"
-            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-          >
-            <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
-              <AvatarFallback class="rounded-lg"> {{ user.name.charAt(0) }} </AvatarFallback>
-            </Avatar>
-            <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ user.name }}</span>
-              <span class="truncate text-xs">{{ user.email }}</span>
-            </div>
-            <ChevronsUpDown class="ml-auto size-4" />
-          </SidebarMenuButton>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          class="w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-          :side="isMobile ? 'bottom' : 'right'"
-          align="end"
-          :side-offset="4"
-        >
-          <DropdownMenuLabel class="p-0 font-normal">
-            <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
-                <AvatarFallback class="rounded-lg"> {{ user.name.charAt(0) }} </AvatarFallback>
-              </Avatar>
-              <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ user.name }}</span>
-                <span class="truncate text-xs">{{ user.email }}</span>
-              </div>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem @click="handleLogout" class="cursor-pointer">
-            <LogOut />
-            Log out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </SidebarMenuItem>
-  </SidebarMenu>
+  <DropdownMenu>
+    <DropdownMenuTrigger as-child>
+      <Button variant="ghost" class="h-10 w-10 rounded-full p-0 hover:bg-transparent focus-visible:ring-1 focus-visible:ring-primary">
+        <Avatar class="h-10 w-10 border border-border shadow-sm transition-transform active:scale-95">
+          <AvatarImage :src="user.avatar" :alt="user.name" />
+          <AvatarFallback class="bg-primary text-primary-foreground"> {{ user.name.charAt(0) }} </AvatarFallback>
+        </Avatar>
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="w-64 rounded-xl p-2 shadow-xl border-border/50" align="end" :side-offset="12">
+      <DropdownMenuLabel class="p-3 font-normal">
+        <div class="flex items-center gap-3 text-left">
+          <Avatar class="h-9 w-9 rounded-lg border">
+            <AvatarImage :src="user.avatar" :alt="user.name" />
+            <AvatarFallback class="rounded-lg"> {{ user.name.charAt(0) }} </AvatarFallback>
+          </Avatar>
+          <div class="grid flex-1 text-left leading-tight">
+            <span class="truncate font-semibold text-sm">{{ user.name }}</span>
+            <span class="truncate text-xs text-muted-foreground">{{ user.email }}</span>
+          </div>
+        </div>
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <div class="p-1">
+        <DropdownMenuItem class="rounded-lg cursor-pointer py-2 px-3 focus:bg-accent focus:text-accent-foreground">
+          <User class="mr-3 h-4 w-4 opacity-70" />
+          <span class="text-sm">My Profile</span>
+          <DropdownMenuShortcut class="text-[10px] opacity-50">⇧⌘P</DropdownMenuShortcut>
+        </DropdownMenuItem>
+        <DropdownMenuItem class="rounded-lg cursor-pointer py-2 px-3 focus:bg-accent focus:text-accent-foreground">
+          <Settings class="mr-3 h-4 w-4 opacity-70" />
+          <span class="text-sm">Settings</span>
+          <DropdownMenuShortcut class="text-[10px] opacity-50">⌘S</DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </div>
+      <DropdownMenuSeparator />
+      <div class="p-1">
+        <DropdownMenuItem @click="handleLogout" class="rounded-lg cursor-pointer py-2 px-3 text-destructive focus:bg-destructive focus:text-destructive-foreground">
+          <LogOut class="mr-3 h-4 w-4" />
+          <span class="text-sm font-semibold">Log out</span>
+        </DropdownMenuItem>
+      </div>
+    </DropdownMenuContent>
+  </DropdownMenu>
 </template>
