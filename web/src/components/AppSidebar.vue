@@ -118,6 +118,17 @@ const data = {
         },
       ],
     },
+    {
+      title: 'Payroll',
+      url: '#',
+      icon: Wallet,
+      items: [
+        {
+          title: 'Manage',
+          url: '/payroll',
+        },
+      ],
+    },
   ],
 }
 

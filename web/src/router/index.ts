@@ -102,6 +102,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Chart of Accounts' },
     },
     {
+      path: '/payroll',
+      name: 'payroll',
+      component: () => import('@/views/payroll/PayrollView.vue'),
+      meta: { requiresAuth: true, title: 'Payroll' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
