@@ -96,6 +96,10 @@ const data = {
           title: 'List',
           url: '/employees',
         },
+        {
+          title: 'Schedule',
+          url: '/shift-schedules',
+        },
       ],
     },
   ],

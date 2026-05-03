@@ -84,6 +84,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Employees' },
     },
     {
+      path: '/shift-schedules',
+      name: 'shift-schedules',
+      component: () => import('@/views/shift-schedule/ShiftScheduleView.vue'),
+      meta: { requiresAuth: true, title: 'Shift Schedules' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
