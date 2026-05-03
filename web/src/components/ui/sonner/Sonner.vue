@@ -17,6 +17,15 @@ const props = defineProps<ToasterProps>()
       '--border-radius': 'var(--radius)',
     }"
     v-bind="props"
+    :toast-options="{
+      classes: {
+        toast:
+          'group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg group-[.toaster]:p-3 group-[.toaster]:text-[13px] group-[.toaster]:rounded-xl',
+        description: 'group-[.toast]:text-muted-foreground group-[.toast]:text-xs',
+        actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground group-[.toast]:text-xs group-[.toast]:h-8',
+        cancelButton: 'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground group-[.toast]:text-xs group-[.toast]:h-8',
+      },
+    }"
   >
     <template #success-icon>
       <CircleCheckIcon class="size-4" />
