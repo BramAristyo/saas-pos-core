@@ -97,11 +97,15 @@ const data = {
           url: '/employees',
         },
         {
-          title: 'Schedule',
+          title: 'Shift Schedule',
           url: '/shift-schedules',
         },
-      ],
-    },
+        {
+          title: 'Attendance',
+          url: '/attendances',
+        },
+        ],
+        },
   ],
 }
 

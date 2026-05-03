@@ -43,10 +43,24 @@ export function useFormatter() {
     }).format(date)
   }
 
+  const formatDuration = (minutes: number | string | undefined | null): string => {
+    if (minutes === undefined || minutes === null) return '-'
+    const totalMinutes = typeof minutes === 'string' ? parseInt(minutes) : minutes
+    if (isNaN(totalMinutes)) return '-'
+
+    const h = Math.floor(totalMinutes / 60)
+    const m = totalMinutes % 60
+
+    if (h === 0) return `${m}m`
+    if (m === 0) return `${h}h`
+    return `${h}h ${m}m`
+  }
+
   return {
     formatRupiah,
     formatPercent,
     formatDate,
     formatDateOnly,
+    formatDuration,
   }
 }

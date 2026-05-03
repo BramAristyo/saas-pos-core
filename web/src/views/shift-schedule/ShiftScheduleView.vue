@@ -125,7 +125,7 @@ function handleDelete(shift: ShiftSchedule) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow v-for="shift in shiftScheduleStore.shiftSchedules" :key="shift.id">
+            <TableRow v-for="shift in shiftScheduleStore.shiftSchedules" :key="shift.id" class="h-14">
               <TableCell class="font-medium">{{ shift.name }}</TableCell>
               <TableCell>{{ shift.startTime }}</TableCell>
               <TableCell>{{ shift.endTime }}</TableCell>
