@@ -97,7 +97,9 @@ onMounted(() => {
               :key="attendance.id"
               class="h-14"
             >
-              <TableCell>{{ attendance.employeeName }}</TableCell>
+              <TableCell class="max-w-30.5 truncate" :title="attendance.employeeName">
+                {{ attendance.employeeName }}
+              </TableCell>
               <TableCell>{{ formatDateOnly(attendance.date) }}</TableCell>
               <TableCell>{{ attendance.shiftScheduleName }}</TableCell>
               <TableCell>{{ attendance.checkIn }}</TableCell>
