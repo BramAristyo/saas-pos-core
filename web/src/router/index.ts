@@ -96,6 +96,12 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Attendance' },
     },
     {
+      path: '/coa',
+      name: 'coa',
+      component: () => import('@/views/coa/COAView.vue'),
+      meta: { requiresAuth: true, title: 'Chart of Accounts' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

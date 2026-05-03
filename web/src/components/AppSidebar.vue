@@ -8,6 +8,7 @@ import {
   Package,
   Receipt,
   Users,
+  Wallet,
 } from 'lucide-vue-next'
 import SearchForm from '@/components/SearchForm.vue'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
@@ -104,8 +105,19 @@ const data = {
           title: 'Attendance',
           url: '/attendances',
         },
-        ],
+      ],
+    },
+    {
+      title: 'Accounting',
+      url: '#',
+      icon: Wallet,
+      items: [
+        {
+          title: 'Chart of Accounts',
+          url: '/coa',
         },
+      ],
+    },
   ],
 }
 
