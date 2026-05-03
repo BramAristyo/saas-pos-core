@@ -272,7 +272,7 @@ onMounted(async () => {
               class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start border-b pb-4 last:border-0 last:pb-0"
             >
               <Field class="md:col-span-5">
-                <FieldLabel v-if="index === 0">Name</FieldLabel>
+                <FieldLabel :class="{ 'md:hidden': index > 0 }">Name</FieldLabel>
                 <FieldContent>
                   <Input
                     v-model="option.name"
@@ -288,7 +288,7 @@ onMounted(async () => {
               </Field>
 
               <Field class="md:col-span-3">
-                <FieldLabel v-if="index === 0">Price</FieldLabel>
+                <FieldLabel :class="{ 'md:hidden': index > 0 }">Price</FieldLabel>
                 <FieldContent>
                   <AmountInput
                     v-model="option.priceAdjustment"
@@ -303,7 +303,7 @@ onMounted(async () => {
               </Field>
 
               <Field class="md:col-span-3">
-                <FieldLabel v-if="index === 0">COGS</FieldLabel>
+                <FieldLabel :class="{ 'md:hidden': index > 0 }">COGS</FieldLabel>
                 <FieldContent>
                   <AmountInput
                     v-model="option.cogsAdjustment"

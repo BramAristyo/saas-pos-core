@@ -85,9 +85,9 @@ function handleRestore(modifier: ModifierGroup) {
 
 <template>
   <AppLayout>
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <h1 class="text-2xl font-bold">Modifier Groups</h1>
-      <div class="flex items-center gap-2 flex-1 md:max-w-sm">
+      <div class="flex items-center gap-2 flex-1 w-full sm:max-w-sm">
         <div class="relative w-full">
           <Search class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input v-model="search" placeholder="Search modifiers..." class="pl-9" />
@@ -116,7 +116,7 @@ function handleRestore(modifier: ModifierGroup) {
     />
 
     <div v-else class="space-y-4">
-      <div class="overflow-hidden">
+      <div class="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -152,7 +152,9 @@ function handleRestore(modifier: ModifierGroup) {
                         : 'bg-muted-foreground/30'
                     "
                   />
-                  <span class="text-sm font-medium">{{ modifier.isRequired ? 'Yes' : 'No' }}</span>
+                  <span class="text-sm font-medium"
+                    >{{ modifier.isRequired ? 'Yes' : 'No' }}</span
+                  >
                 </div>
               </TableCell>
               <TableCell>{{ formatDate(modifier.createdAt) }}</TableCell>
