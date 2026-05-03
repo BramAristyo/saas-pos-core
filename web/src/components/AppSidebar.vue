@@ -105,6 +105,10 @@ const data = {
           title: 'Attendance',
           url: '/attendances',
         },
+        {
+          title: 'Payroll',
+          url: '/payroll',
+        },
       ],
     },
     {
@@ -115,17 +119,6 @@ const data = {
         {
           title: 'Chart of Accounts',
           url: '/coa',
-        },
-      ],
-    },
-    {
-      title: 'Payroll',
-      url: '#',
-      icon: Wallet,
-      items: [
-        {
-          title: 'Manage',
-          url: '/payroll',
         },
       ],
     },

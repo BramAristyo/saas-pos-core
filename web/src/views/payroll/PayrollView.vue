@@ -87,7 +87,7 @@ function handleAdd() {
     />
 
     <div v-else class="space-y-4">
-      <div class="overflow-x-auto border rounded-lg">
+      <div class="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
