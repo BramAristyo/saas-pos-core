@@ -1,32 +1,15 @@
 export interface SalesSummary {
-  grossSales: string
-  discounts: string
-  netSales: string
-  gratuity: string
-  tax: string
-  total: string
+  grossSales: number
+  netSales: number
+  grossProfit: number
+  transactionCount: number
+  averageSales: number
+  grossMargin: number
 }
 
-export interface grossProfit {
-  grossSales: string
-  discounts: string
-  netSales: string
-  cogs: string
-  grossProfit: string
-}
-
-export interface discountReport {
-  name: string
-  count: number
-  grossDiscount: string
-  discount: string
-}
-
-export interface shiftRecociliation {
-  cashierName: string
-  startTime: string
-  endTime: string | null
-  totalExpected: string
-  totalActual: string
-  difference: string
+export interface SalesSummaryFilter {
+  'filter[created_at][type]': 'inRange'
+  'filter[created_at][filterType]': 'date'
+  'filter[created_at][from]': string
+  'filter[created_at][to]': string
 }
