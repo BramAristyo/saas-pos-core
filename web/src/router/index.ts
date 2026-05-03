@@ -78,21 +78,25 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Sales Types' },
     },
     {
+      path: '/employees',
+      name: 'employees',
+      component: () => import('@/views/employee/EmployeeView.vue'),
+      meta: { requiresAuth: true, title: 'Employees' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const authStore = useAuthStore()
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/')
+    return '/'
   } else if (to.path == '/' && authStore.isAuthenticated) {
-    next('/dashboard')
-  } else {
-    next()
+    return '/dashboard'
   }
 })
 

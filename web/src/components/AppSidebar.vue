@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import type { SidebarProps } from '@/components/ui/sidebar'
-import { Store, ChevronDown, ChevronUp, LayoutDashboard, Package, Receipt } from 'lucide-vue-next'
+import {
+  Store,
+  ChevronDown,
+  ChevronUp,
+  LayoutDashboard,
+  Package,
+  Receipt,
+  Users,
+} from 'lucide-vue-next'
 import SearchForm from '@/components/SearchForm.vue'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import NavUser from '@/components/NavUser.vue'
@@ -79,6 +87,17 @@ const data = {
         },
       ],
     },
+    {
+      title: 'Team',
+      url: '#',
+      icon: Users,
+      items: [
+        {
+          title: 'Employees',
+          url: '/employees',
+        },
+      ],
+    },
   ],
 }
 
@@ -97,15 +116,24 @@ const filteredNavMain = computed(() => {
     .filter((section) => section.items.length > 0)
 })
 
+function isChildActive(itemUrl: string) {
+  if (route.path === itemUrl) return true
+  if (itemUrl !== '/' && itemUrl !== '/dashboard' && route.path.startsWith(itemUrl)) {
+    return true
+  }
+  return false
+}
+
 function updateOpenSection() {
-  const activeSection = data.navMain.find((item) =>
-    item.items.some((child) => isChildActive(child.url)),
+  const activeSection = data.navMain.find((section) =>
+    section.items.some((item) => isChildActive(item.url)),
   )
-  openSectionTitle.value = activeSection ? activeSection.title : null
+  if (activeSection) {
+    openSectionTitle.value = activeSection.title
+  }
 }
 
 function handleToggle(title: string, open: boolean) {
-  // Only allow manual toggle if search is empty
   if (searchQuery.value) return
 
   if (open) {
@@ -113,19 +141,6 @@ function handleToggle(title: string, open: boolean) {
   } else if (openSectionTitle.value === title) {
     openSectionTitle.value = null
   }
-}
-
-function isChildActive(itemUrl: string) {
-  // Exact match
-  if (route.path === itemUrl) return true
-
-  // Special handling for master data sub-routes
-  // e.g. /modifiers/create should active /modifiers
-  if (itemUrl !== '/' && itemUrl !== '/dashboard' && route.path.startsWith(itemUrl)) {
-    return true
-  }
-
-  return false
 }
 
 const isParentActive = (item: any) => {
