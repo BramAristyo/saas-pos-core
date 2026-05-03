@@ -33,6 +33,8 @@ func (u *EmployeeUseCase) generateCode(ctx context.Context) string {
 		return "EMP-001"
 	}
 
+	fmt.Println(last, "<-------------------------")
+
 	// Format: EMP-001
 	parts := strings.Split(last.Code, "-")
 	if len(parts) < 2 {
@@ -44,6 +46,7 @@ func (u *EmployeeUseCase) generateCode(ctx context.Context) string {
 		return "EMP-001"
 	}
 
+	fmt.Println(num+1, " <---------------------------------")
 	return fmt.Sprintf("EMP-%03d", num+1)
 }
 

@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"time"
+
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -10,11 +11,11 @@ import (
 
 func SeedAttendanceData(db *gorm.DB) {
 	date := time.Date(2024, 5, 20, 0, 0, 0, 0, time.Local)
-	
+
 	// Mock times
 	inNormal := time.Date(2024, 5, 20, 06, 55, 0, 0, time.Local) // Early
 	outNormal := time.Date(2024, 5, 20, 15, 05, 0, 0, time.Local)
-	inLate := time.Date(2024, 5, 20, 14, 35, 0, 0, time.Local)   // Late (Tolerance 15m, 14:15 deadline)
+	inLate := time.Date(2024, 5, 20, 14, 35, 0, 0, time.Local) // Late (Tolerance 15m, 14:15 deadline)
 
 	attendances := []domain.Attendance{
 		{
@@ -29,7 +30,7 @@ func SeedAttendanceData(db *gorm.DB) {
 		},
 		{
 			ID:              uuid.MustParse("00000000-0000-0000-0000-000000001002"),
-			EmployeeID:      uuid.MustParse("00000000-0000-0000-0000-000000000802"), // Jane Smith
+			EmployeeID:      uuid.MustParse("00000000-0000-0000-0000-000000000801"), // Jane Smith
 			Date:            date,
 			CheckIn:         &inLate,
 			ShiftScheduleID: uuidPtrSeeder("00000000-0000-0000-0000-000000000902"),
