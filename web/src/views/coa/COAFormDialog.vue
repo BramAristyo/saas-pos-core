@@ -47,8 +47,8 @@ const form = reactive<CreateCoaRequest>({
 })
 
 const typeOptions = [
-  { label: 'In', value: 'in' },
-  { label: 'Out', value: 'out' },
+  { label: 'Income', value: 'in' },
+  { label: 'Expenses', value: 'out' },
 ]
 
 const operationalOptions = [

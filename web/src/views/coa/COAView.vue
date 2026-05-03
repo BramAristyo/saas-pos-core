@@ -138,9 +138,8 @@ function handleDelete(coa: Coa) {
               <TableCell>
                 <Badge
                   :variant="coa.type === 'in' ? 'success' : 'destructive'"
-                  class="capitalize"
                 >
-                  {{ coa.type }}
+                  {{ coa.type === 'in' ? 'Income' : 'Expenses' }}
                 </Badge>
               </TableCell>
               <TableCell>
