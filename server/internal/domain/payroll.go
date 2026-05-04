@@ -22,10 +22,19 @@ type Payroll struct {
 	// DeletedAt      gorm.DeletedAt  `gorm:"index"`
 }
 
+// Calculate computes the total deduction and net salary based on the provided attendance records.
+// It sums up all deductions from the attendances and calculates the net salary as:
+// (BaseSalary * number of shifts) - TotalDeduction.
 func (p *Payroll) Calculate(as []Attendance) {
+	p.TotalDeduction = decimal.Zero
+
 	for _, a := range as {
 		p.TotalDeduction = p.TotalDeduction.Add(decimal.NewFromFloat(a.DeductionAmount))
 	}
 
-	p.NetSalary = p.BaseSalary.Sub(p.TotalDeduction)
+	totalShifts := decimal.NewFromInt(int64(len(as)))
+
+	grossSalary := p.BaseSalary.Mul(totalShifts)
+
+	p.NetSalary = grossSalary.Sub(p.TotalDeduction)
 }

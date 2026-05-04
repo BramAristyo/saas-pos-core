@@ -26,7 +26,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex items-center justify-between w-full mt-4">
+  <div class="flex flex-col sm:flex-row items-center justify-between w-full mt-4 gap-4">
     <p class="text-sm text-muted-foreground whitespace-nowrap">
       Showing
       {{ (page - 1) * pageSize + 1 }}
@@ -39,13 +39,14 @@ const emit = defineEmits<{
     <Pagination
       v-slot="{ page: currentPage }"
       :total="totalRows"
-      :sibling-count="1"
+      :sibling-count="0"
+      class="sm:sibling-count-1"
       :items-per-page="pageSize"
       show-edges
       :page="page"
       @update:page="emit('update:page', $event)"
     >
-      <PaginationContent v-slot="{ items }" class="flex items-center gap-2">
+      <PaginationContent v-slot="{ items }" class="flex items-center gap-1 sm:gap-2">
         <PaginationFirst />
         <PaginationPrevious />
 

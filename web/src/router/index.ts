@@ -78,21 +78,49 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Sales Types' },
     },
     {
+      path: '/employees',
+      name: 'employees',
+      component: () => import('@/views/employee/EmployeeView.vue'),
+      meta: { requiresAuth: true, title: 'Employees' },
+    },
+    {
+      path: '/shift-schedules',
+      name: 'shift-schedules',
+      component: () => import('@/views/shift-schedule/ShiftScheduleView.vue'),
+      meta: { requiresAuth: true, title: 'Shift Schedules' },
+    },
+    {
+      path: '/attendances',
+      name: 'attendances',
+      component: () => import('@/views/attendance/AttendanceView.vue'),
+      meta: { requiresAuth: true, title: 'Attendance' },
+    },
+    {
+      path: '/coa',
+      name: 'coa',
+      component: () => import('@/views/coa/COAView.vue'),
+      meta: { requiresAuth: true, title: 'Chart of Accounts' },
+    },
+    {
+      path: '/payroll',
+      name: 'payroll',
+      component: () => import('@/views/payroll/PayrollView.vue'),
+      meta: { requiresAuth: true, title: 'Payroll' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const authStore = useAuthStore()
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/')
+    return '/'
   } else if (to.path == '/' && authStore.isAuthenticated) {
-    next('/dashboard')
-  } else {
-    next()
+    return '/dashboard'
   }
 })
 

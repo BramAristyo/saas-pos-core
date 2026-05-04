@@ -27,7 +27,7 @@ func SeedPayrollData(db *gorm.DB) {
 		},
 		{
 			ID:             uuid.MustParse("00000000-0000-0000-0000-000000001702"),
-			EmployeeID:     uuid.MustParse("00000000-0000-0000-0000-000000000802"), // Jane Smith
+			EmployeeID:     uuid.MustParse("00000000-0000-0000-0000-000000000801"),
 			PeriodStart:    time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 			PeriodEnd:      time.Date(2024, 1, 31, 23, 59, 59, 0, time.UTC),
 			BaseSalary:     decimal.NewFromInt(4500000),

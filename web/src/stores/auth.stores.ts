@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const res = await authApi.login(payload)
-      console.log(res)
+      // console.log(res)
       token.value = res.data.token
       user.value = res.data.user
 
@@ -26,7 +26,13 @@ export const useAuthStore = defineStore('auth', () => {
 
       return res
     } catch (err: any) {
-      error.value = err.message || err.error || 'Something went wrong'
+      if (typeof err.error === 'string') {
+        error.value = err.error
+      } else if (err.message) {
+        error.value = err.message
+      } else {
+        error.value = 'Something went wrong'
+      }
       throw err
     } finally {
       loading.value = false
