@@ -28,6 +28,7 @@ type Handlers struct {
 	Attendance    *handler.AttendanceHandler
 	Payroll       *handler.PayrollHandler
 	ShiftSchedule *handler.ShiftScheduleHandler
+	CashTransaction *handler.CashTransactionHandler
 }
 
 func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
@@ -66,10 +67,13 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	salesTypeRepository := repository.NewSalesTypeRepository(db)
 	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository, auditLogUseCase)
 
-	// ledgerRepository := repository.NewLedgerRepository(db)
+	ledgerRepository := repository.NewLedgerRepository(db)
 
 	coaRepository := repository.NewCOARepository(db)
 	coaUseCase := usecase.NewCOAUseCase(coaRepository, auditLogUseCase)
+
+	cashTransactionRepository := repository.NewCashTransactionRepository(db)
+	cashTransactionUseCase := usecase.NewCashTransactionUseCase(cashTransactionRepository, ledgerRepository, auditLogUseCase)
 
 	employeeRepository := repository.NewEmployeeRepository(db)
 	employeeUseCase := usecase.NewEmployeeUseCase(employeeRepository, auditLogUseCase)
@@ -100,23 +104,25 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	dashboardUseCase := usecase.NewDashboardUseCase(orderRepository)
 
 	return &Handlers{
-		Auth:          handler.NewAuthHandler(authUseCase),
-		User:          handler.NewUserHandler(userUseCase),
-		Category:      handler.NewCategoryHandler(categoryUseCase),
-		Product:       handler.NewProductHandler(productUseCase),
-		ModifierGroup: handler.NewModifierGroupHandler(modifierGroupUseCase),
-		Bundling:      handler.NewBundlingHandler(bundlingUseCase),
-		Tax:           handler.NewTaxHandler(taxUseCase),
-		Discount:      handler.NewDiscountHandler(discountUseCase),
-		Shift:         handler.NewShiftHandler(shiftUseCase),
-		SalesType:     handler.NewSalesTypeHandler(salesTypeUseCase),
-		Order:         handler.NewOrderHandler(orderUseCase),
-		Report:        handler.NewReportHandler(reportUseCase),
-		Dashboard:     handler.NewDashboardHandler(dashboardUseCase),
-		COA:           handler.NewCOAHandler(coaUseCase),
-		Employee:      handler.NewEmployeeHandler(employeeUseCase),
-		Attendance:    handler.NewAttendanceHandler(attendanceUseCase),
-		Payroll:       handler.NewPayrollHandler(payrollUseCase),
-		ShiftSchedule: handler.NewShiftScheduleHandler(shiftScheduleUseCase),
+		Auth:            handler.NewAuthHandler(authUseCase),
+		User:            handler.NewUserHandler(userUseCase),
+		Category:        handler.NewCategoryHandler(categoryUseCase),
+		Product:         handler.NewProductHandler(productUseCase),
+		ModifierGroup:   handler.NewModifierGroupHandler(modifierGroupUseCase),
+		Bundling:        handler.NewBundlingHandler(bundlingUseCase),
+		Tax:             handler.NewTaxHandler(taxUseCase),
+		Discount:        handler.NewDiscountHandler(discountUseCase),
+		Shift:           handler.NewShiftHandler(shiftUseCase),
+		SalesType:       handler.NewSalesTypeHandler(salesTypeUseCase),
+		Order:           handler.NewOrderHandler(orderUseCase),
+		Report:          handler.NewReportHandler(reportUseCase),
+		Dashboard:       handler.NewDashboardHandler(dashboardUseCase),
+		COA:             handler.NewCOAHandler(coaUseCase),
+		Employee:        handler.NewEmployeeHandler(employeeUseCase),
+		Attendance:      handler.NewAttendanceHandler(attendanceUseCase),
+		Payroll:         handler.NewPayrollHandler(payrollUseCase),
+		ShiftSchedule:   handler.NewShiftScheduleHandler(shiftScheduleUseCase),
+		CashTransaction: handler.NewCashTransactionHandler(cashTransactionUseCase),
 	}
 }
+

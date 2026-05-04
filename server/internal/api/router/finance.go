@@ -15,3 +15,12 @@ func COARoutes(r *gin.RouterGroup, h *handler.COAHandler) {
 	r.DELETE("/:id", h.Delete)
 	r.PATCH("/:id/restore", h.Restore)
 }
+
+func CashTransactionRoutes(r *gin.RouterGroup, h *handler.CashTransactionHandler) {
+	r.GET("", h.Paginate)
+	r.GET("/:id", h.FindById)
+	r.POST("", h.Store)
+	r.PUT("/:id", h.Update)
+	r.DELETE("/:id", h.Delete)
+}
+
