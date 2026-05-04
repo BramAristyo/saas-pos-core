@@ -69,8 +69,11 @@ function handleLogout() {
       </div>
       <DropdownMenuSeparator />
       <div class="p-1">
-        <DropdownMenuItem @click="handleLogout" class="rounded-lg cursor-pointer py-2 px-3 text-destructive focus:bg-destructive focus:text-destructive-foreground">
-          <LogOut class="mr-3 h-4 w-4" />
+        <DropdownMenuItem
+          @click="handleLogout"
+          class="rounded-lg cursor-pointer py-2 px-3 text-destructive focus:bg-destructive focus:text-destructive-foreground data-[highlighted]:bg-destructive data-[highlighted]:text-destructive-foreground"
+        >
+          <LogOut class="mr-3 h-4 w-4 text-current" />
           <span class="text-sm font-semibold">Log out</span>
         </DropdownMenuItem>
       </div>
