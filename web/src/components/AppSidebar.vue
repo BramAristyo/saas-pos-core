@@ -170,10 +170,10 @@ watch(
 </script>
 
 <template>
-  <Sidebar v-bind="props" class="border-r border-border/40 bg-sidebar/80 backdrop-blur-xl">
+  <Sidebar v-bind="props" class="backdrop-blur-xl">
     <SidebarHeader class="relative overflow-hidden pb-6 pt-8">
       <!-- Subtle Decorative background element -->
-      <div class="absolute -right-4 -top-8 size-32 rounded-full bg-primary/5 blur-3xl" />
+      <div class="absolute -right-4 -top-8 size-32 rounded-full blur-3xl" />
 
       <SidebarMenu class="relative z-10">
         <SidebarMenuItem>

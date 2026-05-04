@@ -126,20 +126,19 @@ function handleDelete(coa: Coa) {
               <TableHead>Created At</TableHead>
               <TableHead class="w-12.5"></TableHead>
             </TableRow>
-            </TableHeader>
-            <TableBody>
+          </TableHeader>
+          <TableBody>
             <TableRow v-for="coa in coaStore.coas" :key="coa.id">
               <TableCell class="font-medium">
                 <div class="flex items-center gap-2">
                   {{ coa.name }}
-                  <Badge v-if="coa.isSystem" variant="secondary" class="text-[10px] px-1.5 py-0 h-4">System</Badge>
+                  <Badge v-if="coa.isSystem" variant="secondary" class="text-[10px] px-1.5 py-0 h-4"
+                    >System</Badge
+                  >
                 </div>
               </TableCell>
               <TableCell>
-                <span
-                  :class="coa.type === 'in' ? 'text-success' : 'text-destructive'"
-                  class="font-medium"
-                >
+                <span :class="coa.type === 'in' ? 'text-success' : 'text-destructive'">
                   {{ coa.type === 'in' ? 'Income' : 'Expenses' }}
                 </span>
               </TableCell>
