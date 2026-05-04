@@ -26,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { MoreHorizontal, Plus, Search, Package, Pencil, Trash } from 'lucide-vue-next'
+import { MoreHorizontal, Plus, Search, Package } from 'lucide-vue-next'
 import { useSearch } from '@/composables/common/useSearch'
 import { usePagination } from '@/composables/common/usePagination'
 import { useFormatter } from '@/composables/common/useFormatter'
@@ -107,16 +107,15 @@ async function handleDelete() {
         </div>
         <Button @click="handleAdd">
           <Plus class="size-4 mr-2" />
-          Add Product
+          Add
         </Button>
       </div>
     </div>
 
     <div v-if="productStore.loading && productStore.products.length === 0" class="space-y-3">
-      <Skeleton class="h-12 w-full" />
-      <Skeleton class="h-12 w-full" />
-      <Skeleton class="h-12 w-full" />
-      <Skeleton class="h-12 w-full" />
+      <Skeleton class="h-10 w-full" />
+      <Skeleton class="h-10 w-full" />
+      <Skeleton class="h-10 w-full" />
     </div>
 
     <CommonEmpty
@@ -131,43 +130,24 @@ async function handleDelete() {
     />
 
     <div v-else class="space-y-4">
-      <div class="overflow-x-auto border rounded-lg bg-card">
+      <div class="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead class="w-16">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
-              <TableHead>Modifiers</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>COGS</TableHead>
+              <TableHead class="text-right">Price</TableHead>
+              <TableHead class="text-right">COGS</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead class="w-12.5"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow v-for="product in productStore.products" :key="product.id">
-              <TableCell>
-                <div class="h-10 w-10 rounded-md border overflow-hidden bg-muted flex items-center justify-center">
-                  <img
-                    v-if="product.imageUrl"
-                    :src="product.imageUrl"
-                    :alt="product.name"
-                    class="h-full w-full object-cover"
-                  />
-                  <Package v-else class="h-5 w-5 text-muted-foreground" />
-                </div>
-              </TableCell>
               <TableCell class="font-medium">{{ product.name }}</TableCell>
               <TableCell>{{ product.category?.name || '-' }}</TableCell>
-              <TableCell>
-                <Badge v-if="product.modifierGroups?.length" variant="outline">
-                  {{ product.modifierGroups.length }} Groups
-                </Badge>
-                <span v-else class="text-muted-foreground text-xs italic">None</span>
-              </TableCell>
-              <TableCell>{{ formatRupiah(product.price) }}</TableCell>
-              <TableCell>{{ formatRupiah(product.cogs) }}</TableCell>
+              <TableCell class="text-right">{{ formatRupiah(product.price) }}</TableCell>
+              <TableCell class="text-right">{{ formatRupiah(product.cogs) }}</TableCell>
               <TableCell>{{ formatDate(product.createdAt) }}</TableCell>
               <TableCell>
                 <DropdownMenu>
@@ -177,15 +157,11 @@ async function handleDelete() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem @click="handleEdit(product)">
-                      <Pencil class="size-4 mr-2" />
-                      Edit
-                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="handleEdit(product)"> Edit </DropdownMenuItem>
                     <DropdownMenuItem
                       class="text-destructive focus:text-destructive"
                       @click="confirmDelete(product)"
                     >
-                      <Trash class="size-4 mr-2" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>

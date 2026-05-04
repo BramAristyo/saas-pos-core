@@ -69,11 +69,7 @@ const isParentActive = (item: any) => {
   return item.items?.some((child: any) => isChildActive(child.url))
 }
 
-function handleParentClick(item: any) {
-  if (item.items && item.items.length > 0) {
-    router.push(item.items[0].url)
-  }
-}
+function handleParentClick(item: any) {}
 
 watch(
   () => route.path,
@@ -155,7 +151,7 @@ watch(
                     <RouterLink :to="childItem.url" v-slot="{ isActive }">
                       <SidebarMenuSubButton
                         :is-active="isActive"
-                        class="group h-9 rounded-lg transition-all duration-200 hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent/50"
+                        class="group h-9 rounded-lg *:hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent/50"
                       >
                         <span
                           :class="[
