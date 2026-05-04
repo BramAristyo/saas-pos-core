@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { AmountInput } from '@/components/common/form/input/amount'
 import { Label } from '@/components/ui/label'
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp'
 import { toast } from 'vue-sonner'
@@ -69,11 +69,16 @@ watch(
 async function handleSubmit() {
   clearErrors()
   try {
+    const payload = {
+      ...form,
+      baseSalary: Number(form.baseSalary),
+    }
+
     if (isEdit.value && props.employee) {
-      await employeeStore.update(props.employee.id, form as UpdateEmployeeRequest)
+      await employeeStore.update(props.employee.id, payload as UpdateEmployeeRequest)
       toast.success('Employee updated successfully')
     } else {
-      await employeeStore.create(form)
+      await employeeStore.create(payload)
       toast.success('Employee created successfully')
     }
     emit('success')
@@ -106,7 +111,13 @@ async function handleSubmit() {
         <div class="grid gap-4 py-4">
           <div class="grid gap-2">
             <Label for="name">Name</Label>
-            <Input id="name" v-model="form.name" placeholder="Employee name" required />
+            <input
+              id="name"
+              v-model="form.name"
+              placeholder="Employee name"
+              required
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            />
             <span v-if="hasError('Name')" class="text-xs text-destructive">
               {{ getErrorMessage('Name') }}
             </span>
@@ -114,7 +125,12 @@ async function handleSubmit() {
 
           <div class="grid gap-2">
             <Label for="phone">Phone</Label>
-            <Input id="phone" v-model="form.phone" placeholder="Phone number" />
+            <input
+              id="phone"
+              v-model="form.phone"
+              placeholder="Phone number"
+              class="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            />
             <span v-if="hasError('Phone')" class="text-xs text-destructive">
               {{ getErrorMessage('Phone') }}
             </span>
@@ -122,12 +138,12 @@ async function handleSubmit() {
 
           <div class="grid gap-2">
             <Label for="baseSalary">Base Salary</Label>
-            <Input
+            <AmountInput
               id="baseSalary"
-              v-model.number="form.baseSalary"
-              type="number"
+              v-model="form.baseSalary"
               placeholder="0"
               required
+              :aria-invalid="hasError('BaseSalary')"
             />
             <span v-if="hasError('BaseSalary')" class="text-xs text-destructive">
               {{ getErrorMessage('BaseSalary') }}
