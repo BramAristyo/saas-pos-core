@@ -37,7 +37,7 @@ func (r *LedgerRepository) ReportPaginate(ctx context.Context, startDate string,
 				SUM(
 					CASE
 						WHEN ca.type = 'in' THEN l.amount
-						WHEN ca.type = 'out' THEM -l.amount
+						WHEN ca.type = 'out' THEN -l.amount
 						ELSE 0
 					END
 				) OVER (ORDER BY l.transaction_date ASC, l.created_at ASC) AS running_balance
@@ -159,7 +159,6 @@ func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate stri
 	return summary, incomes, expenses, nil
 }
 
-// for returning to method, not for API endpoint
 func (r *LedgerRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Ledger, error) {
 	var l domain.Ledger
 
@@ -174,51 +173,18 @@ func (r *LedgerRepository) FindById(ctx context.Context, id uuid.UUID) (domain.L
 }
 
 func (r *LedgerRepository) Store(ctx context.Context, ledger domain.Ledger) (domain.Ledger, error) {
-	if err := r.DB.WithContext(ctx).Create(ledger).Error; err != nil {
+	if err := r.DB.WithContext(ctx).Create(&ledger).Error; err != nil {
 		return domain.Ledger{}, err
 	}
 
 	return ledger, nil
 }
 
-// ledger with RefType LedgerExpense
-func (r *LedgerRepository) ExpenseUpdate(ctx context.Context, expenseId uuid.UUID, ledger domain.Ledger) (domain.Ledger, error) {
-	var existing domain.Ledger
-
-	if err := r.DB.WithContext(ctx).
-		Where("reference_id = ?", expenseId).
-		Where("reference_type = ?", domain.LedgerExpense).
-		First(&existing).Error; err != nil {
-		return domain.Ledger{}, err
-	}
-
-	updateData := map[string]any{
-		"coaId":  ledger.COAID,
-		"amount": ledger.Amount,
-		"notes":  *ledger.Notes,
-	}
-
-	if err := r.DB.WithContext(ctx).Model(&existing).Updates(updateData).Error; err != nil {
-		return domain.Ledger{}, err
-	}
-
-	return existing, nil
-}
-
-// ledger with RefType LedgerExpense
-func (r *LedgerRepository) ExpenseDelete(ctx context.Context, expenseID uuid.UUID) error {
-	result := r.DB.WithContext(ctx).
-		Where("reference_id = ?", expenseID).
-		Where("reference_type = ?", domain.LedgerExpense).
-		Delete(&domain.Ledger{})
-
-	if result.Error != nil {
-		return result.Error
-	}
-
+func (r *LedgerRepository) Delete(ctx context.Context, refId uuid.UUID, refType domain.ReferenceType) error {
+	result := r.DB.WithContext(ctx).Delete(&domain.Ledger{}, "reference_id = ? AND reference_type = ?", refId, refType)
 	if result.RowsAffected == 0 {
 		return usecase_errors.NotFound
 	}
 
-	return nil
+	return result.Error
 }
