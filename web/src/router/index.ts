@@ -30,6 +30,24 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Categories' },
     },
     {
+      path: '/catalog/products',
+      name: 'products',
+      component: () => import('@/views/catalog/product/ProductView.vue'),
+      meta: { requiresAuth: true, title: 'Products' },
+    },
+    {
+      path: '/catalog/products/create',
+      name: 'product-create',
+      component: () => import('@/views/catalog/product/ProductCreateView.vue'),
+      meta: { requiresAuth: true, title: 'Create Product' },
+    },
+    {
+      path: '/catalog/products/:id/edit',
+      name: 'product-edit',
+      component: () => import('@/views/catalog/product/ProductEditView.vue'),
+      meta: { requiresAuth: true, title: 'Edit Product' },
+    },
+    {
       path: '/modifiers',
       name: 'modifiers',
       component: () => import('@/views/modifier/ModifierView.vue'),

@@ -1,42 +1,36 @@
+import type { BaseResponse } from './common.types'
 import type { Category } from './category.types'
 
 export interface Product {
   id: string
   name: string
-  description: string
-  price: string
-  cogs: string
-  created_at: string
+  description?: string
+  price: number
+  cogs: number
+  categoryId: string
   category: Category
-  deleted_at?: string
+  imageUrl?: string
+  createdAt: string
+  updatedAt: string
+  deletedAt?: string
 }
 
-export interface CreateProductRequest {
+export interface StoreProductRequest {
   name: string
   description?: string
+  price: number
+  cogs: number
   categoryId: string
-  price: string
-  cogs: string
   imageUrl?: string
 }
 
 export interface UpdateProductRequest {
   name: string
   description?: string
+  price: number
+  cogs: number
   categoryId: string
-  price: string
-  cogs: string
   imageUrl?: string
 }
 
-export interface ProductResponse {
-  id: string
-  name: string
-  description: string
-  price: string
-  cogs: string
-  createdAt: string
-  updatedAt: string
-  deletedAt?: string
-  category: Category
-}
+export type PaginatedProductResponse = BaseResponse<Product[]>

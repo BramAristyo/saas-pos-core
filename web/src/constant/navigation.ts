@@ -24,6 +24,10 @@ export const NAVIGATION_CONFIG = [
     icon: Package,
     items: [
       {
+        title: 'Products',
+        url: '/catalog/products',
+      },
+      {
         title: 'Categories',
         url: '/categories',
       },
