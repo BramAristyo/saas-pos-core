@@ -1,47 +1,81 @@
-# SaaS POS Core Frontend
+# SaaS POS Frontend
 
-## Overview
-This repository contains the high-performance, enterprise-grade frontend for the SaaS POS Core ecosystem. Built with Vue 3 and TypeScript, the application is engineered for reliability, scalability, and rapid response times in demanding retail and hospitality environments. It serves as the primary interface for point-of-sale operations, inventory management, and administrative configurations.
+Enterprise-grade SaaS POS frontend built with Vue 3 and TypeScript, designed for scalability and maintainability.
 
-## Tech Stack Deep-Dive
+## Tech Stack
 
-### Core Framework
-- **Vue 3 (Composition API)**: Leverages the latest reactive paradigms for optimal logic reuse and a clean code architecture.
-- **TypeScript**: Implements strict type-safety across the entire codebase to minimize runtime errors and enhance developer productivity through robust IDE support.
+- **Framework**: Vue 3 (Composition API)
+- **Build Tool**: Vite
+- **State Management**: Pinia
+- **Styling**: Tailwind CSS (v4)
+- **UI Components**: Shadcn Vue (via Reka UI)
+- **HTTP Client**: Axios (wrapped in custom http module)
+- **Icons**: Lucide Icons
+- **Type Safety**: TypeScript
+- **Validation**: Integrated form validation composables
 
-### Build and Performance
-- **Vite**: Utilized as the build tool and development server, providing ultra-fast Hot Module Replacement (HMR) and highly optimized production builds with efficient code splitting and tree shaking.
+## Project Structure
 
-### State Management
-- **Pinia**: Implements a modular, "store-per-module" architecture. Stores are defined using the setup-store syntax, ensuring consistency with the Composition API and providing a centralized, reactive state for authentication, sales, and configuration data.
+The codebase follows a modular structure within the `src/` directory:
 
-### UI/UX Engineering
-- **Tailwind CSS**: Utility-first styling framework used for rapid UI development and maintaining a consistent design system across the application.
-- **Shadcn Vue**: Accessible, unstyled UI components built on top of Radix UI primitives (via Reka UI), allowing for full design control while adhering to strict accessibility standards (WAI-ARIA).
-- **Lucide Vue Next**: A comprehensive library of high-quality, consistent iconography tailored for the POS interface.
+- `api/`: Pure HTTP functions for backend integration.
+- `assets/`: Global styles, including `main.css` (color tokens) and `base.css`.
+- `components/`:
+    - `ui/`: Shadcn UI base components.
+    - `common/`: Shared reusable application components.
+- `composables/`: Shared business logic and stateful utilities (e.g., `useFormErrors`, `usePagination`).
+- `layouts/`: Application layout wrappers (e.g., `AppLayout.vue`).
+- `router/`: Vue Router configuration and navigation guards.
+- `stores/`: Pinia setup stores for global state management.
+- `types/`: TypeScript interfaces and type definitions.
+- `utils/`: Common utility functions (e.g., currency formatting).
+- `views/`: Page-level components organized by feature.
 
-### Networking
-- **Axios**: Centralized HTTP client configuration located in `src/lib/http.ts`. It features strict TypeScript interceptors for automated Bearer token attachment and synchronized session expiration (401) handling.
-- **API Layer**: Decoupled API services ensure that business logic remains independent of the transport layer, facilitating easier testing and maintenance.
+## AI Agentic System
 
-## AI Agentic Development
-This project utilizes an advanced Agentic Workflow for development, integrating the Gemini CLI to orchestrate complex engineering tasks directly from the terminal.
+This codebase is developed using an **AI Agentic Architecture** orchestrated by the **Gemini CLI**. The majority of the logic and components are generated and maintained by specialized AI sub-agents to ensure consistency and speed.
 
-### Orchestration System
-- **GEMINI.md**: Serves as the central project context and instruction persistence layer. It provides the orchestrator with the necessary architectural guidelines, naming conventions, and global rules.
-- **Custom Sub-Agents**: Specialized agents are employed to handle domain-specific tasks, ensuring that all code adheres to the project's high standards:
-    - **API Integration Agent**: Manages TypeScript definitions and the implementation of service layers.
-    - **UI Component Generator**: Scaffolds views and components based on established design tokens and layout patterns.
-    - **State Management Agent**: Oversees the creation and modification of Pinia stores and state logic.
-    - **Error Handler Agent**: Implements robust error boundaries, try-catch blocks, and user notification logic.
-    - **Form Validator Agent**: Orchestrates complex form states, validation schemas, and error messaging.
+### Orchestration Model
+The system uses an **Orchestrator** (defined in `gemini.md`) that routes tasks to specialized sub-agents located in `.gemini/agents/`. This multi-agent approach ensures that each aspect of the application—from styling to state management—is handled by a focused expert.
 
-This agentic approach ensures architectural consistency and significantly accelerates the development lifecycle while maintaining a clean, professional codebase.
+### Sub-Agents Registry
+
+| Agent | Responsibility |
+|---|---|
+| `api-integration-agent` | API types and endpoint integration. |
+| `state-management-agent` | Pinia stores and business logic composables. |
+| `ui-component-generator` | Creating UI components and feature views. |
+| `styling-css-agent` | Layout, colors, themes, and Tailwind utility management. |
+| `form-validator-agent` | Form logic, validation rules, and error messaging. |
+| `error-handler-agent` | Error states, try/catch logic, and user notifications (toasts). |
+| `code-reviewer-refactorer` | Code cleanup, optimization, and adherence to standards. |
+| `performance-optimizer-agent` | Runtime performance and bundle optimization. |
+| `responsive-design-checker-agent` | Mobile-first responsiveness and layout integrity. |
+| `documentation-writer-agent` | Maintaining project documentation and READMEs. |
+
+### How to Prompt
+When interacting with the Gemini Orchestrator, use specific task-oriented prompts:
+- "Create a new view for Category management using the category store."
+- "Refactor the DiscountForm to use the new form validation rules."
+- "Fix the responsive layout for the mobile sidebar."
+- "Integrate the new Payroll API endpoints and update the store."
+
+## Naming Conventions
+
+To maintain consistency across the agentic workflow, the following naming conventions are strictly enforced:
+
+| Type | Convention | Example |
+|---|---|---|
+| Component / View | PascalCase | `CategoryView.vue` |
+| Store | camelCase + `.stores.ts` | `category.stores.ts` |
+| API | camelCase + `.api.ts` | `category.api.ts` |
+| Types | camelCase + `.types.ts` | `category.types.ts` |
+| Composable | camelCase + `use` prefix | `useFormErrors.ts` |
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (Version 20.19.0 or 22.12.0+)
+- Node.js (v20.19.0 or >=22.12.0)
 - npm
 
 ### Installation
@@ -50,32 +84,24 @@ npm install
 ```
 
 ### Development
-Launch the development server with HMR:
 ```bash
 npm run dev
 ```
 
-### Production Build
-Compile and minify the project for production:
+### Build for Production
 ```bash
 npm run build
 ```
 
-### Static Analysis and Linting
-Run the full linting suite:
+### Linting and Formatting
 ```bash
+# Run all linters
 npm run lint
+
+# Run specific linters
+npm run lint:oxlint
+npm run lint:eslint
+
+# Format code
+npm run format
 ```
-
-## Engineering Standards
-
-### Architecture Principles
-- **Clean Architecture**: Strict separation of concerns between views, stores, and API layers.
-- **Single Source of Truth**: Centralized state management via Pinia and typed interfaces in `src/types/`.
-- **Mobile-First Design**: Responsive layouts engineered to perform across various hardware profiles, from tablets to desktop monitors.
-
-### Quality Assurance
-- **Oxlint**: Utilized for high-performance linting to provide near-instant feedback during development.
-- **ESLint**: Enforces standardized code quality rules and best practices.
-- **vue-tsc**: Performs strict type-checking on both TypeScript files and Vue templates to ensure total type safety.
-- **No Code Comments**: The project prioritizes self-documenting code through descriptive naming and clear structural patterns.
