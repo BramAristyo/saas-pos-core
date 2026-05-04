@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import AppSidebar from '@/components/AppSidebar.vue'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import NavUser from '@/components/NavUser.vue'
 import { useAuthStore } from '@/stores/auth.stores'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useFormatter } from '@/composables/common/useFormatter'
+import { NAVIGATION_CONFIG } from '@/constant/navigation'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -19,8 +28,34 @@ const user = computed(() => {
   }
 })
 
-const pageTitle = computed(() => {
-  return route.meta?.title || 'Overview'
+const breadcrumbs = computed(() => {
+  const result: { title: string; url?: string }[] = []
+
+  // Find parent in NAVIGATION_CONFIG
+  const parent = NAVIGATION_CONFIG.find((section) =>
+    section.items.some(
+      (item) =>
+        route.path === item.url ||
+        (item.url !== '/' && item.url !== '/dashboard' && route.path.startsWith(item.url)),
+    ),
+  )
+
+  if (parent) {
+    result.push({ title: parent.title })
+    const child = parent.items.find(
+      (item) =>
+        route.path === item.url ||
+        (item.url !== '/' && item.url !== '/dashboard' && route.path.startsWith(item.url)),
+    )
+    if (child) {
+      result.push({ title: child.title, url: child.url })
+    }
+  } else {
+    // Fallback to route meta title if not in navigation config (e.g. Dashboard)
+    result.push({ title: (route.meta?.title as string) || 'Overview' })
+  }
+
+  return result
 })
 
 const today = computed(() => {
@@ -33,13 +68,28 @@ const today = computed(() => {
     <AppSidebar />
     <SidebarInset class="bg-background">
       <!-- Professional Floating Header -->
-      <header class="sticky top-4 z-40 mx-6 flex h-16 shrink-0 items-center justify-between rounded-2xl border border-border/40 bg-background/80 backdrop-blur-xl px-6 shadow-sm transition-all duration-300">
+      <header
+        class="sticky top-4 z-40 mx-6 flex h-16 shrink-0 items-center justify-between rounded-2xl border border-border/40 bg-background/80 backdrop-blur-xl px-6 shadow-sm transition-all duration-300"
+      >
         <div class="flex items-center gap-4">
           <SidebarTrigger class="-ml-2 h-10 w-10 rounded-xl hover:bg-accent transition-colors" />
           <div class="h-4 w-px bg-border/60" />
-          <h1 class="text-sm font-semibold text-foreground hidden md:block">
-            {{ pageTitle }}
-          </h1>
+
+          <Breadcrumb class="hidden md:block">
+            <BreadcrumbList>
+              <template v-for="(crumb, index) in breadcrumbs" :key="crumb.title">
+                <BreadcrumbItem>
+                  <BreadcrumbLink v-if="index < breadcrumbs.length - 1">
+                    {{ crumb.title }}
+                  </BreadcrumbLink>
+                  <BreadcrumbPage v-else>
+                    {{ crumb.title }}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator v-if="index < breadcrumbs.length - 1" />
+              </template>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
         <div class="flex items-center gap-6">
           <div class="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">
@@ -48,7 +98,7 @@ const today = computed(() => {
           <NavUser :user="user" />
         </div>
       </header>
-      
+
       <main class="flex flex-1 flex-col overflow-y-auto pt-8">
         <div class="container max-w-7xl mx-auto p-4 lg:p-6 pb-20">
           <slot />

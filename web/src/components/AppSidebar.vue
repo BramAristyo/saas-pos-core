@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from '@/components/ui/sidebar'
-import {
-  Store,
-  ChevronDown,
-  LayoutDashboard,
-  Package,
-  Receipt,
-  Users,
-  Wallet,
-} from 'lucide-vue-next'
+import { ChevronDown, Store } from 'lucide-vue-next'
 import SearchForm from '@/components/SearchForm.vue'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
@@ -25,108 +17,25 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar'
 import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { NAVIGATION_CONFIG } from '@/constant/navigation'
 
 const props = defineProps<SidebarProps>()
 
 const route = useRoute()
-const data = {
-  navMain: [
-    {
-      title: 'Overview',
-      url: '#',
-      icon: LayoutDashboard,
-      items: [
-        {
-          title: 'Dashboard',
-          url: '/dashboard',
-        },
-      ],
-    },
-    {
-      title: 'Catalog',
-      url: '#',
-      icon: Package,
-      items: [
-        {
-          title: 'Categories',
-          url: '/categories',
-        },
-        {
-          title: 'Modifiers',
-          url: '/modifiers',
-        },
-      ],
-    },
-    {
-      title: 'Transactions',
-      url: '#',
-      icon: Receipt,
-      items: [
-        {
-          title: 'Taxes',
-          url: '/taxes',
-        },
-        {
-          title: 'Sales Types',
-          url: '/sales-types',
-        },
-        {
-          title: 'Discounts',
-          url: '/discounts',
-        },
-      ],
-    },
-    {
-      title: 'Employees',
-      url: '#',
-      icon: Users,
-      items: [
-        {
-          title: 'List',
-          url: '/employees',
-        },
-        {
-          title: 'Shift Schedule',
-          url: '/shift-schedules',
-        },
-        {
-          title: 'Attendance',
-          url: '/attendances',
-        },
-        {
-          title: 'Payroll',
-          url: '/payroll',
-        },
-      ],
-    },
-    {
-      title: 'Accounting',
-      url: '#',
-      icon: Wallet,
-      items: [
-        {
-          title: 'Chart of Accounts',
-          url: '/coa',
-        },
-      ],
-    },
-  ],
-}
+const router = useRouter()
 
 const searchQuery = ref('')
 const openSectionTitle = ref<string | null>(null)
 
 const filteredNavMain = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
-  if (!query) return data.navMain
+  if (!query) return NAVIGATION_CONFIG
 
-  return data.navMain
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => item.title.toLowerCase().includes(query)),
-    }))
-    .filter((section) => section.items.length > 0)
+  return NAVIGATION_CONFIG.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => item.title.toLowerCase().includes(query)),
+  })).filter((section) => section.items.length > 0)
 })
 
 function isChildActive(itemUrl: string) {
@@ -138,7 +47,7 @@ function isChildActive(itemUrl: string) {
 }
 
 function updateOpenSection() {
-  const activeSection = data.navMain.find((section) =>
+  const activeSection = NAVIGATION_CONFIG.find((section) =>
     section.items.some((item) => isChildActive(item.url)),
   )
   if (activeSection) {
@@ -158,6 +67,12 @@ function handleToggle(title: string, open: boolean) {
 
 const isParentActive = (item: any) => {
   return item.items?.some((child: any) => isChildActive(child.url))
+}
+
+function handleParentClick(item: any) {
+  if (item.items && item.items.length > 0) {
+    router.push(item.items[0].url)
+  }
 }
 
 watch(
@@ -216,6 +131,7 @@ watch(
               <CollapsibleTrigger as-child>
                 <SidebarMenuButton
                   :is-active="isParentActive(item)"
+                  @click="handleParentClick(item)"
                   class="h-11 rounded-xl px-4 transition-all duration-300 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                 >
                   <component :is="item.icon" v-if="item.icon" class="size-5 opacity-80" />
@@ -234,7 +150,7 @@ watch(
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                  <SidebarMenuSub class="ml-4 border-l-2 border-primary/10 pl-4 mt-2 space-y-1">
+                <SidebarMenuSub class="ml-4 border-l-2 border-primary/10 pl-4 mt-2 space-y-1">
                   <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
                     <RouterLink :to="childItem.url" v-slot="{ isActive }">
                       <SidebarMenuSubButton
