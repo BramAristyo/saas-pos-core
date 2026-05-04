@@ -97,7 +97,7 @@ function handleLogout() {
         <div class="p-1">
           <DropdownMenuItem
             @select.prevent="isLogoutDialogOpen = true"
-            class="rounded-lg cursor-pointer py-2 px-3 text-destructive! focus:!bg-destructive focus:!text-destructive-foreground data-[highlighted]:!bg-destructive data-[highlighted]:!text-destructive-foreground"
+            class="rounded-lg cursor-pointer py-2 px-3 text-destructive!"
           >
             <LogOut class="mr-3 h-4 w-4 text-current" />
             <span class="text-sm font-semibold">Log out</span>
