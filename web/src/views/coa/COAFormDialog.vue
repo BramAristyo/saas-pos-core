@@ -53,7 +53,7 @@ const typeOptions = [
 
 const operationalOptions = [
   { label: 'Operational', value: true },
-  { label: 'Non-Operational', value: false },
+  { label: 'General', value: false },
 ]
 
 watch(
@@ -136,7 +136,7 @@ async function handleSubmit() {
           </Field>
 
           <Field>
-            <FieldLabel>Operational Status</FieldLabel>
+            <FieldLabel>Account Classification</FieldLabel>
             <FieldContent>
               <Toggle
                 v-model="form.isOperational"

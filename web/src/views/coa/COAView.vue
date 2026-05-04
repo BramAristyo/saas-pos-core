@@ -122,7 +122,7 @@ function handleDelete(coa: Coa) {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Operational</TableHead>
+              <TableHead>Classification</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead class="w-12.5"></TableHead>
             </TableRow>
@@ -143,8 +143,8 @@ function handleDelete(coa: Coa) {
                 </span>
               </TableCell>
               <TableCell>
-                <Badge :variant="coa.IsOperational ? 'default' : 'outline'">
-                  {{ coa.IsOperational ? 'Yes' : 'No' }}
+                <Badge :variant="coa.IsOperational ? 'default' : 'secondary'">
+                  {{ coa.IsOperational ? 'Operational' : 'General' }}
                 </Badge>
               </TableCell>
               <TableCell>{{ formatDate(coa.createdAt) }}</TableCell>
