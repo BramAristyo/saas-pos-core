@@ -234,18 +234,19 @@ watch(
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <SidebarMenuSub class="ml-4 border-l-2 border-primary/10 pl-4 mt-2 space-y-1">
+                  <SidebarMenuSub class="ml-4 border-l-2 border-primary/10 pl-4 mt-2 space-y-1">
                   <SidebarMenuSubItem v-for="childItem in item.items" :key="childItem.title">
                     <RouterLink :to="childItem.url" v-slot="{ isActive }">
                       <SidebarMenuSubButton
                         :is-active="isActive"
-                        class="h-9 rounded-lg transition-all duration-200 hover:bg-sidebar-accent data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
+                        class="h-9 rounded-lg transition-all duration-200 hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent"
                       >
-                        <div v-if="isActive" class="size-1 rounded-full bg-primary shrink-0" />
                         <span
                           :class="[
                             'text-sm transition-all',
-                            isActive ? 'font-semibold' : 'text-muted-foreground hover:text-foreground',
+                            isActive
+                              ? 'font-bold text-foreground'
+                              : 'text-muted-foreground hover:text-foreground',
                           ]"
                         >
                           {{ childItem.title }}
