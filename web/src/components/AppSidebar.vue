@@ -155,14 +155,14 @@ watch(
                     <RouterLink :to="childItem.url" v-slot="{ isActive }">
                       <SidebarMenuSubButton
                         :is-active="isActive"
-                        class="h-9 rounded-lg transition-all duration-200 hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent"
+                        class="group h-9 rounded-lg transition-all duration-200 hover:bg-sidebar-accent data-[active=true]:bg-sidebar-accent/50"
                       >
                         <span
                           :class="[
                             'text-sm transition-all',
                             isActive
-                              ? 'font-bold text-foreground'
-                              : 'text-muted-foreground hover:text-foreground',
+                              ? 'font-semibold text-foreground'
+                              : 'text-muted-foreground group-hover:text-foreground',
                           ]"
                         >
                           {{ childItem.title }}
