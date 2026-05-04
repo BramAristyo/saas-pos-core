@@ -9,7 +9,9 @@ import {
   FieldError,
 } from '@/components/ui/field'
 import { AmountInput } from '@/components/common/form/input/amount'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useCategoryStore } from '@/stores/category.stores'
+import { useModifierStore } from '@/stores/modifier.store'
 import { useFormErrors } from '@/composables/common/useFormErrors'
 import type { Product, StoreProductRequest } from '@/types/product.types'
 
@@ -23,14 +25,24 @@ const emit = defineEmits<{
 }>()
 
 const categoryStore = useCategoryStore()
+const modifierStore = useModifierStore()
 const { getErrorMessage, hasError, setErrors, clearErrors } = useFormErrors()
 
-const form = reactive({
+const form = reactive<{
+  name: string
+  description: string
+  price: string
+  cogs: string
+  categoryId: string
+  modifierGroupIds: string[]
+  imageUrl: string
+}>({
   name: '',
   description: '',
   price: '0',
   cogs: '0',
   categoryId: '',
+  modifierGroupIds: [],
   imageUrl: '',
 })
 
@@ -43,6 +55,7 @@ watch(
       form.price = newData.price.toString()
       form.cogs = newData.cogs.toString()
       form.categoryId = newData.categoryId
+      form.modifierGroupIds = newData.modifierGroups?.map((mg) => mg.id) || []
       form.imageUrl = newData.imageUrl || ''
     } else {
       form.name = ''
@@ -50,6 +63,7 @@ watch(
       form.price = '0'
       form.cogs = '0'
       form.categoryId = ''
+      form.modifierGroupIds = []
       form.imageUrl = ''
     }
   },
@@ -57,10 +71,19 @@ watch(
 )
 
 onMounted(async () => {
-  if (categoryStore.categories.length === 0) {
-    await categoryStore.fetchAll()
-  }
+  await Promise.all([
+    categoryStore.categories.length === 0 ? categoryStore.fetchAll() : Promise.resolve(),
+    modifierStore.modifiers.length === 0 ? modifierStore.fetchAll() : Promise.resolve(),
+  ])
 })
+
+function handleModifierToggle(id: string, checked: boolean) {
+  if (checked) {
+    form.modifierGroupIds.push(id)
+  } else {
+    form.modifierGroupIds = form.modifierGroupIds.filter((mgId) => mgId !== id)
+  }
+}
 
 const handleSubmit = () => {
   emit('submit', {
@@ -69,7 +92,8 @@ const handleSubmit = () => {
     price: Number(form.price),
     cogs: Number(form.cogs),
     categoryId: form.categoryId,
-    imageUrl: form.imageUrl,
+    modifierGroupIds: form.modifierGroupIds,
+    imageUrl: form.imageUrl || undefined,
   })
 }
 
@@ -129,6 +153,36 @@ defineExpose({
             ></textarea>
             <FieldError v-if="hasError('Description')" :errors="[getErrorMessage('Description')]" />
           </FieldContent>
+        </Field>
+
+        <Field>
+          <FieldLabel>Modifier Groups</FieldLabel>
+          <div class="grid grid-cols-1 gap-2 border rounded-md p-4 max-h-[200px] overflow-y-auto bg-muted/20">
+            <div
+              v-for="mg in modifierStore.modifiers"
+              :key="mg.id"
+              class="flex items-center space-x-2"
+            >
+              <Checkbox
+                :id="mg.id"
+                :checked="form.modifierGroupIds.includes(mg.id)"
+                @update:checked="(val: boolean) => handleModifierToggle(mg.id, val)"
+              />
+              <label
+                :for="mg.id"
+                class="text-sm font-medium leading-none cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {{ mg.name }}
+              </label>
+            </div>
+            <div v-if="modifierStore.modifiers.length === 0" class="text-sm text-muted-foreground italic">
+              No modifier groups available.
+            </div>
+          </div>
+          <FieldError
+            v-if="hasError('ModifierGroupIds')"
+            :errors="[getErrorMessage('ModifierGroupIds')]"
+          />
         </Field>
       </div>
 

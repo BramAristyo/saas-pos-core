@@ -138,6 +138,7 @@ async function handleDelete() {
               <TableHead class="w-16">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
+              <TableHead>Modifiers</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>COGS</TableHead>
               <TableHead>Created At</TableHead>
@@ -159,6 +160,12 @@ async function handleDelete() {
               </TableCell>
               <TableCell class="font-medium">{{ product.name }}</TableCell>
               <TableCell>{{ product.category?.name || '-' }}</TableCell>
+              <TableCell>
+                <Badge v-if="product.modifierGroups?.length" variant="outline">
+                  {{ product.modifierGroups.length }} Groups
+                </Badge>
+                <span v-else class="text-muted-foreground text-xs italic">None</span>
+              </TableCell>
               <TableCell>{{ formatRupiah(product.price) }}</TableCell>
               <TableCell>{{ formatRupiah(product.cogs) }}</TableCell>
               <TableCell>{{ formatDate(product.createdAt) }}</TableCell>
