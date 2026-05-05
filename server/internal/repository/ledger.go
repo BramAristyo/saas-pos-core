@@ -30,35 +30,16 @@ func (r *LedgerRepository) ReportPaginate(ctx context.Context, startDate string,
 		return 0, nil, err
 	}
 
-	q := `
-		WITH RunningData AS (
-			SELECT
-				l.*,
-				SUM(
-					CASE
-						WHEN ca.type = 'in' THEN l.amount
-						WHEN ca.type = 'out' THEN -l.amount
-						ELSE 0
-					END
-				) OVER (ORDER BY l.transaction_date ASC, l.created_at ASC) AS running_balance
-				FROM ledgers l
-				JOIN chart_of_accounts ca ON ca.id = l.coa_id
-				WHERE l.transaction_date BETWEEN ? AND ?
-		),
-		PaginatedData AS (
-			SELECT * FROM RunningData
-			ORDER BY transaction_date ASC, created_at ASC
-			LIMIT ? OFFSET ?
-		)
-		SELECT * FROM PaginatedData
-	`
-
-	err := r.DB.WithContext(ctx).Raw(q,
-		startDate,
-		endDate,
-		limit,
-		offset,
-	).Scan(&results).Error
+	err := r.DB.WithContext(ctx).
+		Model(&domain.Ledger{}).
+		Select("ledgers.*, SUM(CASE WHEN ca.type = 'in' THEN ledgers.amount WHEN ca.type = 'out' THEN -ledgers.amount ELSE 0 END) OVER (ORDER BY ledgers.transaction_date ASC, ledgers.created_at ASC) AS running_balance").
+		Joins("JOIN chart_of_accounts ca ON ca.id = ledgers.coa_id").
+		Where("ledgers.transaction_date BETWEEN ? AND ?", startDate, endDate).
+		Preload("COA").
+		Order("transaction_date ASC, created_at ASC").
+		Limit(limit).
+		Offset(offset).
+		Find(&results).Error
 
 	if err != nil {
 		return 0, nil, err
@@ -87,7 +68,7 @@ func (r *LedgerRepository) TransactionSummary(ctx context.Context, startDate str
 				END
 			) FILTER (WHERE l.transaction_date BETWEEN ? AND ?), 0) as total
 
-			FROM ledgers
+			FROM ledgers l
 			JOIN chart_of_accounts ca ON ca.id = l.coa_id
 	`
 	var summary domain.TransactionSummary
@@ -138,18 +119,25 @@ func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate stri
 	})
 
 	g.Go(func() error {
-		detailQ := `
-				SELECT l.*, ca.type
-				FROM ledgers l
-				JOIN chart_of_accounts ca ON ca.id = l.coa_id
-				WHERE l.transaction_date BETWEEN ? AND ?
-				AND ca.type = ?
-				ORDER BY l.transaction_date ASC, l.created_at ASC
-			`
-		if err := r.DB.WithContext(gctx).Raw(detailQ, startDate, endDate, "in").Scan(&incomes).Error; err != nil {
+		if err := r.DB.WithContext(gctx).
+			Model(&domain.Ledger{}).
+			Joins("JOIN chart_of_accounts ca ON ca.id = ledgers.coa_id").
+			Where("ledgers.transaction_date BETWEEN ? AND ?", startDate, endDate).
+			Where("ca.type = ?", "in").
+			Preload("COA").
+			Order("transaction_date ASC, created_at ASC").
+			Find(&incomes).Error; err != nil {
 			return err
 		}
-		return r.DB.WithContext(gctx).Raw(detailQ, startDate, endDate, "out").Scan(&expenses).Error
+
+		return r.DB.WithContext(gctx).
+			Model(&domain.Ledger{}).
+			Joins("JOIN chart_of_accounts ca ON ca.id = ledgers.coa_id").
+			Where("ledgers.transaction_date BETWEEN ? AND ?", startDate, endDate).
+			Where("ca.type = ?", "out").
+			Preload("COA").
+			Order("transaction_date ASC, created_at ASC").
+			Find(&expenses).Error
 	})
 
 	if err := g.Wait(); err != nil {
@@ -158,6 +146,7 @@ func (r *LedgerRepository) CashFlowStatement(ctx context.Context, startDate stri
 
 	return summary, incomes, expenses, nil
 }
+
 
 func (r *LedgerRepository) FindById(ctx context.Context, id uuid.UUID) (domain.Ledger, error) {
 	var l domain.Ledger

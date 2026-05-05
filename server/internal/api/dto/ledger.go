@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/BramAristyo/saas-pos-core/server/internal/domain"
+	"github.com/BramAristyo/saas-pos-core/server/pkg/filter"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -33,6 +34,7 @@ type TransactionSummaryResponse struct {
 	TotalExpense   decimal.Decimal       `json:"totalExpense"`
 	Total          decimal.Decimal       `json:"total"`
 	Transactions   []TransactionResponse `json:"transactions"`
+	Meta           filter.Meta           `json:"meta"`
 }
 
 type CashFlowReportResponse struct {
