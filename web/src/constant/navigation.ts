@@ -1,10 +1,4 @@
-import {
-  LayoutDashboard,
-  Package,
-  Receipt,
-  Users,
-  Wallet,
-} from 'lucide-vue-next'
+import { LayoutDashboard, Package, Receipt, Users, Wallet } from 'lucide-vue-next'
 
 export const NAVIGATION_CONFIG = [
   {
@@ -19,7 +13,7 @@ export const NAVIGATION_CONFIG = [
     ],
   },
   {
-    title: 'Catalog',
+    title: 'Menu',
     url: '#',
     icon: Package,
     items: [
@@ -57,12 +51,12 @@ export const NAVIGATION_CONFIG = [
     ],
   },
   {
-    title: 'Employees',
+    title: 'People',
     url: '#',
     icon: Users,
     items: [
       {
-        title: 'List',
+        title: 'Employee',
         url: '/employees',
       },
       {
@@ -87,6 +81,10 @@ export const NAVIGATION_CONFIG = [
       {
         title: 'Chart of Accounts',
         url: '/coa',
+      },
+      {
+        title: 'Cash Transaction',
+        url: '/accounting/cash-transactions',
       },
     ],
   },

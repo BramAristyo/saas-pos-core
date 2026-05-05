@@ -24,3 +24,8 @@ func CashTransactionRoutes(r *gin.RouterGroup, h *handler.CashTransactionHandler
 	r.DELETE("/:id", h.Delete)
 }
 
+func LedgerRoutes(r *gin.RouterGroup, h *handler.LedgerHandler) {
+	r.GET("/transactions", h.TransactionList)
+	r.GET("/cash-flow", h.CashFlowStatement)
+}
+

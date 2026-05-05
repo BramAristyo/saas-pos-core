@@ -126,6 +126,24 @@ const router = createRouter({
       meta: { requiresAuth: true, title: 'Payroll' },
     },
     {
+      path: '/accounting/cash-transactions',
+      name: 'cash-transactions',
+      component: () => import('@/views/accounting/cash-transaction/CashTransactionView.vue'),
+      meta: { requiresAuth: true, title: 'Cash Transactions' },
+    },
+    {
+      path: '/accounting/cash-transactions/create',
+      name: 'cash-transaction-create',
+      component: () => import('@/views/accounting/cash-transaction/CashTransactionCreateView.vue'),
+      meta: { requiresAuth: true, title: 'Create Cash Transaction' },
+    },
+    {
+      path: '/accounting/cash-transactions/:id/edit',
+      name: 'cash-transaction-edit',
+      component: () => import('@/views/accounting/cash-transaction/CashTransactionEditView.vue'),
+      meta: { requiresAuth: true, title: 'Edit Cash Transaction' },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

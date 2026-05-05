@@ -27,11 +27,12 @@ type Handlers struct {
 	Employee      *handler.EmployeeHandler
 	Attendance    *handler.AttendanceHandler
 	Payroll       *handler.PayrollHandler
-	ShiftSchedule *handler.ShiftScheduleHandler
+	ShiftSchedule   *handler.ShiftScheduleHandler
 	CashTransaction *handler.CashTransactionHandler
-}
+	Ledger          *handler.LedgerHandler
+	}
 
-func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
+	func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	validation.RegisterCustomValidators()
 
 	userRepository := repository.NewUserRepository(db)
@@ -68,6 +69,7 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 	salesTypeUseCase := usecase.NewSalesTypeUseCase(salesTypeRepository, auditLogUseCase)
 
 	ledgerRepository := repository.NewLedgerRepository(db)
+	ledgerUseCase := usecase.NewLedgerUseCase(ledgerRepository)
 
 	coaRepository := repository.NewCOARepository(db)
 	coaUseCase := usecase.NewCOAUseCase(coaRepository, auditLogUseCase)
@@ -123,6 +125,7 @@ func Bootstrap(db *gorm.DB, cfg *config.Config) *Handlers {
 		Payroll:         handler.NewPayrollHandler(payrollUseCase),
 		ShiftSchedule:   handler.NewShiftScheduleHandler(shiftScheduleUseCase),
 		CashTransaction: handler.NewCashTransactionHandler(cashTransactionUseCase),
+		Ledger:          handler.NewLedgerHandler(ledgerUseCase),
 	}
 }
 

@@ -41,6 +41,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		payrolls := v1.Group("/payrolls", middleware.Authentication(cfg))
 		shiftSchedules := v1.Group("/shift-schedules", middleware.Authentication(cfg))
 		cashTransactions := v1.Group("/cash-transactions", middleware.Authentication(cfg))
+		ledger := v1.Group("/ledger", middleware.Authentication(cfg))
 
 		v1.POST("/", h.Auth.Login)
 		v1.GET("/me", middleware.Authentication(cfg), h.Auth.Me)
@@ -63,6 +64,7 @@ func RegisterRoutes(r *gin.Engine, h *dependency.Handlers, cfg *config.Config) {
 		PayrollRoutes(payrolls, h.Payroll)
 		ShiftScheduleRoutes(shiftSchedules, h.ShiftSchedule)
 		CashTransactionRoutes(cashTransactions, h.CashTransaction)
+		LedgerRoutes(ledger, h.Ledger)
 	}
 }
 
